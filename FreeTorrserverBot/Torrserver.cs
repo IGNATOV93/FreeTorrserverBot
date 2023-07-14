@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using System.Diagnostics;
 namespace FreeTorrserverBot
 {
     public abstract class Torrserver
     {
-        static string filePath = @"G:\accs.db";
+        static string filePath = @"/opt/torrserver/accs.db";
         public static async Task ChangeAccountTorrserver()
         {
             var newParolRandom = new Random();
@@ -11,12 +12,11 @@ namespace FreeTorrserverBot
             var newParol = new string(Enumerable.Repeat(chars, 8)
                          .Select(s => s[newParolRandom.Next(s.Length)]).ToArray());
             string result = $"{{\"freeServer\":\"{newParol}\"}}";
-
-
             using (StreamWriter writer = new StreamWriter(filePath))
             {
                 writer.WriteLine($"{result}") ;
             }
+          await  RebootingTorrserver();
         }
         public static string TakeAccountTorrserver()
         {
@@ -32,6 +32,12 @@ namespace FreeTorrserverBot
                 
                 return result.Replace("\"","").Replace("{","").Replace("}","");
             }
+        }
+        public static async Task RebootingTorrserver()
+        {
+            Process.Start("killall", "torrserver");
+            Process.Start("/opt/torrserver/torrserver");
+            return;
         }
     }
 }
