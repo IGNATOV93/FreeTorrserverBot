@@ -1,4 +1,5 @@
-﻿using IniParser;
+﻿using FluentScheduler;
+using IniParser;
 using IniParser.Model;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -10,9 +11,11 @@ namespace FreeTorrserverBot.BotTelegram
     {
         private static string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.ini");
         private static FileIniDataParser parser = new FileIniDataParser();
-        private static IniData data = parser.ReadFile(path);
-        static private TelegramBotClient client = new TelegramBotClient(data["Profile0"]["YourBotTelegreamToken"]);
+        public static IniData data = parser.ReadFile(path);
+       
+        static public  TelegramBotClient client = new TelegramBotClient(data["Profile0"]["YourBotTelegreamToken"]);
         public static string AdminChat = (data["Profile0"]["AdminChatId"]);
+       
 
         public static async Task Update(ITelegramBotClient botClient, Update update, CancellationToken token)
         {
@@ -25,7 +28,7 @@ namespace FreeTorrserverBot.BotTelegram
             var buttonPrintPassword = new KeyboardButton("Посмотреть пароль");
             var keyboardMain = new ReplyKeyboardMarkup(new[] { buttonChangePassword, buttonPrintPassword });
             var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
-                 {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
+                {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
             keyboardMain.ResizeKeyboard = true;
             if (update?.CallbackQuery?.Data != null)
             {
@@ -43,7 +46,7 @@ namespace FreeTorrserverBot.BotTelegram
                 if (InputText == "Поменять пароль")
                 {
                     await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
-                    Torrserver.ChangeAccountTorrserver();
+                   await Torrserver.Torrserver.ChangeAccountTorrserver();
                     await botClient.SendTextMessageAsync(ChatId
                                                          , "Пароль успешно изменен !"
                                                          , replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
@@ -52,7 +55,7 @@ namespace FreeTorrserverBot.BotTelegram
                 if (InputText == "Посмотреть пароль")
                 {
                     await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
-                    var newParol = Torrserver.TakeAccountTorrserver();
+                    var newParol =  Torrserver.Torrserver.TakeAccountTorrserver();
                     await botClient.SendTextMessageAsync(ChatId
                                                        , $"{newParol}"
                                                        , replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
@@ -78,8 +81,10 @@ namespace FreeTorrserverBot.BotTelegram
         }
         static public async Task StartBot()
         {
+            JobManager.Initialize(new MyRegistry());
             var statrBotThread = new Thread(() => client.StartReceiving(Update, Error));
             statrBotThread.Start();
+            
             Console.ReadLine();
         }
     }

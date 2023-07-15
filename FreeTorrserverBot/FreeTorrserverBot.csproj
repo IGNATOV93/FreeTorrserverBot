@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentScheduler" Version="5.5.1" />
     <PackageReference Include="ini-parser" Version="2.5.2" />
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
   </ItemGroup>
