@@ -39,9 +39,9 @@ namespace FreeTorrserverBot.BotTelegram
                     {
                         await botClient.DeleteMessageAsync(ChatId, update.CallbackQuery.Message.MessageId);
                     }
-                    catch 
+                    catch (Exception ex) 
                     {
-                        
+                        Console.WriteLine(ex.Message);
                     }
                     
                     return;
@@ -57,7 +57,10 @@ namespace FreeTorrserverBot.BotTelegram
                     {
                         await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
                     }
-                    catch {}
+                    catch(Exception ex) 
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                    await Torrserver.Torrserver.ChangeAccountTorrserver();
                     await botClient.SendTextMessageAsync(ChatId
                                                          , "Пароль успешно изменен !"
@@ -70,7 +73,7 @@ namespace FreeTorrserverBot.BotTelegram
                     {
                         await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
                     }
-                    catch { }
+                    catch (Exception ex) { Console.WriteLine(ex.Message); }
                     var newParol =  Torrserver.Torrserver.TakeAccountTorrserver();
                     await botClient.SendTextMessageAsync(ChatId
                                                        , $"{newParol}"
@@ -83,7 +86,7 @@ namespace FreeTorrserverBot.BotTelegram
                     {
                         await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
                     }
-                    catch { }
+                    catch (Exception ex) { Console.WriteLine(ex.Message); }
                     await botClient.SendTextMessageAsync(ChatId
                                                          , "Бот по смене пароля Torrserver приветствует тебя !"
                                                          , replyMarkup: keyboardMain);
