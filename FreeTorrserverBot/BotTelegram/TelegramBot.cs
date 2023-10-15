@@ -35,7 +35,15 @@ namespace FreeTorrserverBot.BotTelegram
                 if (ChatId != AdminChat) { return; }
                 if (InlineText == "deletemessages")
                 {
-                    await botClient.DeleteMessageAsync(ChatId, update.CallbackQuery.Message.MessageId);
+                    try
+                    {
+                        await botClient.DeleteMessageAsync(ChatId, update.CallbackQuery.Message.MessageId);
+                    }
+                    catch 
+                    {
+                        
+                    }
+                    
                     return;
                 }
             }
@@ -45,7 +53,11 @@ namespace FreeTorrserverBot.BotTelegram
                 if (ChatId != AdminChat) { return; }
                 if (InputText == "Поменять пароль")
                 {
-                    await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
+                    try 
+                    {
+                        await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
+                    }
+                    catch {}
                    await Torrserver.Torrserver.ChangeAccountTorrserver();
                     await botClient.SendTextMessageAsync(ChatId
                                                          , "Пароль успешно изменен !"
@@ -54,7 +66,11 @@ namespace FreeTorrserverBot.BotTelegram
                 }
                 if (InputText == "Посмотреть пароль")
                 {
-                    await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
+                    try
+                    {
+                        await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
+                    }
+                    catch { }
                     var newParol =  Torrserver.Torrserver.TakeAccountTorrserver();
                     await botClient.SendTextMessageAsync(ChatId
                                                        , $"{newParol}"
@@ -63,7 +79,11 @@ namespace FreeTorrserverBot.BotTelegram
                 }
                 if (InputText == "/start")
                 {
-                    await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
+                    try
+                    {
+                        await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
+                    }
+                    catch { }
                     await botClient.SendTextMessageAsync(ChatId
                                                          , "Бот по смене пароля Torrserver приветствует тебя !"
                                                          , replyMarkup: keyboardMain);

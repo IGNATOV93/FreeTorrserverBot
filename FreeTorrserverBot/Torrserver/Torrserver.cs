@@ -50,7 +50,7 @@ namespace FreeTorrserverBot.Torrserver
         }
         public static async Task RebootingTorrserver()
         {
-            Process.Start("killall", "torrserver");
+            Process.Start("killall", "TorrServer-linux-amd64");
             Process.Start(@$"{FilePathTor}") ;
             return;
         }
