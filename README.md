@@ -23,7 +23,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 2. **Распакуйте архив**:
    - Используйте команду:
      ```bash
-     unzip ваш_архив.zip
+     unzip FreeTorrBot-linux-64.rar
      ```
 
 3. **Убедитесь, что установлен .NET 8**:
@@ -32,6 +32,6 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 4. **Запустите проект в фоне через screen**:
    - Используйте команду:
      ```bash
-    screen -S ftorcd /opt/FreeTorrBot/./FreeTorrBot
+     screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
      ```
 
