@@ -26,7 +26,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      sudo unrar x FreeTorrBot-linux-64.rar /opt/
      ```
 
-1. **Установите .NET 8**:
+3. **Установите .NET 8**:
    - Выполните следующие команды:
      ```bash
      sudo apt-get install -y wget apt-transport-https
@@ -39,7 +39,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      dotnet --version
      ```
-2. **Установите права на чтение и запись**:
+4. **Установите права на чтение и запись**:
    - Установите права на чтение для файла `FreeTorrBot` в папке бота:
      ```bash
      sudo chmod +r /opt/FreeTorrBot/FreeTorrBot
@@ -52,8 +52,29 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      sudo chmod +r /opt/torrserver/TorrServer-linux-amd64
      ```
+5. **Установите `unrar` и `screen`** (если они не установлены):
+   - Установите `unrar`:
+     ```bash
+     sudo apt-get install -y unrar
+     ```
+   - Установите `screen`:
+     ```bash
+     sudo apt-get install -y screen
+     ```
+### Основные команды для работы с `screen`
 
-4. **Запустите проект в фоне через screen**:
+- **Создание нового окна**:
+  - `screen -S <имя_сессии>` — создаёт новую сессию с указанным именем.
+
+- **Запуск существующей сессии**:
+  - `screen -r <имя_сессии_или_id>` — восстанавливает существующую сессию.
+
+- **Свернуть сессию в фоне**:
+  - `Ctrl + A` затем `D` — сворачивает текущую сессию в фоне.
+
+- **Просмотр списка сессий**:
+  - `screen -ls` — отображает список активных сессий `screen`.
+6. **Запустите проект в фоне через screen**:
    - Используйте команду:
      ```bash
      screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
