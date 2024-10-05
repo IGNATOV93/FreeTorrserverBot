@@ -68,7 +68,8 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
      ```
 
-     Основные команды для работы с `screen`
+
+     ##Основные команды для работы с `screen`
 
 - **Создание нового окна**:
   - `screen -S <имя_сессии>` — создаёт новую сессию с указанным именем.
