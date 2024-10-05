@@ -32,8 +32,6 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 4. **Запустите проект в фоне через screen**:
    - Используйте команду:
      ```bash
-    screen -S ftor
-    cd /opt/FreeTorrBot/
-    ./FreeTorrBot
+    screen -S ftorcd /opt/FreeTorrBot/./FreeTorrBot
      ```
 
