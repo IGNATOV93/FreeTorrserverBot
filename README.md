@@ -39,7 +39,19 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      dotnet --version
      ```
-
+2. **Установите права на чтение и запись**:
+   - Установите права на чтение для файла `FreeTorrBot` в папке бота:
+     ```bash
+     sudo chmod +r /opt/FreeTorrBot/FreeTorrBot
+     ```
+   - Установите права на чтение и запись для файла `accs.db` в папке Torrserver:
+     ```bash
+     sudo chmod 664 /opt/torrserver/accs.db
+     ```
+   - Установите права на чтение для файла `TorrServer-linux-amd64` в папке Torrserver:
+     ```bash
+     sudo chmod +r /opt/torrserver/TorrServer-linux-amd64
+     ```
 
 4. **Запустите проект в фоне через screen**:
    - Используйте команду:
