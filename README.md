@@ -18,7 +18,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 ## Как запустить
 
 1. **Скачайте архив проекта**:
-   - Перейдите на [страницу релизов](https://github.com/ваш_репозиторий/releases) и скачайте последний архив.
+   - Перейдите на [эту](https://github.com/IGNATOV93/FreeTorrserverBot/releases/tag/v1.01) и скачайте последний архив.
 
 2. **Распакуйте архив**:
    - Используйте команду:
@@ -29,16 +29,11 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 3. **Убедитесь, что установлен .NET 8**:
    - Для работы проекта требуется .NET 8. Установите его, следуя [инструкциям по установке](https://docs.microsoft.com/ru-ru/dotnet/core/install/linux).
 
-4. **Запустите проект в фоне**:
+4. **Запустите проект в фоне через screen**:
    - Используйте команду:
      ```bash
-     screen -S ftor
+    screen -S ftor
+    cd /opt/FreeTorrBot/
+    ./FreeTorrBot
      ```
-   - После этого перейдите в папку с проектом:
-     ```bash
-     cd /opt/FreeTorrBot/
-     ```
-   - И запустите бота:
-     ```bash
-     ./FreeTorrBot
-     ```
+
