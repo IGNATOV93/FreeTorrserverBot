@@ -61,8 +61,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      sudo apt-get install -y screen
      ```
-
-     6. **Запустите проект в фоне через screen**:
+6. **Запустите проект в фоне через screen**
    - Используйте команду:
      ```bash
      screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
