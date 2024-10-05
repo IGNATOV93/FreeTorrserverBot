@@ -61,13 +61,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      sudo apt-get install -y screen
      ```
-6. **Запустите проект в фоне через screen**
-   - Используйте команду:
-     ```bash
-     screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
-     ```
-
-<details>
+     <details>
 <summary>Основные команды для работы с `screen`</summary>
 
 - **Создание нового окна**:
@@ -83,5 +77,12 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
   - `screen -ls` — отображает список активных сессий `screen`.
 
 </details>
+6. **Запустите проект в фоне через screen**
+   - Используйте команду:
+     ```bash
+     screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
+     ```
+
+
 
 
