@@ -13,7 +13,7 @@ AdminChatId=ваш id чата в Telegram
 TimeAutoChangePassword=время автосмены пароля, например 23:00
 FilePathTorrserverBd=/opt/torrserver/accs.db   ; путь к настройкам torrserver
 FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrserver
-
+```
 
 ## Как запустить
 
