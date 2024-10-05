@@ -70,7 +70,9 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
      ```
-     <details>
+
+
+<details>
 <summary>Основные команды для работы с `screen`</summary>
 
 - **Создание нового окна**:
