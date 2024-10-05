@@ -12,7 +12,7 @@ YourBotTelegramToken=ваш токен бота
 AdminChatId=ваш id чата в Telegram
 TimeAutoChangePassword=время автосмены пароля, например 23:00
 FilePathTorrserverBd=/opt/torrserver/accs.db   ; путь к настройкам torrserver
-FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrserver
+FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrserver файлу (запускаемый,название может файла отличаться у вас)
 ```
 
 ## Как запустить
@@ -23,11 +23,23 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 2. **Распакуйте архив**:
    - Используйте команду:
      ```bash
-     unzip FreeTorrBot-linux-64.rar
+     sudo unrar x FreeTorrBot-linux-64.rar /opt/
      ```
 
-3. **Убедитесь, что установлен .NET 8**:
-   - Для работы проекта требуется .NET 8. Установите его, следуя [инструкциям по установке](https://docs.microsoft.com/ru-ru/dotnet/core/install/linux).
+1. **Установите .NET 8**:
+   - Выполните следующие команды:
+     ```bash
+     sudo apt-get install -y wget apt-transport-https
+     wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
+     sudo dpkg -i packages-microsoft-prod.deb
+     sudo apt-get update
+     sudo apt-get install -y dotnet-sdk-8.0
+     ```
+   - Проверьте установку:
+     ```bash
+     dotnet --version
+     ```
+
 
 4. **Запустите проект в фоне через screen**:
    - Используйте команду:
