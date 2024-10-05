@@ -44,6 +44,10 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      sudo chmod +r /opt/FreeTorrBot/FreeTorrBot
      ```
+   - Установите права на чтение для файла `settings.ini` в папке бота:
+     ```bash
+     sudo chmod +r /opt/FreeTorrBot/settings.ini
+     ``` 
    - Установите права на чтение и запись для файла `accs.db` в папке Torrserver:
      ```bash
      sudo chmod 664 /opt/torrserver/accs.db
