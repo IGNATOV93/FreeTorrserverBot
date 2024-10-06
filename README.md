@@ -76,7 +76,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 Добавьте в `crontab`:
 ```bash
 @reboot /opt/to/FreeTorrBot/autoStartFreeTorrBot.sh
-
+ ```
 <details>
 <summary>Основные команды для работы с `screen`</summary>
 
