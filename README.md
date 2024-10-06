@@ -72,7 +72,12 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
     screen -S ftor cd /opt/FreeTorrBot/./FreeTorrBot
    
 2. **Автоматический запуск скрипта(бота) при перезагрузке**
+Добавление скрипта в `crontab`
 
+Выполните команду:
+```bash
+crontab -e
+```
 Добавьте в `crontab`:
 ```bash
 @reboot /opt/to/FreeTorrBot/autoStartFreeTorrBot.sh
