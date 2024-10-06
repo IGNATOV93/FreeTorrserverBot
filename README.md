@@ -36,15 +36,11 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      dotnet --version
      ```
-4. **Установите права на чтение и запись**:
-   - Установите права на чтение для файла `FreeTorrBot` в папке бота:
+4. **Установите права на доступ**:
+   - Установите права на чтение для файлов в папке бота:
      ```bash
-     sudo chmod +r /opt/FreeTorrBot/FreeTorrBot
+     sudo chmod +r /opt/FreeTorrBot/FreeTorrBot /opt/FreeTorrBot/settings.ini /opt/FreeTorrBot/autoStartFreeTorrBot.sh
      ```
-   - Установите права на чтение для файла `settings.ini` в папке бота:
-     ```bash
-     sudo chmod +r /opt/FreeTorrBot/settings.ini
-     ``` 
    - Установите права на чтение и запись для файла `accs.db` в папке Torrserver:
      ```bash
      sudo chmod 664 /opt/torrserver/accs.db
