@@ -68,9 +68,9 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 
 1. **Запустите проект в фоне через screen**
    - Используйте команду:
-     ```bash
+     
     screen -S ftor cd /opt/FreeTorrBot/./FreeTorrBot
-     ```
+   
 2. **Автоматический запуск скрипта(бота) при перезагрузке**
 
 Добавьте в `crontab`:
