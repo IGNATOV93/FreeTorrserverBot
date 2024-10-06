@@ -14,9 +14,6 @@ TimeAutoChangePassword=время автосмены пароля, наприм�
 FilePathTorrserverBd=/opt/torrserver/accs.db   ; путь к настройкам torrserver
 FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrserver файлу (запускаемый,название может файла отличаться у вас)
 ```
-
-## Как запустить
-
 1. **Скачайте архив проекта**:
    - Перейдите на [эту](https://github.com/IGNATOV93/FreeTorrserverBot/releases/tag/v1.01) и скачайте последний архив.
 
@@ -65,10 +62,14 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
      ```bash
      sudo apt-get install -y screen
      ```
-6. **Запустите проект в фоне через screen**
+
+
+## Как запустить
+
+1. **Запустите проект в фоне через screen**
    - Используйте команду:
      ```bash
-     screen -S ftor && cd /opt/FreeTorrBot/ && ./FreeTorrBot
+    screen -S ftor cd /opt/FreeTorrBot/./FreeTorrBot
      ```
 
 
