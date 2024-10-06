@@ -82,7 +82,6 @@ crontab -e
 Добавьте в `crontab`:
 ```bash
 @reboot /opt/to/FreeTorrBot/autoStartFreeTorrBot.sh
-/opt/to/FreeTorrBot/autoStartFreeTorrBot.sh
  ```
 <details>
 <summary>Основные команды для работы с `screen`</summary>
