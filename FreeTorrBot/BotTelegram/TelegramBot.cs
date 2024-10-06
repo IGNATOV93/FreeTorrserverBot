@@ -20,7 +20,8 @@ namespace FreeTorrserverBot.BotTelegram
         static public TelegramBotClient client = new TelegramBotClient(configuration["Profile0:YourBotTelegramToken"]);
         public static string AdminChat = configuration["Profile0:AdminChatId"];
 
-
+      public static  InlineKeyboardMarkup inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
+                {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
         public static async Task Update(ITelegramBotClient botClient, Update update, CancellationToken token)
         {
             
@@ -31,8 +32,7 @@ namespace FreeTorrserverBot.BotTelegram
             var buttonChangePassword = new KeyboardButton("Поменять пароль");
             var buttonPrintPassword = new KeyboardButton("Посмотреть пароль");
             var keyboardMain = new ReplyKeyboardMarkup(new[] { buttonChangePassword, buttonPrintPassword });
-            var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
-                {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
+            
             keyboardMain.ResizeKeyboard = true;
             if (update?.CallbackQuery?.Data != null)
             {
@@ -110,9 +110,16 @@ namespace FreeTorrserverBot.BotTelegram
         {
             JobManager.Initialize(new MyRegistry());
             var statrBotThread = new Thread(() => client.StartReceiving(Update, Error));
+            await SendMessageToAdmin("Бот успешно стартовал!");
             statrBotThread.Start();
             
             Console.ReadLine();
+        }
+        public static async Task SendMessageToAdmin(string mes)
+        {
+            Console.WriteLine(mes);
+            await client.SendTextMessageAsync(AdminChat, mes, replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
+            return;
         }
     }
 }
