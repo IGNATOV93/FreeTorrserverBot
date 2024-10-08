@@ -1,0 +1,10 @@
+﻿{
+  "Profile0": {
+    "YourBotTelegramToken": "ваш токен бота telegram",
+    "AdminChatId": "ваш idchat telegram",
+    "TimeAutoChangePassword": "20:00",
+    "FilePathTorrserverBd": "/opt/torrserver/accs.db",
+    "FilePathTor": "/opt/torrserver/TorrServer-linux-amd64",
+    "IsActiveAutoChange": "true"
+  }
+}

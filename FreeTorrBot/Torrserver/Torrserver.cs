@@ -8,8 +8,8 @@ namespace FreeTorrserverBot.Torrserver
 {
     public abstract class Torrserver
     {
-        static string filePathTorrserverBd = @$"{TelegramBot.configuration["Profile0:FilePathTorrserverBd"]}";
-        static string FilePathTor = @$"{TelegramBot.configuration["Profile0:FilePathTor"]}";
+        static string filePathTorrserverBd = @$"{TelegramBot.settingsJson.FilePathTorrserverBd}";
+        static string FilePathTor = @$"{TelegramBot.settingsJson.FilePathTor}";
         public static async Task AutoChangeAccountTorrserver()
         {
             var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
@@ -50,7 +50,8 @@ namespace FreeTorrserverBot.Torrserver
         }
         public static async Task RebootingTorrserver()
         {
-            Process.Start("killall", "TorrServer-linux-amd64");
+            var nameProcesTorrserver = BotTelegram.TelegramBot.settingsJson.FilePathTor.Substring(BotTelegram.TelegramBot.settingsJson.FilePathTor.LastIndexOf('/') + 1);
+            Process.Start("killall",nameProcesTorrserver);
             Process.Start(@$"{FilePathTor}") ;
             return;
         }
