@@ -1,4 +1,5 @@
 ﻿using FluentScheduler;
+using FreeTorrBot.BotTelegram;
 using FreeTorrBot.BotTelegram.BotSettings;
 using FreeTorrBot.BotTelegram.BotSettings.Model;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +13,8 @@ namespace FreeTorrserverBot.BotTelegram
     {
         static public BotSettingsJson settingsJson =  BotSettingsMethods.LoadSettings();
 
-        static public TelegramBotClient client = new TelegramBotClient(settingsJson.YourBotTelegramToken);
-        public static string AdminChat = settingsJson.AdminChatId;
+        static readonly public TelegramBotClient client = new TelegramBotClient(settingsJson.YourBotTelegramToken);
+        public readonly static string AdminChat = settingsJson.AdminChatId;
         
       public static  InlineKeyboardMarkup inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
                 {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
@@ -24,41 +25,26 @@ namespace FreeTorrserverBot.BotTelegram
             var ChatId = update?.CallbackQuery?.Message?.Chat?.Id.ToString();
             var InputText = Message?.Text;
             var InlineText = update?.CallbackQuery?.Data;
-            var buttonChangePassword = new KeyboardButton("🔑 Поменять пароль");
-            var buttonPrintPassword = new KeyboardButton("👀 Посмотреть пароль");
-            var buttonChangeTimeAuto = new KeyboardButton("⏰ Время автосмены");
-            var buttonPrintTimeAuto = new KeyboardButton("🕒 Посмотреть время");
-            var buttonEnableAutoChange = new KeyboardButton("✅ Включить автосмену");
-            var buttonDisableAutoChange = new KeyboardButton("❌ Отключить автосмену");
-            var buttonShowStatus = new KeyboardButton("📊 Текущее состояние");
-            var keyboardMain = new ReplyKeyboardMarkup(new[]{ new[] { buttonChangePassword, buttonPrintPassword }
-                                                       , new[]{ buttonChangeTimeAuto, buttonPrintTimeAuto }
-                                                       ,new[]{buttonEnableAutoChange, buttonDisableAutoChange }
-                                                       ,new[] { buttonShowStatus}
-                                                       });
-            
-            keyboardMain.ResizeKeyboard = true;
             if (update?.CallbackQuery?.Data != null)
             {
-                if (ChatId != AdminChat) { return; }
-                if (InlineText == "deletemessages")
-                {
+                if (ChatId != AdminChat&&!MessageHandler.IsCallbackQueryCommandBot(InlineText)) { return; }
+                await MessageHandler.HandleUpdate(update);
+                
                     try
                     {
-                        await botClient.DeleteMessageAsync(ChatId, update.CallbackQuery.Message.MessageId);
+                        await botClient.DeleteMessageAsync(AdminChat, update.CallbackQuery.Message.MessageId);
                     }
                     catch (Exception ex) 
                     {
                         Console.WriteLine(ex.Message);
                     }
-                    
                     return;
-                }
+                
             }
             if (Message?.Text != null)
             {
                 ChatId = Message.Chat.Id.ToString();
-                if (ChatId != AdminChat) { return; }
+                if (ChatId != AdminChat&&!MessageHandler.IsTextCommandBot(InputText)) { return; }
 
                 if(InlineText == "✅ Включить автосмену")
                 {
@@ -126,6 +112,7 @@ namespace FreeTorrserverBot.BotTelegram
             return;
 
         }
+        
         public static Task Error(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
         {
             Console.WriteLine(arg2.Message);
