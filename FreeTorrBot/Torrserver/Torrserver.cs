@@ -35,18 +35,27 @@ namespace FreeTorrserverBot.Torrserver
         }
         public static string TakeAccountTorrserver()
         {
-            using (StreamReader reader = new StreamReader(filePathTorrserverBd))
+            try
             {
-                string line;
-                string result = "";
-                while ((line = reader.ReadLine()) != null)
+                using (StreamReader reader = new StreamReader(filePathTorrserverBd))
                 {
-                    result += line;
-                    Console.WriteLine(line);
-                }
+                    string line;
+                    string result = "";
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        result += line;
+                        Console.WriteLine(line);
+                    }
 
-                return result.Replace("\"", "").Replace("{", "").Replace("}", "");
+                    return result.Replace("\"", "").Replace("{", "").Replace("}", "");
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+            }
+            return "";
         }
         public static async Task RebootingTorrserver()
         {

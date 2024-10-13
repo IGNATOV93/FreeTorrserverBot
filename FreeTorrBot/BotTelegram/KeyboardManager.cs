@@ -16,7 +16,8 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
-        public static InlineKeyboardMarkup GetAdminKeyboard()
+       
+        public static InlineKeyboardMarkup GetControlTorrserver()
         {
             var buttonChangePassword = InlineKeyboardButton.WithCallbackData("🔑 Поменять пароль", "change_password");
             var buttonPrintPassword = InlineKeyboardButton.WithCallbackData("👀 Посмотреть пароль", "print_password");

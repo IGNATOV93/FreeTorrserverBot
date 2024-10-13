@@ -29,85 +29,16 @@ namespace FreeTorrserverBot.BotTelegram
             {
                 if (ChatId != AdminChat&&!MessageHandler.IsCallbackQueryCommandBot(InlineText)) { return; }
                 await MessageHandler.HandleUpdate(update);
-                
-                    try
-                    {
-                        await botClient.DeleteMessageAsync(AdminChat, update.CallbackQuery.Message.MessageId);
-                    }
-                    catch (Exception ex) 
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                    return;
-                
+                return;
+              
             }
             if (Message?.Text != null)
             {
                 ChatId = Message.Chat.Id.ToString();
                 if (ChatId != AdminChat&&!MessageHandler.IsTextCommandBot(InputText)) { return; }
-
-                if(InlineText == "✅ Включить автосмену")
-                {
-
-                }
-                if(InlineText=="❌ Отключить автосмену")
-                {
-
-                }
-                if(InlineText== "📊 Текущее состояние")
-                {
-
-                }
-                if (InlineText == "⏰ Время автосмены")
-                {
-
-                }
-                if(InlineText =="🕒 Посмотреть время")
-                {
-
-                }
-                if (InputText == "🔑 Поменять пароль")
-                {
-                    try 
-                    {
-                        await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
-                    }
-                    catch(Exception ex) 
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                   await Torrserver.Torrserver.ChangeAccountTorrserver();
-                    await botClient.SendTextMessageAsync(ChatId
-                                                         , "Пароль успешно изменен !"
-                                                         , replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
-                    return;
-                }
-                if (InputText == "👀 Посмотреть пароль")
-                {
-                    try
-                    {
-                        await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
-                    }
-                    catch (Exception ex) { Console.WriteLine(ex.Message); }
-                    var newParol =  Torrserver.Torrserver.TakeAccountTorrserver();
-                    await botClient.SendTextMessageAsync(ChatId
-                                                       , $"{newParol}"
-                                                       , replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
-                    return;
-                }
-                if (InputText == "/start")
-                {
-                    try
-                    {
-                        await botClient.DeleteMessageAsync(ChatId, Message.MessageId);
-                    }
-                    catch (Exception ex) { Console.WriteLine(ex.Message); }
-                    await botClient.SendTextMessageAsync(ChatId
-                                                         , "Бот по смене пароля Torrserver приветствует тебя !"
-                                                         , replyMarkup: keyboardMain);
-                    return;
-                }
+                await MessageHandler.HandleUpdate(update);
                 return;
+
             }
             return;
 
