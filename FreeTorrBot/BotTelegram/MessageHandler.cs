@@ -8,6 +8,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using FreeTorrserverBot.Torrserver;
+using FreeTorrBot.BotTelegram.BotSettings;
+using static FreeTorrBot.BotTelegram.BotSettings.BotSettingsMethods;
 
 namespace FreeTorrBot.BotTelegram
 {
@@ -45,7 +47,7 @@ namespace FreeTorrBot.BotTelegram
         {
             var text = message.Text;
             var idMessage = message.MessageId;
-            Console.WriteLine(text);
+           // Console.WriteLine(text);
             // Обрабатываем обычное текстовое сообщение
             if (text == "/start")
             {
@@ -68,7 +70,7 @@ namespace FreeTorrBot.BotTelegram
         private static async Task HandleCallbackQuery(CallbackQuery callbackQuery)
         {
             var callbackData = callbackQuery.Data;
-            Console.WriteLine(callbackData);
+          //  Console.WriteLine(callbackData);
             var idMessage = callbackQuery.Message.MessageId;
             // Обрабатываем callback-сообщение
             if (callbackData == "deletemessages")
@@ -98,22 +100,51 @@ namespace FreeTorrBot.BotTelegram
             }
             if(callbackData== "change_time_auto")
             {
-
+                await DeleteMessage(idMessage);
+                
+                await botClient.SendTextMessageAsync(AdminChat
+                                                   , $"Данная функция временно не работает,\r\n"+
+                                                      "Обновите вручную через settings.json"
+                                                   , replyMarkup: KeyboardManager.GetDeleteThisMessage());
             }
             if(callbackData== "print_time_auto")
             {
-
+                await DeleteMessage(idMessage);
+                var settings = LoadSettings();
+                await botClient.SendTextMessageAsync(AdminChat
+                                                   , $"⏰ Время автосмены пароля {settings.TimeAutoChangePassword}"
+                                                   , replyMarkup: KeyboardManager.GetDeleteThisMessage());
             }
             if(callbackData== "enable_auto_change")
             {
-
+                await DeleteMessage(idMessage);
+                BotSettingsMethods.UpdateSettings(SettingsField.IsActiveAutoChange, "true");
+              var autoChangeTime = LoadSettings().TimeAutoChangePassword;
+                await botClient.SendTextMessageAsync(AdminChat
+                                                   , "Автосмена пароля включена \u2705 \r\n" +
+                                                   autoChangeTime
+                                                   , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                return ;
             }
             if(callbackData== "disable_auto_change")
             {
-
+                await DeleteMessage(idMessage);
+                BotSettingsMethods.UpdateSettings(SettingsField.IsActiveAutoChange, "false");
+                var autoChangeTime = LoadSettings().TimeAutoChangePassword;
+                await botClient.SendTextMessageAsync(AdminChat
+                                                   , "Автосмена пароля выключена \u274C\r\n" +
+                                                   autoChangeTime
+                                                   , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                return;
             }
             if(callbackData== "show_status")
+               
             {
+                await DeleteMessage(idMessage);
+                var settings =LoadSettings();
+                await botClient.SendTextMessageAsync(AdminChat
+                                                   , settings.ToString()
+                                                   , replyMarkup: KeyboardManager.GetDeleteThisMessage());
 
             }
             await botClient.AnswerCallbackQueryAsync(callbackQuery.Id);

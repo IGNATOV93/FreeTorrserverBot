@@ -4,4 +4,4 @@
 export LC_ALL=en_US.UTF-8
 
 sleep 5
-/usr/bin/screen -dmS ftorr /bin/bash -c 'cd /opt/AdTorrBot; ./FreeTorrBot'
+/usr/bin/screen -dmS ftorr /bin/bash -c 'cd /opt/AdTorrBot; ./AdTorrBot'

@@ -14,7 +14,7 @@ namespace FreeTorrserverBot.BotTelegram
         static public BotSettingsJson settingsJson =  BotSettingsMethods.LoadSettings();
 
         static readonly public TelegramBotClient client = new TelegramBotClient(settingsJson.YourBotTelegramToken);
-        public readonly static string AdminChat = settingsJson.AdminChatId;
+        public  static string AdminChat = settingsJson.AdminChatId;
         
       public static  InlineKeyboardMarkup inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
                 {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});

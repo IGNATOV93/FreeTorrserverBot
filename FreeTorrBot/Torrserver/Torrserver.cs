@@ -3,6 +3,8 @@ using System.Diagnostics;
 using FreeTorrserverBot.BotTelegram;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
+using FreeTorrBot.BotTelegram.BotSettings.Model;
+using FreeTorrBot.BotTelegram.BotSettings;
 
 namespace FreeTorrserverBot.Torrserver
 {
@@ -12,12 +14,17 @@ namespace FreeTorrserverBot.Torrserver
         static string FilePathTor = @$"{TelegramBot.settingsJson.FilePathTor}";
         public static async Task AutoChangeAccountTorrserver()
         {
-            var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
-               {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
-            await ChangeAccountTorrserver();
-            await TelegramBot.client.SendTextMessageAsync(TelegramBot.AdminChat, $"Произведена автосмена пароля сервера \U00002705\r\n" +
-                                                                                  $"\U0001F570   {DateTime.Now}",replyMarkup:inlineKeyboarDeleteMessageOnluOnebutton);
-            await TelegramBot.client.SendTextMessageAsync(TelegramBot.AdminChat, $"{TakeAccountTorrserver()}",replyMarkup:inlineKeyboarDeleteMessageOnluOnebutton);
+            var settings = BotSettingsMethods.LoadSettings();
+            if (settings != null&&settings.IsActiveAutoChange=="true")
+            {
+                var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
+                  {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
+                await ChangeAccountTorrserver();
+                await TelegramBot.client.SendTextMessageAsync(TelegramBot.AdminChat, $"Произведена автосмена пароля сервера \U00002705\r\n" +
+                                                                                      $"\U0001F570   {DateTime.Now}", replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
+                await TelegramBot.client.SendTextMessageAsync(TelegramBot.AdminChat, $"{TakeAccountTorrserver()}", replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
+            }
+           
             return;
         }
         public static async Task ChangeAccountTorrserver()
