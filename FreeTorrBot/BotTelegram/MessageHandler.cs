@@ -87,7 +87,7 @@ namespace FreeTorrBot.BotTelegram
                 }
                 if (callbackData == "сontrolTorrserver")
                 {
-                    await DeleteMessage(idMessage);
+                    
                     var settingsJson = BotSettingsMethods.LoadSettings();
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "Управление доступом к Torrserver.\r\n" + settingsJson.ToString()
 

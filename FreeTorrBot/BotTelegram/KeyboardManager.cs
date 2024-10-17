@@ -21,10 +21,10 @@ namespace FreeTorrBot.BotTelegram
 
         public static InlineKeyboardMarkup GetSetTimeAutoChangePassword()
         {
-            var butHourBack = InlineKeyboardButton.WithCallbackData("- 1\uFE0F\u20E3 час", "backHourPassAuto");
-            var butHourNext = InlineKeyboardButton.WithCallbackData("+ 1\uFE0F\u20E3 час", "nextHourPassAuto");
-            var butMinuteBack = InlineKeyboardButton.WithCallbackData("- \uFE0F\uFE0F\u20E3 мин.", "backMinutePassAuto");
-            var butMinuteNext = InlineKeyboardButton.WithCallbackData("+ \uFE0F\uFE0F\u20E3 мин.", "nextMitutePassAuto");
+            var butHourBack = InlineKeyboardButton.WithCallbackData("- 1 час", "backHourPassAuto");
+            var butHourNext = InlineKeyboardButton.WithCallbackData("+ 1 час", "nextHourPassAuto");
+            var butMinuteBack = InlineKeyboardButton.WithCallbackData("- 10 мин.", "backMinutePassAuto");
+            var butMinuteNext = InlineKeyboardButton.WithCallbackData("+ 10 мин.", "nextMitutePassAuto");
             var backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 \uD83D\uDD10", "сontrolTorrserver");
             var inlineSetAutoChangePass = new InlineKeyboardMarkup(new[]
             {
