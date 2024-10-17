@@ -33,7 +33,8 @@ namespace FreeTorrserverBot.Torrserver
             const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
             var newParol = new string(Enumerable.Repeat(chars, 8)
                          .Select(s => s[newParolRandom.Next(s.Length)]).ToArray());
-            string result = $"{{\"freeServer\":\"{newParol}\"}}";
+            var settingsJson =BotSettingsMethods.LoadSettings();
+            string result = $"{{\"{settingsJson.LoginDefaultTorrserver}\":\"{newParol}\"}}";
             using (StreamWriter writer = new StreamWriter(filePathTorrserverBd))
             {
                 writer.WriteLine($"{result}");

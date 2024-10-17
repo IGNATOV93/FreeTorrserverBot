@@ -20,26 +20,34 @@ namespace FreeTorrserverBot.BotTelegram
                 {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
         public static async Task Update(ITelegramBotClient botClient, Update update, CancellationToken token)
         {
-            
-            var Message = update.Message;
-            var ChatId = update?.CallbackQuery?.Message?.Chat?.Id.ToString();
-            var InputText = Message?.Text;
-            var InlineText = update?.CallbackQuery?.Data;
-            if (update?.CallbackQuery?.Data != null)
+            try
             {
-                if (ChatId != AdminChat&&!MessageHandler.IsCallbackQueryCommandBot(InlineText)) { return; }
-                await MessageHandler.HandleUpdate(update);
-                return;
-              
-            }
-            if (Message?.Text != null)
-            {
-                ChatId = Message.Chat.Id.ToString();
-                if (ChatId != AdminChat&&!MessageHandler.IsTextCommandBot(InputText)) { return; }
-                await MessageHandler.HandleUpdate(update);
-                return;
+                var Message = update.Message;
+                var ChatId = update?.CallbackQuery?.Message?.Chat?.Id.ToString();
+                var InputText = Message?.Text;
+                var InlineText = update?.CallbackQuery?.Data;
+                if (update?.CallbackQuery?.Data != null)
+                {
+                    if (ChatId != AdminChat && !MessageHandler.IsCallbackQueryCommandBot(InlineText)) { return; }
+                    await MessageHandler.HandleUpdate(update);
+                    return;
 
+                }
+                if (Message?.Text != null)
+                {
+                    ChatId = Message.Chat.Id.ToString();
+                    if (ChatId != AdminChat && !MessageHandler.IsTextCommandBot(InputText)) { return; }
+                    await MessageHandler.HandleUpdate(update);
+                    return;
+
+                }
             }
+            catch (Exception ex) 
+            {
+             Console.WriteLine(ex.ToString());  
+            }
+
+            
             return;
 
         }

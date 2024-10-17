@@ -15,12 +15,13 @@ namespace FreeTorrBot.BotTelegram.BotSettings.Model
         public string? FilePathTor { get; set; }
 
         public string? IsActiveAutoChange {get; set; }
+        public string? LoginDefaultTorrserver { get; set; }
 
         // Переопределение метода ToString()
         public override string ToString()
         {
             return
-                 
+                   
                    $"\u23F0 Автосмена пароля : {TimeAutoChangePassword ?? "не задан"}\r\n\r\n" +
                   $"Статус автосмены: {(IsActiveAutoChange == "true" ? "✅" : "❌")}"
                    ;

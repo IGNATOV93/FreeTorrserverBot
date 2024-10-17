@@ -20,7 +20,8 @@ namespace FreeTorrBot.BotTelegram.BotSettings
             TimeAutoChangePassword,
             FilePathTorrserverBd,
             FilePathTor,
-            IsActiveAutoChange
+            IsActiveAutoChange,
+            LoginDefaultTorrserver
         }
         public static void UpdateSettings(SettingsField field, string newValue)
         {
@@ -47,6 +48,8 @@ namespace FreeTorrBot.BotTelegram.BotSettings
                     break;
                 case SettingsField.IsActiveAutoChange:
                     settings.IsActiveAutoChange = newValue;
+                    break;
+                case SettingsField.LoginDefaultTorrserver: settings.LoginDefaultTorrserver = newValue;
                     break;
             }
 

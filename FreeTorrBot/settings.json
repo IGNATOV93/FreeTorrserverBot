@@ -4,5 +4,6 @@
     "TimeAutoChangePassword": "20:00",
     "FilePathTorrserverBd": "/opt/torrserver/accs.db",
     "FilePathTor": "/opt/torrserver/TorrServer-linux-amd64",
-    "IsActiveAutoChange": "true"
-  }
+  "IsActiveAutoChange": "true",
+  "LoginDefaultTorrserver": "adTorrBot"
+}

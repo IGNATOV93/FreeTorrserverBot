@@ -8,7 +8,9 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace FreeTorrBot.BotTelegram
 {
    public abstract class KeyboardManager
+      
     {
+        public static InlineKeyboardButton buttonHideButtots = InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages");
         public static InlineKeyboardMarkup GetDeleteThisMessage()
         {
              var  inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
@@ -16,29 +18,48 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
-       
+
+        public static InlineKeyboardMarkup GetSetTimeAutoChangePassword()
+        {
+            var butHourBack = InlineKeyboardButton.WithCallbackData("- 1\uFE0F\u20E3 час", "backHourPassAuto");
+            var butHourNext = InlineKeyboardButton.WithCallbackData("+ 1\uFE0F\u20E3 час", "nextHourPassAuto");
+            var butMinuteBack = InlineKeyboardButton.WithCallbackData("- \uFE0F\uFE0F\u20E3 мин.", "backMinutePassAuto");
+            var butMinuteNext = InlineKeyboardButton.WithCallbackData("+ \uFE0F\uFE0F\u20E3 мин.", "nextMitutePassAuto");
+            var backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 \uD83D\uDD10", "сontrolTorrserver");
+            var inlineSetAutoChangePass = new InlineKeyboardMarkup(new[]
+            {
+               new[]{butHourBack,butHourNext}
+               ,new[] {butMinuteBack,butMinuteNext}
+                ,new[] {backGetControlTorrserver,buttonHideButtots}
+            });
+            return inlineSetAutoChangePass;
+        }
         public static InlineKeyboardMarkup GetControlTorrserver()
         {
-            var buttonChangePassword = InlineKeyboardButton.WithCallbackData("🔑 Поменять пароль", "change_password");
-            var buttonPrintPassword = InlineKeyboardButton.WithCallbackData("👀 Посмотреть пароль", "print_password");
-            var buttonChangeTimeAuto = InlineKeyboardButton.WithCallbackData("⏰ Время автосмены", "change_time_auto");
-            var buttonPrintTimeAuto = InlineKeyboardButton.WithCallbackData("🕒 Посмотреть время", "print_time_auto");
-            var buttonEnableAutoChange = InlineKeyboardButton.WithCallbackData("✅ Включить автосмену", "enable_auto_change");
-            var buttonDisableAutoChange = InlineKeyboardButton.WithCallbackData("❌ Отключить автосмену", "disable_auto_change");
-            var buttonShowStatus = InlineKeyboardButton.WithCallbackData("📊 Текущее состояние", "show_status");
-            var buttonHideButtots = InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages");
+            var buttonChangeLogin = InlineKeyboardButton.WithCallbackData("👤 \u2699 логин ", "change_login");
+            var buttonPrintLogin = InlineKeyboardButton.WithCallbackData(" 👀 Логин ", "print_login");
+            var buttonChangePassword = InlineKeyboardButton.WithCallbackData("🔑 \u2699 пароль", "change_password");
+            var buttonPrintPassword = InlineKeyboardButton.WithCallbackData("👀  Пароль", "print_password");
+            var buttonChangeTimeAuto = InlineKeyboardButton.WithCallbackData("⏰ Автосмена 🔑", "change_time_auto");
+            var buttonPrintTimeAuto = InlineKeyboardButton.WithCallbackData("👀 Автосмена 🔑", "print_time_auto");
+            var buttonEnableAutoChange = InlineKeyboardButton.WithCallbackData("✅ Вкл. Автосмену 🔑", "enable_auto_change");
+            var buttonDisableAutoChange = InlineKeyboardButton.WithCallbackData("❌ Откл. Автосмену 🔑", "disable_auto_change");
+           // var buttonShowStatus = InlineKeyboardButton.WithCallbackData("📊 Текущее состояние", "show_status");
+           
             return new InlineKeyboardMarkup(new[]
             {
-            new[] { buttonChangePassword, buttonPrintPassword },
-            new[] { buttonChangeTimeAuto, buttonPrintTimeAuto },
-            new[] { buttonEnableAutoChange, buttonDisableAutoChange },
-            new[] { buttonShowStatus,buttonHideButtots}
-        });
+                        new[] {buttonChangeLogin, buttonPrintLogin},
+                        new[] { buttonChangePassword, buttonPrintPassword },
+                        new[] { buttonChangeTimeAuto, buttonPrintTimeAuto },
+                        new[] { buttonEnableAutoChange, buttonDisableAutoChange },
+                        new[] {buttonHideButtots}
+            });
         }
 
         public static ReplyKeyboardMarkup GetMainKeyboard()
         {
-            var buttonAdminMenu = new KeyboardButton("🛠 Управление");
+            var buttonAdminMenu = new KeyboardButton("\uD83D\uDD10 Доступ");
+           
            // var buttonSettings = InlineKeyboardButton.WithCallbackData("⚙️ Настройки", "settings");
             return new ReplyKeyboardMarkup(new[]
             {
