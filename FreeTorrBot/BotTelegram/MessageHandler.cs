@@ -58,6 +58,27 @@ namespace FreeTorrBot.BotTelegram
                                                           , replyMarkup: KeyboardManager.GetMainKeyboard());
                 return;
             }
+            if(text == "💾 Бекапы")
+            {
+                await DeleteMessage(idMessage);
+                await botClient.SendTextMessageAsync(AdminChat, "Настройки бекапов "
+
+                    , replyMarkup: KeyboardManager.GetBackupMenu());
+                return;
+            }
+            if (text =="\u2699 Настройки бота")
+            {
+                await DeleteMessage(idMessage);
+                await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки бота", replyMarkup: KeyboardManager.GetSettingsBot());
+                return;
+
+            }
+            if(text== "⚙ Настройки Torrserver")
+            {
+                await DeleteMessage(idMessage);
+                await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки Torrserver", replyMarkup: KeyboardManager.GetSettingsBot());
+                return;
+            }
             if (text == "🔐 Доступ")
             {
                 await DeleteMessage(idMessage);
@@ -185,6 +206,9 @@ namespace FreeTorrBot.BotTelegram
             {
              "/start"
              ,"🔐 Доступ"
+             ,"💾 Бекапы"
+             ,"\u2699 Настройки бота"
+             ,"⚙ Настройки Torrserver"
             };
             return commands.Contains(command);
 
