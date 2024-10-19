@@ -6,6 +6,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using FreeTorrBot.BotTelegram.BotSettings.Model;
 using FreeTorrBot.BotTelegram.BotSettings;
 
+
 namespace FreeTorrserverBot.Torrserver
 {
     public abstract class Torrserver
@@ -26,6 +27,10 @@ namespace FreeTorrserverBot.Torrserver
             }
            
             return;
+        }
+        public static string GetLocalServerTime()
+        {
+            return DateTime.Now.ToString("HH:mm"); // Возвращает текущее локальное время на сервере
         }
         public static async Task ChangeAccountTorrserver()
         {

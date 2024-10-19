@@ -11,6 +11,7 @@ using FreeTorrserverBot.Torrserver;
 using FreeTorrBot.BotTelegram.BotSettings;
 using static FreeTorrBot.BotTelegram.BotSettings.BotSettingsMethods;
 using static System.Net.Mime.MediaTypeNames;
+using AdTorrBot.BotTelegram.Db;
 
 namespace FreeTorrBot.BotTelegram
 {
@@ -76,15 +77,16 @@ namespace FreeTorrBot.BotTelegram
             if(text== "⚙ Настройки Torrserver")
             {
                 await DeleteMessage(idMessage);
-                await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки Torrserver", replyMarkup: KeyboardManager.GetSettingsBot());
+                await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки Torrserver");
                 return;
             }
             if (text == "🔐 Доступ")
             {
                 await DeleteMessage(idMessage);
                 var settingsJson = BotSettingsMethods.LoadSettings();
-                await botClient.SendTextMessageAsync(AdminChat, "Управление доступом к Torrserver.\r\n"+settingsJson.ToString()
-                   
+                await SqlMethods.ListTablesAsync();
+                await botClient.SendTextMessageAsync(AdminChat,
+                    "Управление доступом к Torrserver.\r\n" + settingsJson.ToString()
                     , replyMarkup: KeyboardManager.GetControlTorrserver());
                 return;
             }

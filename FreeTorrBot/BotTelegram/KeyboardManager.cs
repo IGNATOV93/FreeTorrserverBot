@@ -66,6 +66,7 @@ namespace FreeTorrBot.BotTelegram
             });
             return inlineBackupMenu;
         }
+        //public static InlineKeyboardMarkup GetSettingsTorrserver() {        }
         public static InlineKeyboardMarkup GetSettingsBot()
         {
             var buttonTimeZone = InlineKeyboardButton.WithCallbackData("\uD83C\uDF0F Часовой пояс");
