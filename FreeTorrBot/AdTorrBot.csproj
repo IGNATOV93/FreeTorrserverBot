@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="autoStartFreeTorrBot.sh">
+    <None Update="autoStartAdTorrBot.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="settings.json">
