@@ -1,4 +1,5 @@
-﻿using FluentScheduler;
+﻿using AdTorrBot.BotTelegram.Db;
+using FluentScheduler;
 using FreeTorrBot.BotTelegram;
 using FreeTorrBot.BotTelegram.BotSettings;
 using FreeTorrBot.BotTelegram.BotSettings.Model;
@@ -59,14 +60,18 @@ namespace FreeTorrserverBot.BotTelegram
         }
         static public async Task StartBot()
         {
+            // Создайте таблицы, если они не существуют
+            using (var db = new AppDbContext())
+            {
+                await db.Database.EnsureCreatedAsync();
+            }
+            await SqlMethods.CheckAndInsertDefaultData(AdminChat);
             JobManager.Initialize(new MyRegistry());
-
             // Запускаем получение обновлений
             var statrBotTask = Task.Run(() => client.StartReceiving(Update, Error));
-
             // Ждем небольшую паузу, чтобы бот успел инициализироваться
             await Task.Delay(1000); // Настройте время ожидания по необходимости
-
+            
             // Отправляем сообщение админу
             await SendMessageToAdmin("Бот успешно стартовал!");
 

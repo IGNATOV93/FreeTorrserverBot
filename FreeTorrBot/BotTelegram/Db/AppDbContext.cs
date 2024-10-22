@@ -11,7 +11,7 @@ namespace AdTorrBot.BotTelegram.Db
     public class AppDbContext : DbContext
     {
         public virtual DbSet<SettingsBot> SettingsBot {  get; set; }
-        public virtual DbSet<SettingsTorrserver> SettingsTorrserver { get; set; }
+        public virtual DbSet<SettingsTorrserverBot> SettingsTorrserverBot { get; set; }
         public virtual DbSet<User>User { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

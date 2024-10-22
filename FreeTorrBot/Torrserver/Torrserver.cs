@@ -5,6 +5,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 using FreeTorrBot.BotTelegram.BotSettings.Model;
 using FreeTorrBot.BotTelegram.BotSettings;
+using AdTorrBot.BotTelegram.Db;
 
 
 namespace FreeTorrserverBot.Torrserver
@@ -15,8 +16,8 @@ namespace FreeTorrserverBot.Torrserver
         static string FilePathTor = @$"{TelegramBot.settingsJson.FilePathTor}";
         public static async Task AutoChangeAccountTorrserver()
         {
-            var settings = BotSettingsMethods.LoadSettings();
-            if (settings != null&&settings.IsActiveAutoChange=="true")
+            var settings = await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
+            if (settings != null&&settings.IsActiveAutoChange==true)
             {
                 var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
                   {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
@@ -38,8 +39,8 @@ namespace FreeTorrserverBot.Torrserver
             const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
             var newParol = new string(Enumerable.Repeat(chars, 8)
                          .Select(s => s[newParolRandom.Next(s.Length)]).ToArray());
-            var settingsJson =BotSettingsMethods.LoadSettings();
-            string result = $"{{\"{settingsJson.LoginDefaultTorrserver}\":\"{newParol}\"}}";
+            var settingsTorr =await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
+            string result = $"{{\"{settingsTorr.Login}\":\"{newParol}\"}}";
             using (StreamWriter writer = new StreamWriter(filePathTorrserverBd))
             {
                 writer.WriteLine($"{result}");

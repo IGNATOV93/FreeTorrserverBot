@@ -110,9 +110,9 @@ namespace FreeTorrBot.BotTelegram
                 }
                 if (callbackData == "сontrolTorrserver")
                 {
-                    
-                    var settingsJson = BotSettingsMethods.LoadSettings();
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Управление доступом к Torrserver.\r\n" + settingsJson.ToString()
+
+                    var setTorr = await SqlMethods.GetSettingsTorrserverBot(AdminChat);
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Управление доступом к Torrserver.\r\n" +setTorr.ToString()
 
                         , replyMarkup: KeyboardManager.GetControlTorrserver());
                     return;
@@ -154,30 +154,29 @@ namespace FreeTorrBot.BotTelegram
                 if (callbackData == "print_time_auto")
                 {
 
-                    var settings = LoadSettings();
+                    var setTorr =await SqlMethods.GetSettingsTorrserverBot(AdminChat);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
-                                                       , $"⏰ Время автосмены пароля {settings.TimeAutoChangePassword}"
+                                                       , $"⏰ Время автосмены пароля {setTorr.TimeAutoChangePassword}"
                                                        , replyMarkup: KeyboardManager.GetControlTorrserver());
                 }
                 if (callbackData == "enable_auto_change")
                 {
-
-                    BotSettingsMethods.UpdateSettings(SettingsField.IsActiveAutoChange, "true");
-                    var autoChangeTime = LoadSettings().TimeAutoChangePassword;
+                    var setTorr = await SqlMethods.GetSettingsTorrserverBot(AdminChat);
+                    await SqlMethods.SwitchAutoChangePassTorrserver(true,AdminChat);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                        , "Автосмена пароля включена \u2705 \r\n" +
-                                                       autoChangeTime
+                                                      setTorr.TimeAutoChangePassword
                                                        , replyMarkup: KeyboardManager.GetControlTorrserver());
                     return;
                 }
                 if (callbackData == "disable_auto_change")
                 {
 
-                    BotSettingsMethods.UpdateSettings(SettingsField.IsActiveAutoChange, "false");
-                    var autoChangeTime = LoadSettings().TimeAutoChangePassword;
+                    var setTorr = await SqlMethods.GetSettingsTorrserverBot(AdminChat);
+                    await SqlMethods.SwitchAutoChangePassTorrserver(false, AdminChat);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
-                                                       , "Автосмена пароля выключена \u274C\r\n" +
-                                                       autoChangeTime
+                                                       , "Автосмена пароля выключена \u2705 \r\n" +
+                                                      setTorr.TimeAutoChangePassword
                                                        , replyMarkup: KeyboardManager.GetControlTorrserver());
                     return;
                 }
@@ -185,7 +184,7 @@ namespace FreeTorrBot.BotTelegram
 
                 {
 
-                    var settings = LoadSettings();
+                    var settings = await SqlMethods.GetSettingsTorrserverBot(AdminChat);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                        , settings.ToString()
                                                        , replyMarkup: KeyboardManager.GetControlTorrserver());

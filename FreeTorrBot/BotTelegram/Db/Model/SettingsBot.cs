@@ -16,5 +16,6 @@ namespace AdTorrBot.BotTelegram.Db.Model
         public string IdChat { get; set; } = string.Empty;
 
         public double TimeZoneOffset { get; set; } = 3.0; // UTC+3 для Москвы
+
     }
 }

@@ -3,37 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AdTorrBot.BotTelegram.Db;
+using AdTorrBot.BotTelegram;
 using FluentScheduler;
 using FreeTorrserverBot.BotTelegram;
+using AdTorrBot.BotTelegram.Db.Model;
+
 
 namespace FreeTorrserverBot
 {
     public  class MyRegistry : Registry
     {
-       // static string TimeAutoChangePassworTorrserver = TelegramBot.settingsJson.TimeAutoChangePassword;
         public MyRegistry()
         {
-          // int hours = int.Parse(TimeAutoChangePassworTorrserver.Split(":")[0]);
-            //int minutes = int.Parse(TimeAutoChangePassworTorrserver.Split(":")[1]);
+            ScheduleJobAsync().GetAwaiter().GetResult();
+        }
+
+        private async Task ScheduleJobAsync()
+        {
+            int hours = await GetHoursAsync();
+            int minutes = await GetMinutesAsync();
+
             Schedule(async () => await Torrserver.Torrserver.AutoChangeAccountTorrserver())
-                 .ToRunEvery(1)
-                 .Days()
-                 .At(GetHours(), GetMinutes());
-
+                .ToRunEvery(1)
+                .Days()
+                .At(hours, minutes);
         }
 
-        private int GetHours()
+        private async Task<int> GetHoursAsync()
         {
-            // Читаем время каждый раз
-            string timeAutoChangePassword = TelegramBot.settingsJson.TimeAutoChangePassword;
-            return int.Parse(timeAutoChangePassword.Split(":")[0]);
+            // Предполагается асинхронная загрузка данных
+            var settings = await LoadSettingsAsync();
+            return int.Parse(settings.TimeAutoChangePassword.Split(":")[0]);
         }
 
-        private int GetMinutes()
+        private async Task<int> GetMinutesAsync()
         {
-            // Читаем время каждый раз
-            string timeAutoChangePassword = TelegramBot.settingsJson.TimeAutoChangePassword;
-            return int.Parse(timeAutoChangePassword.Split(":")[1]);
+            // Предполагается асинхронная загрузка данных
+            var settings = await LoadSettingsAsync();
+            return int.Parse(settings.TimeAutoChangePassword.Split(":")[1]);
+        }
+        private async Task<SettingsTorrserverBot> LoadSettingsAsync()
+        {
+            
+          return  await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
+            // Ваша логика для загрузки настроек
         }
     }
 }

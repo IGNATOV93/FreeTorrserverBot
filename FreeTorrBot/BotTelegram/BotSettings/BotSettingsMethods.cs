@@ -37,19 +37,11 @@ namespace FreeTorrBot.BotTelegram.BotSettings
                 case SettingsField.AdminChatId:
                     settings.AdminChatId = newValue;
                     break;
-                case SettingsField.TimeAutoChangePassword:
-                    settings.TimeAutoChangePassword = newValue;
-                    break;
                 case SettingsField.FilePathTorrserverBd:
                     settings.FilePathTorrserverBd = newValue;
                     break;
                 case SettingsField.FilePathTor:
                     settings.FilePathTor = newValue;
-                    break;
-                case SettingsField.IsActiveAutoChange:
-                    settings.IsActiveAutoChange = newValue;
-                    break;
-                case SettingsField.LoginDefaultTorrserver: settings.LoginDefaultTorrserver = newValue;
                     break;
             }
 
@@ -59,10 +51,20 @@ namespace FreeTorrBot.BotTelegram.BotSettings
         }
         public static BotSettingsJson LoadSettings()
         {
-           
-
             var json = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<BotSettingsJson>(json);
+            var settings = JsonConvert.DeserializeObject<BotSettingsJson>(json);
+
+            // Проверка, что настройки загружены
+            if (settings == null)
+            {
+                throw new InvalidOperationException("Не удалось загрузить настройки: настройки равны null.");
+            }
+
+            // Валидация загруженных настроек
+            settings.Validate();
+
+            // Возвращаем валидные настройки
+            return settings;
         }
         public static void SaveSettings(BotSettingsJson settings)
         {
