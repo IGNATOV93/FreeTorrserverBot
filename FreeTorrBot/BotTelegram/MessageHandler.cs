@@ -244,7 +244,27 @@ namespace FreeTorrBot.BotTelegram
             ,"сontrolTorrserver"
             ,"setAutoPassMinutes"
             };
-            return commands.Contains(command);
+            // Проверяем, если это одна из стандартных команд
+            if (commands.Contains(command))
+            {
+                return true;
+            }
+
+            // Если команда содержит "setAutoPassMinutes", проверим формат
+            if (command.Contains("setAutoPassMinutes"))
+            {
+                // Получаем часть команды перед "setAutoPassMinutes"
+                string valuePart = command.Split("setAutoPassMinutes")[0].Trim();
+
+                // Проверяем, является ли часть числовым значением (может быть с + или -)
+                if (int.TryParse(valuePart, out _))
+                {
+                    return true;
+                }
+            }
+
+            // Если команда не найдена
+            return false;
         }
     }
 }
