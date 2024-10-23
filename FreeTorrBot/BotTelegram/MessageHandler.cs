@@ -12,6 +12,7 @@ using FreeTorrBot.BotTelegram.BotSettings;
 using static FreeTorrBot.BotTelegram.BotSettings.BotSettingsMethods;
 using static System.Net.Mime.MediaTypeNames;
 using AdTorrBot.BotTelegram.Db;
+using AdTorrBot.BotTelegram;
 
 namespace FreeTorrBot.BotTelegram
 {
@@ -62,9 +63,9 @@ namespace FreeTorrBot.BotTelegram
             if(text == "💾 Бекапы")
             {
                 await DeleteMessage(idMessage);
-                await botClient.SendTextMessageAsync(AdminChat, "Настройки бекапов "
+                await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки бекапов \u2601"
 
-                    , replyMarkup: KeyboardManager.GetBackupMenu());
+                    , replyMarkup: KeyboardManager.GetMainBackups());
                 return;
             }
             if (text =="\u2699 Настройки бота")
@@ -83,10 +84,10 @@ namespace FreeTorrBot.BotTelegram
             if (text == "🔐 Доступ")
             {
                 await DeleteMessage(idMessage);
-                var settingsJson = BotSettingsMethods.LoadSettings();
+                 var setTorr = await SqlMethods.GetSettingsTorrserverBot(AdminChat);
                 await SqlMethods.ListTablesAsync();
                 await botClient.SendTextMessageAsync(AdminChat,
-                    "Управление доступом к Torrserver.\r\n" + settingsJson.ToString()
+                    "Управление доступом к Torrserver.\r\n" + setTorr.ToString()
                     , replyMarkup: KeyboardManager.GetControlTorrserver());
                 return;
             }
@@ -143,13 +144,23 @@ namespace FreeTorrBot.BotTelegram
                     Console.WriteLine($"Ваш логин пароль {passw}");
                     return;
                 }
-                if (callbackData == "change_time_auto")
+
+                if (callbackData == "change_time_auto"||callbackData.Contains("SetAutoPassMinutes"))
                 {
+                    
+                        if (callbackData.Contains("SetAutoPassMinutes"))
+                        {
+                            var setMinutesAutoChangePassTorr = ParsingCallbackMethods.ExtractTimeChangeValue(callbackData);
+                            await SqlMethods.SetTimeAutoChangePasswordTorrserver(setMinutesAutoChangePassTorr);
+                        }
 
 
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage
-                                                       , $"Установка автосмены пароля ."
-                                                       , replyMarkup: KeyboardManager.GetSetTimeAutoChangePassword());
+                        var setTorr = await SqlMethods.GetSettingsTorrserverBot(AdminChat);
+                        await botClient.EditMessageTextAsync(AdminChat, idMessage
+                                                           , $"Установка времени автосмены пароля .\r\n" +
+                                                             $"Сейчас стоит {setTorr.TimeAutoChangePassword}"
+                                                           , replyMarkup: KeyboardManager.GetSetTimeAutoChangePassword());
+                    return;
                 }
                 if (callbackData == "print_time_auto")
                 {
@@ -158,6 +169,7 @@ namespace FreeTorrBot.BotTelegram
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                        , $"⏰ Время автосмены пароля {setTorr.TimeAutoChangePassword}"
                                                        , replyMarkup: KeyboardManager.GetControlTorrserver());
+                    return;
                 }
                 if (callbackData == "enable_auto_change")
                 {
@@ -188,6 +200,7 @@ namespace FreeTorrBot.BotTelegram
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                        , settings.ToString()
                                                        , replyMarkup: KeyboardManager.GetControlTorrserver());
+                    return;
 
                 }
             }
@@ -229,6 +242,7 @@ namespace FreeTorrBot.BotTelegram
             ,"change_login"
             ,"print_login"
             ,"сontrolTorrserver"
+            ,"setAutoPassMinutes"
             };
             return commands.Contains(command);
         }

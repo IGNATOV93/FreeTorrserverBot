@@ -19,13 +19,23 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
-
+        public static InlineKeyboardMarkup GetMainBackups()
+        {
+            var butBackupTorrserver = InlineKeyboardButton.WithCallbackData("backupTorr", "\u2601 \u26A1 Бекап torrserver ");
+            var butBackupBotSettings = InlineKeyboardButton.WithCallbackData("backupBotSettings", "\u2601 \u2699 Бекап настроек бота");
+            var inlineBackupMenu = new InlineKeyboardMarkup(new[]
+           {
+                 new[]{butBackupTorrserver, butBackupBotSettings, buttonHideButtots}
+            });
+            return inlineBackupMenu;
+        }
         public static InlineKeyboardMarkup GetSetTimeAutoChangePassword()
         {
-            var butHourBack = InlineKeyboardButton.WithCallbackData("- 1 час", "backHourPassAuto");
-            var butHourNext = InlineKeyboardButton.WithCallbackData("+ 1 час", "nextHourPassAuto");
-            var butMinuteBack = InlineKeyboardButton.WithCallbackData("- 10 мин.", "backMinutePassAuto");
-            var butMinuteNext = InlineKeyboardButton.WithCallbackData("+ 10 мин.", "nextMitutePassAuto");
+            var butHourBack = InlineKeyboardButton.WithCallbackData("- 1 час", "-60setAutoPassMinutes");
+            var butHourNext = InlineKeyboardButton.WithCallbackData("+ 1 час", "+60setAutoPassMinutes");
+            var butMinuteBack = InlineKeyboardButton.WithCallbackData("- 10 мин.", "-10setAutoPasMinutes");
+            var butMinuteNext = InlineKeyboardButton.WithCallbackData("+ 10 мин.", "+10setAutoPasMinutes");
+           var backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 ", "сontrolTorrserver");
             var inlineSetAutoChangePass = new InlineKeyboardMarkup(new[]
             {
                new[]{butHourBack,butHourNext}
@@ -56,16 +66,7 @@ namespace FreeTorrBot.BotTelegram
                         new[] { buttonUpdateGetControlTorrserver, buttonHideButtots}
             });
         }
-        public static InlineKeyboardMarkup GetBackupMenu()
-        {
-            var butBackupTorrserver = InlineKeyboardButton.WithCallbackData("💾 Бекап Torrserver", "backupTorr");
-            var butBackupSettingsBot = InlineKeyboardButton.WithCallbackData("💾 Бекап бота", "backupBot");
-            var inlineBackupMenu = new InlineKeyboardMarkup(new[]
-            {
-                 new[]{butBackupTorrserver, butBackupSettingsBot,buttonHideButtots}
-            });
-            return inlineBackupMenu;
-        }
+    
         //public static InlineKeyboardMarkup GetSettingsTorrserver() {        }
         public static InlineKeyboardMarkup GetSettingsBot()
         {

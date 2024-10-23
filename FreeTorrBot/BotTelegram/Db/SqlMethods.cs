@@ -1,4 +1,5 @@
 ﻿using AdTorrBot.BotTelegram.Db.Model;
+using FreeTorrserverBot.BotTelegram;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,22 @@ using Telegram.Bot.Types;
 
 namespace AdTorrBot.BotTelegram.Db
 {
-   public class SqlMethods
+   public abstract class SqlMethods
     {
+     
+        public static async Task SetTimeAutoChangePasswordTorrserver(int minutes)
+        {
+            await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var setTorr = db.SettingsTorrserverBot.FirstOrDefault(x => x.idChat == TelegramBot.AdminChat);
+                var timeStringAutoChangePassTorrNow = setTorr.TimeAutoChangePassword;
+                setTorr.TimeAutoChangePassword = ParsingCallbackMethods.UpdateTimeString(timeStringAutoChangePassTorrNow, minutes);
+                await db.SaveChangesAsync();
+                return Task.CompletedTask;
+            }
+            );
 
+        }
         public static async Task SwitchAutoChangePassTorrserver(bool isActive,string idChat)
         {
            await SqlMethods.WithDbContextAsync(async db =>
