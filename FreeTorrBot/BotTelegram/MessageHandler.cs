@@ -145,10 +145,10 @@ namespace FreeTorrBot.BotTelegram
                     return;
                 }
 
-                if (callbackData == "change_time_auto"||callbackData.Contains("SetAutoPassMinutes"))
+                if (callbackData == "change_time_auto"||callbackData.Contains("setAutoPassMinutes"))
                 {
                     
-                        if (callbackData.Contains("SetAutoPassMinutes"))
+                        if (callbackData.Contains("setAutoPassMinutes"))
                         {
                             var setMinutesAutoChangePassTorr = ParsingCallbackMethods.ExtractTimeChangeValue(callbackData);
                             await SqlMethods.SetTimeAutoChangePasswordTorrserver(setMinutesAutoChangePassTorr);
