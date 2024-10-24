@@ -19,6 +19,15 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
+        public static InlineKeyboardMarkup ExitTextLogin()
+        {
+            var buttonExitTextLogin = InlineKeyboardButton.WithCallbackData("exitTextLogin", "\uD83D\uDEAA Выход из режима ввода логина ");
+            var inlineExitTextLogin= new InlineKeyboardMarkup(new[]
+           {
+                 new[]{ buttonExitTextLogin }
+            });
+            return inlineExitTextLogin;
+        }
         public static InlineKeyboardMarkup GetMainBackups()
         {
             var butBackupTorrserver = InlineKeyboardButton.WithCallbackData("backupTorr", "\u2601 \u26A1 Бекап torrserver ");
@@ -29,13 +38,22 @@ namespace FreeTorrBot.BotTelegram
             });
             return inlineBackupMenu;
         }
+        public static InlineKeyboardMarkup GetBackControlTorrserver()
+        {
+            var backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 ", "сontrolTorrserver");
+            var inlineBackControlTorrserver = new InlineKeyboardMarkup(new[]
+            {
+                new[]{ backGetControlTorrserver,buttonHideButtots}
+            });
+            return inlineBackControlTorrserver;
+        }
         public static InlineKeyboardMarkup GetSetTimeAutoChangePassword()
         {
             var butHourBack = InlineKeyboardButton.WithCallbackData("- 1 час", "-60setAutoPassMinutes");
             var butHourNext = InlineKeyboardButton.WithCallbackData("+ 1 час", "+60setAutoPassMinutes");
             var butMinuteBack = InlineKeyboardButton.WithCallbackData("- 10 мин.", "-10setAutoPassMinutes");
             var butMinuteNext = InlineKeyboardButton.WithCallbackData("+ 10 мин.", "+10setAutoPassMinutes");
-           var backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 ", "сontrolTorrserver");
+           
             var inlineSetAutoChangePass = new InlineKeyboardMarkup(new[]
             {
                new[]{butHourBack,butHourNext}
@@ -46,9 +64,9 @@ namespace FreeTorrBot.BotTelegram
         }
         public static InlineKeyboardMarkup GetControlTorrserver()
         {
-            var buttonChangeLogin = InlineKeyboardButton.WithCallbackData("👤 \u2699 логин ", "change_login");
+            var buttonChangeLogin = InlineKeyboardButton.WithCallbackData("👤 \u2699 (new)Логин ", "change_login");
             var buttonPrintLogin = InlineKeyboardButton.WithCallbackData(" 👀 Логин ", "print_login");
-            var buttonChangePassword = InlineKeyboardButton.WithCallbackData("🔑 \u2699 пароль", "change_password");
+            var buttonChangePassword = InlineKeyboardButton.WithCallbackData("🔑 \u2699 (new)Пароль", "change_password");
             var buttonPrintPassword = InlineKeyboardButton.WithCallbackData("👀  Пароль", "print_password");
             var buttonChangeTimeAuto = InlineKeyboardButton.WithCallbackData("⏰ Автосмена 🔑", "change_time_auto");
             var buttonPrintTimeAuto = InlineKeyboardButton.WithCallbackData("👀 Автосмена 🔑", "print_time_auto");

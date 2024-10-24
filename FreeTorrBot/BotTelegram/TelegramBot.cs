@@ -37,7 +37,9 @@ namespace FreeTorrserverBot.BotTelegram
                 if (Message?.Text != null)
                 {
                     ChatId = Message.Chat.Id.ToString();
+                    if(ChatId==AdminChat&&await SqlMethods.IsTextInputFlagLogin(AdminChat)) { await MessageHandler.HandleUpdate(update);return; }
                     if (ChatId != AdminChat && !MessageHandler.IsTextCommandBot(InputText)) { return; }
+
                     await MessageHandler.HandleUpdate(update);
                     return;
 

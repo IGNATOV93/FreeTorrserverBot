@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AdTorrBot.BotTelegram
 {
     
-     public abstract class ParsingCallbackMethods
+     public abstract class ParsingMethods
       {
 
         public static string UpdateTimeString(string time,int minutesToAdd)

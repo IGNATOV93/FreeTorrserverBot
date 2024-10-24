@@ -17,6 +17,7 @@ namespace AdTorrBot.BotTelegram.Db.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string? idChat { get; set; }
+
         public string? Login { get; set; }="adTorrBot";
         public string? Password { get; set; }
         public bool IsActiveAutoChange { get; set; }=false;

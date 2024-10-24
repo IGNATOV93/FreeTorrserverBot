@@ -1,6 +1,7 @@
 ﻿using AdTorrBot.BotTelegram.Db.Model;
 using FreeTorrserverBot.BotTelegram;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,32 @@ namespace AdTorrBot.BotTelegram.Db
             {
                 var setTorr = db.SettingsTorrserverBot.FirstOrDefault(x => x.idChat == TelegramBot.AdminChat);
                 var timeStringAutoChangePassTorrNow = setTorr.TimeAutoChangePassword;
-                setTorr.TimeAutoChangePassword = ParsingCallbackMethods.UpdateTimeString(timeStringAutoChangePassTorrNow, minutes);
+                setTorr.TimeAutoChangePassword = ParsingMethods.UpdateTimeString(timeStringAutoChangePassTorrNow, minutes);
                 await db.SaveChangesAsync();
                 return Task.CompletedTask;
             }
             );
 
+        }
+        public static async Task<bool> IsTextInputFlagLogin(string idChat)
+        {
+            await WithDbContextAsync(async db =>
+            {
+                var textInputFlags = db.TextInputFlag.FirstOrDefault(x => x.IdChat == idChat);
+               return textInputFlags.FlagLogin;
+               // return Task.CompletedTask;
+            });
+            return false;
+        }
+        public static async Task SwitchTextInputFlagLogin(string idChat,bool value)
+        {
+            await WithDbContextAsync(async db =>
+            {
+                var textInputFlags = db.TextInputFlag.FirstOrDefault(x => x.IdChat == idChat);
+                textInputFlags.FlagLogin=value;
+                await db.SaveChangesAsync();
+                return Task.CompletedTask;
+            });
         }
         public static async Task SwitchAutoChangePassTorrserver(bool isActive,string idChat)
         {
@@ -62,9 +83,12 @@ namespace AdTorrBot.BotTelegram.Db
                 var existingSettingsBot = await db.SettingsBot.FirstOrDefaultAsync(s => s.IdChat == idChat);
                 var existingSettingsTorrserver = await db.SettingsTorrserverBot.FirstOrDefaultAsync(s => s.idChat == idChat);
                 var existingUser = await db.User.FirstOrDefaultAsync(u => u.IdChat == idChat);
-
+                var existingTextInputFlags = await db.User.FirstOrDefaultAsync(u => u.IdChat == idChat);
                 var entitiesToAdd = new List<object>();
-
+                if (existingTextInputFlags == null)
+                {
+                    entitiesToAdd.Add(new TextInputFlags { IdChat = idChat });
+                }
                 if (existingSettingsBot == null)
                     entitiesToAdd.Add(new SettingsBot { IdChat = idChat });
 
