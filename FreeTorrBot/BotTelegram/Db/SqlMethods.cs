@@ -83,7 +83,7 @@ namespace AdTorrBot.BotTelegram.Db
                 var existingSettingsBot = await db.SettingsBot.FirstOrDefaultAsync(s => s.IdChat == idChat);
                 var existingSettingsTorrserver = await db.SettingsTorrserverBot.FirstOrDefaultAsync(s => s.idChat == idChat);
                 var existingUser = await db.User.FirstOrDefaultAsync(u => u.IdChat == idChat);
-                var existingTextInputFlags = await db.User.FirstOrDefaultAsync(u => u.IdChat == idChat);
+                var existingTextInputFlags = await db.TextInputFlag.FirstOrDefaultAsync(u => u.IdChat == idChat);
                 var entitiesToAdd = new List<object>();
                 if (existingTextInputFlags == null)
                 {
