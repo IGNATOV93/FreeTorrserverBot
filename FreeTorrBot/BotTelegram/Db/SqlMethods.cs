@@ -29,13 +29,20 @@ namespace AdTorrBot.BotTelegram.Db
         }
         public static async Task<bool> IsTextInputFlagLogin(string idChat)
         {
-            await WithDbContextAsync(async db =>
+            Console.WriteLine("Заход в IsTextInputFlagLogin");
+
+            // Выполняем и получаем результат из WithDbContextAsync
+            var result = await WithDbContextAsync(async db =>
             {
-                var textInputFlags = db.TextInputFlag.FirstOrDefault(x => x.IdChat == idChat);
-               return textInputFlags.FlagLogin;
-               // return Task.CompletedTask;
+                var textInputFlags = await db.TextInputFlag.FirstOrDefaultAsync(x => x.IdChat == idChat);
+                var flagLogin = textInputFlags?.FlagLogin ?? false;
+                Console.WriteLine($"flaglogin:{flagLogin}");
+
+                return flagLogin;
             });
-            return false;
+
+            return result;
+
         }
         public static async Task SwitchTextInputFlagLogin(string idChat,bool value)
         {

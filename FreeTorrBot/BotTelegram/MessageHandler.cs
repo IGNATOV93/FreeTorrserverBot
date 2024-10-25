@@ -24,14 +24,19 @@ namespace FreeTorrBot.BotTelegram
         {
             if (update.Type == UpdateType.Message)
             {
+                Console.WriteLine($"Пришло text сообщение: { update?.Message?.Text}");
                 // Обработка обычного текстового сообщения
                 await HandleTextMessage(update.Message);
+                return;
             }
-            else if (update.Type == UpdateType.CallbackQuery)
+           if (update.Type == UpdateType.CallbackQuery)
             {
+                Console.WriteLine($"Пришло Callback сообщение: {update.CallbackQuery.Data}");
                 // Обработка callback-сообщения
                 await HandleCallbackQuery(update.CallbackQuery);
+                return;
             }
+           return;
         }
 
         public static async Task DeleteMessage(int messageId)
@@ -50,14 +55,15 @@ namespace FreeTorrBot.BotTelegram
         {
             var text = message.Text;
             var idMessage = message.MessageId;
-           // Console.WriteLine(text);
             // Обрабатываем обычное текстовое сообщение
             if(await SqlMethods.IsTextInputFlagLogin(AdminChat))
             {
+                Console.WriteLine("Обработка  TextInputFlagLogin");
                 await DeleteMessage(idMessage);
                 if (InputTextValidator.ValidateLogin(text))
                 {
                     await Torrserver.ChangeAccountTorrserver(text);
+                    Console.WriteLine("Смена логина выполнена.");
                     await botClient.SendTextMessageAsync(AdminChat
                                                          , $"Ваш  новый логин \u27A1 {text}" +
                                                          " установлен \u2705"
@@ -65,6 +71,7 @@ namespace FreeTorrBot.BotTelegram
                 }
                 else
                 {
+                    Console.WriteLine("Смена логина не удалась.");
                     await botClient.SendTextMessageAsync(AdminChat
                                                           , "\u2757 Вы в режиме ввода логина .\r\n" +
                                                         "Напишите желаемый логин.\r\n" +
@@ -133,6 +140,7 @@ namespace FreeTorrBot.BotTelegram
                 if(callbackData== "exitTextLogin")
                 {
                     await DeleteMessage(idMessage);
+                    Console.WriteLine("Выход из ввода логина.");
                     await SqlMethods.SwitchTextInputFlagLogin(AdminChat,false);
                     await botClient.SendTextMessageAsync(AdminChat
                                                          , $"Вы вышли из режима ввода логина \u2705"
@@ -140,7 +148,7 @@ namespace FreeTorrBot.BotTelegram
                 }
                 if (callbackData == "сontrolTorrserver")
                 {
-
+                    Console.WriteLine("Управление доступом к Torrserver .");
                     var setTorr = await SqlMethods.GetSettingsTorrserverBot(AdminChat);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "Управление доступом к Torrserver.\r\n" +setTorr.ToString()
 
@@ -149,6 +157,7 @@ namespace FreeTorrBot.BotTelegram
                 }
                 if (callbackData == "change_login")
                 {
+                    Console.WriteLine("В режите ввода логина.");
                     await SqlMethods.SwitchTextInputFlagLogin(AdminChat,true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                         , "\u2757 Вы в режиме ввода логина .\r\n" +
@@ -160,7 +169,7 @@ namespace FreeTorrBot.BotTelegram
 
                 if (callbackData == "change_password")
                 {
-
+                   
                     await Torrserver.ChangeAccountTorrserver("");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                          , "Пароль успешно изменен !"
@@ -175,7 +184,7 @@ namespace FreeTorrBot.BotTelegram
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                              , $"{passw}"
                                                              , replyMarkup: KeyboardManager.GetControlTorrserver());
-                    Console.WriteLine($"Ваш логин пароль {passw}");
+                    Console.WriteLine($"Запрос на просмотр логина:пароля удачен.");
                     return;
                 }
 
