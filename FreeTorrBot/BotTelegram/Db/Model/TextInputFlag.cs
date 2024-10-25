@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace AdTorrBot.BotTelegram.Db.Model
 {
-    public class TextInputFlags
+    public class TextInputFlag
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string IdChat { get; set; }
+        public string? IdChat { get; set; }
         public bool FlagLogin { get; set; }=false;
 
     }

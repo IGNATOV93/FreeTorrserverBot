@@ -13,7 +13,7 @@ namespace AdTorrBot.BotTelegram.Db
         public virtual DbSet<SettingsBot> SettingsBot {  get; set; }
         public virtual DbSet<SettingsTorrserverBot> SettingsTorrserverBot { get; set; }
         public virtual DbSet<User>User { get; set; }
-        public virtual DbSet<TextInputFlags> TextInputFlags { get; set; }
+        public virtual DbSet<TextInputFlag> TextInputFlag { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Подключение к SQLite базе данных

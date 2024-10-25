@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdTorrBot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241019234330_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241025201619_25.10")]
+    partial class _2510
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,15 +37,48 @@ namespace AdTorrBot.Migrations
                     b.ToTable("SettingsBot");
                 });
 
-            modelBuilder.Entity("AdTorrBot.BotTelegram.Db.Model.SettingsTorrserver", b =>
+            modelBuilder.Entity("AdTorrBot.BotTelegram.Db.Model.SettingsTorrserverBot", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsActiveAutoChange")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Login")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TimeAutoChangePassword")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("idChat")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.ToTable("SettingsTorrserver");
+                    b.ToTable("SettingsTorrserverBot");
+                });
+
+            modelBuilder.Entity("AdTorrBot.BotTelegram.Db.Model.TextInputFlag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagLogin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("IdChat")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TextInputFlag");
                 });
 
             modelBuilder.Entity("AdTorrBot.BotTelegram.Db.Model.User", b =>

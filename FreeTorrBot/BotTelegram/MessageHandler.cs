@@ -67,7 +67,7 @@ namespace FreeTorrBot.BotTelegram
                 {
                     await botClient.SendTextMessageAsync(AdminChat
                                                           , "\u2757 Вы в режиме ввода логина .\r\n" +
-                                                        "\xe2\x9c\x8d Напишите желаемый логин.\r\n" +
+                                                        "Напишите желаемый логин.\r\n" +
                                                         "\u2757 Login может содержать только английские буквы и цифры."
                                                         , replyMarkup: KeyboardManager.ExitTextLogin());
                 }
@@ -152,7 +152,7 @@ namespace FreeTorrBot.BotTelegram
                     await SqlMethods.SwitchTextInputFlagLogin(AdminChat,true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                         , "\u2757 Вы в режиме ввода логина .\r\n" +
-                                                        "\xe2\x9c\x8d Напишите желаемый логин.\r\n" +
+                                                        "Напишите желаемый логин.\r\n" +
                                                         "\u2757 Login может содержать только английские буквы и цифры."
                                                         , replyMarkup: KeyboardManager.ExitTextLogin());
                     return;

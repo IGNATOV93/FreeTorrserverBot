@@ -21,7 +21,7 @@ namespace FreeTorrBot.BotTelegram
         }
         public static InlineKeyboardMarkup ExitTextLogin()
         {
-            var buttonExitTextLogin = InlineKeyboardButton.WithCallbackData("exitTextLogin", "\uD83D\uDEAA Выход из режима ввода логина ");
+            var buttonExitTextLogin = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода логина ","exitTextLogin");
             var inlineExitTextLogin= new InlineKeyboardMarkup(new[]
            {
                  new[]{ buttonExitTextLogin }
@@ -30,8 +30,8 @@ namespace FreeTorrBot.BotTelegram
         }
         public static InlineKeyboardMarkup GetMainBackups()
         {
-            var butBackupTorrserver = InlineKeyboardButton.WithCallbackData("backupTorr", "\u2601 \u26A1 Бекап torrserver ");
-            var butBackupBotSettings = InlineKeyboardButton.WithCallbackData("backupBotSettings", "\u2601 \u2699 Бекап настроек бота");
+            var butBackupTorrserver = InlineKeyboardButton.WithCallbackData("\u2601 \u26A1 Бекап torrserver ","backupTorr");
+            var butBackupBotSettings = InlineKeyboardButton.WithCallbackData("\u2601 \u2699 Бекап настроек бота","backupBotSettings" );
             var inlineBackupMenu = new InlineKeyboardMarkup(new[]
            {
                  new[]{butBackupTorrserver, butBackupBotSettings, buttonHideButtots}

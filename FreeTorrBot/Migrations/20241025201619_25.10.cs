@@ -5,7 +5,7 @@
 namespace AdTorrBot.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class _2510 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,15 +25,34 @@ namespace AdTorrBot.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SettingsTorrserver",
+                name: "SettingsTorrserverBot",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    idChat = table.Column<string>(type: "TEXT", nullable: true),
+                    Login = table.Column<string>(type: "TEXT", nullable: true),
+                    Password = table.Column<string>(type: "TEXT", nullable: true),
+                    IsActiveAutoChange = table.Column<bool>(type: "INTEGER", nullable: false),
+                    TimeAutoChangePassword = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SettingsTorrserver", x => x.Id);
+                    table.PrimaryKey("PK_SettingsTorrserverBot", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TextInputFlag",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IdChat = table.Column<string>(type: "TEXT", nullable: true),
+                    FlagLogin = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TextInputFlag", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,7 +76,10 @@ namespace AdTorrBot.Migrations
                 name: "SettingsBot");
 
             migrationBuilder.DropTable(
-                name: "SettingsTorrserver");
+                name: "SettingsTorrserverBot");
+
+            migrationBuilder.DropTable(
+                name: "TextInputFlag");
 
             migrationBuilder.DropTable(
                 name: "User");

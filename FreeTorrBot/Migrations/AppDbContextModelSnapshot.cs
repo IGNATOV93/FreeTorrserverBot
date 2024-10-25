@@ -61,7 +61,7 @@ namespace AdTorrBot.Migrations
                     b.ToTable("SettingsTorrserverBot");
                 });
 
-            modelBuilder.Entity("AdTorrBot.BotTelegram.Db.Model.TextInputFlags", b =>
+            modelBuilder.Entity("AdTorrBot.BotTelegram.Db.Model.TextInputFlag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +71,6 @@ namespace AdTorrBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("IdChat")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

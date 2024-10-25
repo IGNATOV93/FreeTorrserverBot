@@ -78,8 +78,11 @@ namespace AdTorrBot.BotTelegram.Db
         }
         public static async Task CheckAndInsertDefaultData(string idChat)
         {
+            
             await SqlMethods.WithDbContextAsync(async db =>
             {
+                // Убедимся, что таблицы созданы
+                await db.Database.EnsureCreatedAsync();
                 var existingSettingsBot = await db.SettingsBot.FirstOrDefaultAsync(s => s.IdChat == idChat);
                 var existingSettingsTorrserver = await db.SettingsTorrserverBot.FirstOrDefaultAsync(s => s.idChat == idChat);
                 var existingUser = await db.User.FirstOrDefaultAsync(u => u.IdChat == idChat);
@@ -87,7 +90,7 @@ namespace AdTorrBot.BotTelegram.Db
                 var entitiesToAdd = new List<object>();
                 if (existingTextInputFlags == null)
                 {
-                    entitiesToAdd.Add(new TextInputFlags { IdChat = idChat });
+                    entitiesToAdd.Add(new TextInputFlag { IdChat = idChat });
                 }
                 if (existingSettingsBot == null)
                     entitiesToAdd.Add(new SettingsBot { IdChat = idChat });

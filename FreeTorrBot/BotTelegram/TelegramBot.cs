@@ -62,11 +62,7 @@ namespace FreeTorrserverBot.BotTelegram
         }
         static public async Task StartBot()
         {
-            // Создайте таблицы, если они не существуют
-            using (var db = new AppDbContext())
-            {
-                await db.Database.EnsureCreatedAsync();
-            }
+           
             await SqlMethods.CheckAndInsertDefaultData(AdminChat);
             JobManager.Initialize(new MyRegistry());
             // Запускаем получение обновлений
