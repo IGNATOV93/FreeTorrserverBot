@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,21 @@ namespace AdTorrBot.BotTelegram.Db.Model
         public int Id { get; set; }
         public string? IdChat { get; set; }
         public bool FlagLogin { get; set; }=false;
+        public bool CheckAllBooleanFlags()
+        {
+            var boolProperties = this.GetType()
+                                     .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                     .Where(p => p.PropertyType == typeof(bool));
 
+            foreach (var property in boolProperties)
+            {
+                if ((bool)property.GetValue(this) == true)
+                {
+                    return true; // Возвращает true, если найдено хотя бы одно значение true
+                }
+            }
+
+            return false; // Возвращает false, если все булевые значения равны false
+        }
     }
 }

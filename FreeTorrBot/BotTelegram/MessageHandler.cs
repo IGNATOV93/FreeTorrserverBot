@@ -13,6 +13,7 @@ using static FreeTorrBot.BotTelegram.BotSettings.BotSettingsMethods;
 using static System.Net.Mime.MediaTypeNames;
 using AdTorrBot.BotTelegram.Db;
 using AdTorrBot.BotTelegram;
+using AdTorrBot.BotTelegram.Db.Model;
 
 namespace FreeTorrBot.BotTelegram
 {
@@ -25,15 +26,23 @@ namespace FreeTorrBot.BotTelegram
             if (update.Type == UpdateType.Message)
             {
                 Console.WriteLine($"Пришло text сообщение: { update?.Message?.Text}");
-                // Обработка обычного текстового сообщения
-                await HandleTextMessage(update.Message);
+                // Проверка на режим ввода.
+                var textInputFlags = await SqlMethods.GetTextInputFlag(AdminChat);
+                if (textInputFlags.CheckAllBooleanFlags())
+                {
+                    await HandlerTextInputMessage(update.Message,textInputFlags);
+                    return;
+                }
+                
+                await HandlerTextButtonAndCommandMessage(update.Message);
+
                 return;
             }
            if (update.Type == UpdateType.CallbackQuery)
             {
                 Console.WriteLine($"Пришло Callback сообщение: {update.CallbackQuery.Data}");
                 // Обработка callback-сообщения
-                await HandleCallbackQuery(update.CallbackQuery);
+                await HandlerCallbackQuery(update.CallbackQuery);
                 return;
             }
            return;
@@ -51,19 +60,21 @@ namespace FreeTorrBot.BotTelegram
             }
             return;
         }
-        private static async Task HandleTextMessage(Message message)
+        private static async Task HandlerTextInputMessage(Message message,TextInputFlag textInputFlag)
         {
             var text = message.Text;
             var idMessage = message.MessageId;
             // Обрабатываем обычное текстовое сообщение
-            if(await SqlMethods.IsTextInputFlagLogin(AdminChat))
+            if (textInputFlag.FlagLogin)
             {
                 Console.WriteLine("Обработка  TextInputFlagLogin");
                 await DeleteMessage(idMessage);
                 if (InputTextValidator.ValidateLogin(text))
                 {
                     await Torrserver.ChangeAccountTorrserver(text);
-                    Console.WriteLine("Смена логина выполнена.");
+                    await SqlMethods.SwitchTextInputFlagLogin(AdminChat, false);
+                    Console.WriteLine("Смена логина выполнена.\r\n" +
+                        "Вы вышли с режима ввода логина !");
                     await botClient.SendTextMessageAsync(AdminChat
                                                          , $"Ваш  новый логин \u27A1 {text}" +
                                                          " установлен \u2705"
@@ -80,6 +91,14 @@ namespace FreeTorrBot.BotTelegram
                 }
                 return;
             }
+            return;
+        }
+        private static async Task HandlerTextButtonAndCommandMessage(Message message)
+        {
+            var text = message.Text;
+            var idMessage = message.MessageId;
+            // Обрабатываем обычное текстовое сообщение
+
             if (text == "/start")
             {
                 await DeleteMessage(idMessage);
@@ -123,7 +142,7 @@ namespace FreeTorrBot.BotTelegram
             return;
         }
 
-        private static async Task HandleCallbackQuery(CallbackQuery callbackQuery)
+        private static async Task HandlerCallbackQuery(CallbackQuery callbackQuery)
         {
             var callbackData = callbackQuery.Data;
           //  Console.WriteLine(callbackData);
