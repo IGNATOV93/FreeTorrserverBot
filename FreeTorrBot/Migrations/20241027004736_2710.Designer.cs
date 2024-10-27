@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdTorrBot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241026234639_2710")]
+    [Migration("20241027004736_2710")]
     partial class _2710
     {
         /// <inheritdoc />

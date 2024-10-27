@@ -250,7 +250,7 @@ namespace FreeTorrBot.BotTelegram
                     await Torrserver.ChangeAccountTorrserver("", "", true, false);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                          , "Логин успешно изменен !"
-                                                         , replyMarkup: KeyboardManager.GetControlTorrserver());
+                                                         , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
                     Console.WriteLine("Логин успешно изменен !");
                     return; 
                 }
@@ -260,7 +260,7 @@ namespace FreeTorrBot.BotTelegram
                     await Torrserver.ChangeAccountTorrserver("","",false,true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                          , "Пароль успешно изменен !"
-                                                         , replyMarkup: KeyboardManager.GetControlTorrserver());
+                                                         , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
                     Console.WriteLine("Пароль успешно изменен !");
                     return;
                 }

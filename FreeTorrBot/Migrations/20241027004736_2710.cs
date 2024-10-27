@@ -5,7 +5,7 @@
 namespace AdTorrBot.Migrations
 {
     /// <inheritdoc />
-    public partial class _2510 : Migration
+    public partial class _2710 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,7 +48,8 @@ namespace AdTorrBot.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     IdChat = table.Column<string>(type: "TEXT", nullable: true),
-                    FlagLogin = table.Column<bool>(type: "INTEGER", nullable: false)
+                    FlagLogin = table.Column<bool>(type: "INTEGER", nullable: false),
+                    FlagPassword = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

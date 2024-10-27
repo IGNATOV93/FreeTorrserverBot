@@ -123,7 +123,7 @@ namespace AdTorrBot.BotTelegram.Db
                 await db.Database.MigrateAsync();
 
                 // Убедимся, что таблицы созданы
-                await db.Database.EnsureCreatedAsync();
+              //  await db.Database.EnsureCreatedAsync();
                 var existingSettingsBot = await db.SettingsBot.FirstOrDefaultAsync(s => s.IdChat == idChat);
                 var existingSettingsTorrserver = await db.SettingsTorrserverBot.FirstOrDefaultAsync(s => s.idChat == idChat);
                 var existingUser = await db.User.FirstOrDefaultAsync(u => u.IdChat == idChat);
