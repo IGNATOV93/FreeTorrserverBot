@@ -21,19 +21,41 @@ namespace FreeTorrserverBot
 
         private async Task ScheduleJobAsync()
         {
+           var setBot = await SqlMethods.GetSettingBot(BotTelegram.TelegramBot.AdminChat);
+            var timeZone = Torrserver.Torrserver.GetLocalServerTimeTimeZone();
+            double hoursWithTimeZone = timeZone-setBot.TimeZoneOffset;
             int hours = await GetHoursAsync();
             int minutes = await GetMinutesAsync();
+            // Извлекаем целую часть и дробную часть
+            int additionalHours = (int)hoursWithTimeZone; 
+            int additionalMinutes = (int)((hoursWithTimeZone - additionalHours) * 60); 
+
+            // Складываем часы и минуты
+            int finalHours = hours + additionalHours; 
+            int finalMinutes = minutes + additionalMinutes; 
+
+            // Если минуты превышают 60, корректируем
+            if (finalMinutes >= 60)
+            {
+                finalHours += finalMinutes / 60; // Добавляем полные часы
+                finalMinutes %= 60; // Оставляем остаток минут
+            }
+
+            // Выводим итоговое время
+            Console.WriteLine($"Итоговое время автосмены пароля на самом сервере : {finalHours:D2}:{finalMinutes:D2}"); // Формат с ведущим нулем
 
             Schedule(async () => await Torrserver.Torrserver.AutoChangeAccountTorrserver())
                 .ToRunEvery(1)
                 .Days()
-                .At(hours, minutes);
+                .At(finalHours, finalMinutes);
         }
 
         private async Task<int> GetHoursAsync()
         {
             // Предполагается асинхронная загрузка данных
             var settings = await LoadSettingsAsync();
+            
+         
             return int.Parse(settings.TimeAutoChangePassword.Split(":")[0]);
         }
 

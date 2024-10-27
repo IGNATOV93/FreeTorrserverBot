@@ -145,7 +145,7 @@ namespace FreeTorrBot.BotTelegram
             }
             if (text =="\u2699 Настройки бота")
             {
-                
+                await DeleteMessage(idMessage);
                 await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки бота", replyMarkup: KeyboardManager.GetSettingsBot());
                 return;
 
@@ -184,6 +184,27 @@ namespace FreeTorrBot.BotTelegram
                     await DeleteMessage(idMessage);
                     return;
                 }
+                if (callbackData.Contains("time_zone"))
+                {
+                    var timezoneChangeIndicator = callbackData.Split("time_zone")[0];
+                    Console.WriteLine($"Пришел timezoneChangeIndicator: {timezoneChangeIndicator}");
+                    // Проверяем, содержит ли значение "+" или "-"
+                    if (timezoneChangeIndicator == "+" || timezoneChangeIndicator == "-")
+                    {
+                        // Вызываем метод для смены часового пояса
+                        await SqlMethods.SwitchTimeZone(AdminChat, timezoneChangeIndicator);
+                    }
+                    var settingBot = await SqlMethods.GetSettingBot(AdminChat);
+                    var timeLocalServer =  Torrserver.GetLocalServerTime();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                        $"\uD83D\uDD52 Время на сервере: {timeLocalServer}\r\n" +
+                        $"🌍 Ваш часовой пояс: {settingBot.TimeZoneOffset} UTC",
+                        replyMarkup: KeyboardManager.GetMainTimeZone());
+                    return;
+
+                }
+
+
                 if(callbackData== "exitTextPassword")
                 {
                     await DeleteMessage(idMessage);
@@ -381,6 +402,9 @@ namespace FreeTorrBot.BotTelegram
             ,"setAutoPassMinutes"
             ,"exitTextLogin"
             ,"exitTextPassword"
+            ,"-time_zone"
+            ,"+time_zone"
+            ,"time_zone"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

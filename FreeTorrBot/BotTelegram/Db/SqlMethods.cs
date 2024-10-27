@@ -53,6 +53,17 @@ namespace AdTorrBot.BotTelegram.Db
             return result;
 
         }
+
+        public static async Task SwitchTimeZone(string idChat, string indicator)
+        {
+            await WithDbContextAsync(async db =>
+            {
+                var setBot = db.SettingsBot.FirstOrDefault(x => x.IdChat == idChat);
+                setBot.ChangeTimeZone(indicator);
+                await db.SaveChangesAsync();
+                return Task.CompletedTask;
+            });
+        }
         public static async Task SwitchTextInputFlagPassword(string idChat, bool value)
         {
             await WithDbContextAsync(async db =>

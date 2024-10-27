@@ -78,26 +78,25 @@ namespace FreeTorrBot.BotTelegram
         {
             
             // Кнопка для генерации нового логина и пароля
-            var buttonGenerateNewLoginPassword = InlineKeyboardButton.WithCallbackData("👤 🔄 Сгенерировать пароль", "generate_new_password");
+            var buttonGenerateNewPassword = InlineKeyboardButton.WithCallbackData("🔑 🔄 Пароль", "generate_new_password");
 
             // Кнопка для ручного ввода логина и пароля
-            var buttonSetLoginPasswordManually = InlineKeyboardButton.WithCallbackData("👤 ✍️ Ввести пароль", "set_password_manually");
+            var buttonSetPasswordManually = InlineKeyboardButton.WithCallbackData("🔑 ✍️ Пароль", "set_password_manually");
 
             // Кнопка для генерации нового логина
-            var buttonGenerateNewLogin = InlineKeyboardButton.WithCallbackData("👤 🔄 Сгенерировать логин", "generate_new_login");
+            var buttonGenerateNewLogin = InlineKeyboardButton.WithCallbackData("👤 🔄 Логин", "generate_new_login");
 
             // Кнопка для ручного ввода логина
-            var buttonSetLoginManually = InlineKeyboardButton.WithCallbackData("👤 ✍️ Ввести логин", "set_login_manually");
+            var buttonSetLoginManually = InlineKeyboardButton.WithCallbackData("👤 ✍️ Логин", "set_login_manually");
             var backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 ", "сontrolTorrserver");
 
             var buttonShowLoginPassword = InlineKeyboardButton.WithCallbackData("👀 Показать логин и пароль", "show_login_password");
             // Возврат InlineKeyboardMarkup с кнопками
             return new InlineKeyboardMarkup(new[]
             {
-                new[] { buttonGenerateNewLoginPassword },
-                new[] { buttonSetLoginPasswordManually },
-                new[] { buttonGenerateNewLogin },
-                new[] { buttonSetLoginManually },
+                new[] {  buttonSetPasswordManually,buttonGenerateNewPassword},
+                new[] {  buttonSetLoginManually, buttonGenerateNewLogin },
+           
                 new[] { buttonShowLoginPassword  },
                 new[] {backGetControlTorrserver,buttonHideButtots}
                 });
@@ -126,10 +125,22 @@ namespace FreeTorrBot.BotTelegram
             });
         }
     
-        //public static InlineKeyboardMarkup GetSettingsTorrserver() {        }
+        //public static InlineKeyboardMarkup GetSettingsTorrserver() {}
+        public static InlineKeyboardMarkup GetMainTimeZone()
+        {
+            
+            var buttonLeftTime = InlineKeyboardButton.WithCallbackData("\u2B05", "-time_zone");
+            var buttonRightTime = InlineKeyboardButton.WithCallbackData("\u27A1", "+time_zone");
+            var inlineTimeZoneMain = new InlineKeyboardMarkup(new[]
+            {
+                new[]{buttonLeftTime, buttonRightTime},
+                new[] {buttonHideButtots}
+            });
+            return inlineTimeZoneMain;
+        }
         public static InlineKeyboardMarkup GetSettingsBot()
         {
-            var buttonTimeZone = InlineKeyboardButton.WithCallbackData("\uD83C\uDF0F Часовой пояс");
+            var buttonTimeZone = InlineKeyboardButton.WithCallbackData("\uD83C\uDF0F Часовой пояс","time_zone");
             var inlineSettinsBotMenu = new InlineKeyboardMarkup(new[]
             {
                 new[]{buttonTimeZone, buttonHideButtots }
