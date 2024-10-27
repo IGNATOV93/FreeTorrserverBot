@@ -16,6 +16,7 @@ namespace AdTorrBot.BotTelegram.Db.Model
         public int Id { get; set; }
         public string? IdChat { get; set; }
         public bool FlagLogin { get; set; }=false;
+        public bool FlagPassword { get; set; }=false;
         public bool CheckAllBooleanFlags()
         {
             var boolProperties = this.GetType()

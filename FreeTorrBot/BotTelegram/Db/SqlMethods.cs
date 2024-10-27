@@ -53,6 +53,16 @@ namespace AdTorrBot.BotTelegram.Db
             return result;
 
         }
+        public static async Task SwitchTextInputFlagPassword(string idChat, bool value)
+        {
+            await WithDbContextAsync(async db =>
+            {
+                var textInputFlags = db.TextInputFlag.FirstOrDefault(x => x.IdChat == idChat);
+                textInputFlags.FlagPassword = value;
+                await db.SaveChangesAsync();
+                return Task.CompletedTask;
+            });
+        }
         public static async Task SwitchTextInputFlagLogin(string idChat,bool value)
         {
             await WithDbContextAsync(async db =>
@@ -83,6 +93,18 @@ namespace AdTorrBot.BotTelegram.Db
             });
 
         }
+        public static async Task SetLoginPasswordSettingsTorrserverBot(string idChat,string login,string password)
+        {
+            await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var setTorr = db.SettingsTorrserverBot.FirstOrDefault(x => x.idChat == idChat);
+                setTorr.Login = login;
+                setTorr.Password = password;
+              await  db.SaveChangesAsync();
+                return Task.CompletedTask;
+            });
+
+        }
         public static async Task<SettingsTorrserverBot> GetSettingsTorrserverBot(string idChat)
         {
          return   await SqlMethods.WithDbContextAsync(async db =>
@@ -97,6 +119,9 @@ namespace AdTorrBot.BotTelegram.Db
             
             await SqlMethods.WithDbContextAsync(async db =>
             {
+                // Применяем все необходимые миграции
+                await db.Database.MigrateAsync();
+
                 // Убедимся, что таблицы созданы
                 await db.Database.EnsureCreatedAsync();
                 var existingSettingsBot = await db.SettingsBot.FirstOrDefaultAsync(s => s.IdChat == idChat);

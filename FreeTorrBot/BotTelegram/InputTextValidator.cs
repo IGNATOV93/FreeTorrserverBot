@@ -8,12 +8,12 @@ namespace AdTorrBot.BotTelegram
 {
   public  class InputTextValidator
     {
-        public static bool ValidateLogin(string login)
+        public static bool ValidateLoginAndPassword(string login)
         {
             // Проверка длины строки
-            if (login.Length > 20)
+            if (login.Length > 10)
             {
-                Console.WriteLine("Login не может быть длиннее 20 символов.");
+                Console.WriteLine("Login/password не может быть длиннее 10 символов.");
                 return false;  
                     ;
             }
@@ -22,7 +22,7 @@ namespace AdTorrBot.BotTelegram
             var regex = new System.Text.RegularExpressions.Regex(@"^[a-zA-Z0-9]+$");
             if (!regex.IsMatch(login))
             {
-                Console.WriteLine("Login может содержать только английские буквы и цифры.");
+                Console.WriteLine("Login/password может содержать только английские буквы и цифры.");
                 return false;
                
                 

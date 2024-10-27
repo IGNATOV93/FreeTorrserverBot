@@ -69,9 +69,9 @@ namespace FreeTorrBot.BotTelegram
             {
                 Console.WriteLine("Обработка  TextInputFlagLogin");
                 await DeleteMessage(idMessage);
-                if (InputTextValidator.ValidateLogin(text))
+                if (InputTextValidator.ValidateLoginAndPassword(text))
                 {
-                    await Torrserver.ChangeAccountTorrserver(text);
+                    await Torrserver.ChangeAccountTorrserver(text,"",true,false);
                     await SqlMethods.SwitchTextInputFlagLogin(AdminChat, false);
                     Console.WriteLine("Смена логина выполнена.\r\n" +
                         "Вы вышли с режима ввода логина !");
@@ -86,10 +86,38 @@ namespace FreeTorrBot.BotTelegram
                     await botClient.SendTextMessageAsync(AdminChat
                                                           , "\u2757 Вы в режиме ввода логина .\r\n" +
                                                         "Напишите желаемый логин.\r\n" +
-                                                        "\u2757 Login может содержать только английские буквы и цифры."
+                                                        "\u2757 Login может содержать только английские буквы и цифры\r\n." +
+                                                        "Ограничение на символы:10"
                                                         , replyMarkup: KeyboardManager.ExitTextLogin());
                 }
                 return;
+            }
+            if (textInputFlag.FlagPassword) 
+            {
+                Console.WriteLine("Обработка  TextInputFlagPassword");
+                await DeleteMessage(idMessage);
+                if (InputTextValidator.ValidateLoginAndPassword(text))
+                {
+                    await Torrserver.ChangeAccountTorrserver("",text, false, true);
+                    await SqlMethods.SwitchTextInputFlagPassword(AdminChat, false);
+                    Console.WriteLine("Смена пароля выполнена.\r\n" +
+                        "Вы вышли с режима ввода пароля !");
+                    await botClient.SendTextMessageAsync(AdminChat
+                                                         , $"Ваш  новый пароль \u27A1 {text}" +
+                                                         " установлен \u2705"
+                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                }
+                else
+                {
+                    Console.WriteLine("Смена пароля не удалась.");
+                    await botClient.SendTextMessageAsync(AdminChat
+                                                          , "\u2757 Вы в режиме ввода пароля .\r\n" +
+                                                        "Напишите желаемый пароль.\r\n" +
+                                                        "\u2757 Password может содержать только английские буквы и цифры\r\n." +
+                                                        "Ограничение на символы:10"
+                                                        , replyMarkup: KeyboardManager.ExitTextPassword());
+                }
+
             }
             return;
         }
@@ -156,6 +184,15 @@ namespace FreeTorrBot.BotTelegram
                     await DeleteMessage(idMessage);
                     return;
                 }
+                if(callbackData== "exitTextPassword")
+                {
+                    await DeleteMessage(idMessage);
+                    Console.WriteLine("Выход из ввода пароля.");
+                    await SqlMethods.SwitchTextInputFlagPassword(AdminChat, false);
+                    await botClient.SendTextMessageAsync(AdminChat
+                                                         , $"Вы вышли из режима ввода пароля \u2705"
+                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                }
                 if(callbackData== "exitTextLogin")
                 {
                     await DeleteMessage(idMessage);
@@ -164,6 +201,14 @@ namespace FreeTorrBot.BotTelegram
                     await botClient.SendTextMessageAsync(AdminChat
                                                          , $"Вы вышли из режима ввода логина \u2705"
                                                          , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                }
+                if(callbackData== "manage_login_password")
+                {
+                    Console.WriteLine("Управление логином и паролем Torrserver");
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Управление логином и паролем Torrserver ."
+
+                     , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
+                    return;
                 }
                 if (callbackData == "сontrolTorrserver")
                 {
@@ -174,35 +219,58 @@ namespace FreeTorrBot.BotTelegram
                         , replyMarkup: KeyboardManager.GetControlTorrserver());
                     return;
                 }
-                if (callbackData == "change_login")
+               
+                if (callbackData == "set_login_manually")
                 {
                     Console.WriteLine("В режите ввода логина.");
                     await SqlMethods.SwitchTextInputFlagLogin(AdminChat,true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                         , "\u2757 Вы в режиме ввода логина .\r\n" +
                                                         "Напишите желаемый логин.\r\n" +
-                                                        "\u2757 Login может содержать только английские буквы и цифры."
+                                                        "\u2757 Login может содержать только английские буквы и цифры.\r\n"+
+                                                         "Ограничение на символы:10"
                                                         , replyMarkup: KeyboardManager.ExitTextLogin());
                     return;
                 }
-
-                if (callbackData == "change_password")
+                if(callbackData== "set_password_manually")
+                {
+                    Console.WriteLine("В режите ввода пароля.");
+                    await SqlMethods.SwitchTextInputFlagPassword(AdminChat, true);
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage
+                                                        , "\u2757 Вы в режиме ввода пароля .\r\n" +
+                                                        "Напишите желаемый пароль.\r\n" +
+                                                        "\u2757 Password может содержать только английские буквы и цифры.\r\n" +
+                                                         "Ограничение на символы:10"
+                                                        , replyMarkup: KeyboardManager.ExitTextPassword());
+                    return;
+                   
+                }
+                if(callbackData== "generate_new_login")
+                {
+                    await Torrserver.ChangeAccountTorrserver("", "", true, false);
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage
+                                                         , "Логин успешно изменен !"
+                                                         , replyMarkup: KeyboardManager.GetControlTorrserver());
+                    Console.WriteLine("Логин успешно изменен !");
+                    return; 
+                }
+                if (callbackData == "generate_new_password")
                 {
                    
-                    await Torrserver.ChangeAccountTorrserver("");
+                    await Torrserver.ChangeAccountTorrserver("","",false,true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                          , "Пароль успешно изменен !"
                                                          , replyMarkup: KeyboardManager.GetControlTorrserver());
                     Console.WriteLine("Пароль успешно изменен !");
                     return;
                 }
-                if (callbackData == "print_password" || callbackData == "print_login")
+                if (callbackData == "show_login_password")
                 {
 
                     var passw = Torrserver.TakeAccountTorrserver();
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                              , $"{passw}"
-                                                             , replyMarkup: KeyboardManager.GetControlTorrserver());
+                                                             , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
                     Console.WriteLine($"Запрос на просмотр логина:пароля удачен.");
                     return;
                 }
@@ -294,18 +362,25 @@ namespace FreeTorrBot.BotTelegram
             HashSet<string> commands = new HashSet<string>()
             {
             "deletemessages"
-            ,"change_password"
-            ,"print_password"
+            //,"change_password"
+            ,"manage_login_password"
+            ,"generate_new_password"
+            ,"set_password_manually"
+            ,"generate_new_login"
+            ,"set_login_manually"
+            ,"show_login_password"
+            //,"print_password"
             ,"change_time_auto"
             ,"print_time_auto"
             , "enable_auto_change"
             ,"disable_auto_change"
             ,"show_status"
-            ,"change_login"
-            ,"print_login"
+            //,"change_login"
+            //,"print_login"
             ,"сontrolTorrserver"
             ,"setAutoPassMinutes"
             ,"exitTextLogin"
+            ,"exitTextPassword"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

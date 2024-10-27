@@ -21,7 +21,8 @@ namespace FreeTorrserverBot.Torrserver
             {
                 var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
                   {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
-                await ChangeAccountTorrserver("");
+
+                await ChangeAccountTorrserver("","",false,true);
                 await TelegramBot.client.SendTextMessageAsync(TelegramBot.AdminChat, $"Произведена автосмена пароля сервера \U00002705\r\n" +
                                                                                       $"\U0001F570   {DateTime.Now}", replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
                 await TelegramBot.client.SendTextMessageAsync(TelegramBot.AdminChat, $"{TakeAccountTorrserver()}", replyMarkup: inlineKeyboarDeleteMessageOnluOnebutton);
@@ -33,24 +34,34 @@ namespace FreeTorrserverBot.Torrserver
         {
             return DateTime.Now.ToString("HH:mm"); // Возвращает текущее локальное время на сервере
         }
-        public static async Task ChangeAccountTorrserver(string login)
+        public static async Task ChangeAccountTorrserver(string login,string password,bool setLogin,bool setPassword)
         {
             var newParolRandom = new Random();
             const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-            var newParol = new string(Enumerable.Repeat(chars, 8)
-                         .Select(s => s[newParolRandom.Next(s.Length)]).ToArray());
             var settingsTorr = await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
-            var newlogin = login!=""? login : settingsTorr.Login;
-            if (login != "") 
-            { 
-             
+            string newPassword = string.IsNullOrEmpty(password) ? settingsTorr.Password : password;
+            string newLogin = string.IsNullOrEmpty(login) ? settingsTorr.Login : login;
+
+            if (setLogin && string.IsNullOrEmpty(login))
+            {
+                newLogin = new string(Enumerable.Repeat(chars, 10)
+                                .Select(s => s[newParolRandom.Next(s.Length)]).ToArray());
             }
-           
-            string result = $"{{\"{newlogin}\":\"{newParol}\"}}";
+
+            if (setPassword && string.IsNullOrEmpty(password))
+            {
+                newPassword = new string(Enumerable.Repeat(chars, 10)
+                                .Select(s => s[newParolRandom.Next(s.Length)]).ToArray());
+            }
+
+            await SqlMethods.SetLoginPasswordSettingsTorrserverBot(TelegramBot.AdminChat, newLogin, newPassword);
+            string result = $"{{\"{newLogin}\":\"{newPassword}\"}}";
+
             using (StreamWriter writer = new StreamWriter(filePathTorrserverBd))
             {
                 writer.WriteLine($"{result}");
             }
+
             await RebootingTorrserver();
         }
         public static string TakeAccountTorrserver()
