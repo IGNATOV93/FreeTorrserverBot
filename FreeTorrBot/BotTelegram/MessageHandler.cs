@@ -196,8 +196,11 @@ namespace FreeTorrBot.BotTelegram
                     }
                     var settingBot = await SqlMethods.GetSettingBot(AdminChat);
                     var timeLocalServer =  Torrserver.GetLocalServerTime();
+                     var localTimeZone = Torrserver.GetLocalServerTimeTimeZone();
+                    string localTimeZoneString = $"UTC{(localTimeZone >= 0 ? "+" : "")}{localTimeZone}";
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
-                        $"\uD83D\uDD52 Время на сервере: {timeLocalServer}\r\n" +
+                       
+                        $"\uD83D\uDD52 Время сервера : {timeLocalServer}  🌍 {localTimeZoneString}\r\n" +
                         $"🌍 Ваш часовой пояс: {settingBot.TimeZoneOffset} UTC",
                         replyMarkup: KeyboardManager.GetMainTimeZone());
                     return;

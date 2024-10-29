@@ -28,17 +28,18 @@ namespace AdTorrBot.BotTelegram.Db.Model
             var localTime =  Torrserver.GetLocalServerTime();
 
             // Получаем локальное смещение времени и часовой пояс пользователя
-            var localTimeZone = Torrserver.GetLocalServerTimeTimeZone();
-            var timeZoneUser = SqlMethods.GetSettingBot(idChat).Result.TimeZoneOffset;
+           // var localTimeZone = Torrserver.GetLocalServerTimeTimeZone();
+           // var timeZoneUser = SqlMethods.GetSettingBot(idChat).Result.TimeZoneOffset;
             // Форматируем строки для отображения
 
-            string localTimeZoneString = $"UTC{(localTimeZone >= 0 ? "+" : "")}{localTimeZone}";
-            string timeZoneUserString = $"UTC{(timeZoneUser >= 0 ? "+" : "")}{timeZoneUser}";
+            //string localTimeZoneString = $"UTC{(localTimeZone >= 0 ? "+" : "")}{localTimeZone}";
+           // string timeZoneUserString = $"UTC{(timeZoneUser >= 0 ? "+" : "")}{timeZoneUser}";
             return
                
                 $"Статус автосмены: {(IsActiveAutoChange ? "✅" : "❌")}\r\n" +
-                $"\u23F0 Автосмена пароля : {TimeAutoChangePassword} \uD83C\uDF0F {timeZoneUserString}\r\n" +
-                $"\uD83D\uDD50 Время сервера : {localTime} \uD83C\uDF0F {localTimeZoneString}\r\n" 
+                $"\u23F0 Автосмена пароля : {TimeAutoChangePassword} "
+                //+$"\uD83C\uDF0F {timeZoneUserString}\r\n"
+                //+$"\uD83D\uDD50 Время сервера : {localTime} \uD83C\uDF0F {localTimeZoneString}\r\n" 
                 ;
         }
     }
