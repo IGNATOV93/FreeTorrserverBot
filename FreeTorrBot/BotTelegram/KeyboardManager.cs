@@ -147,18 +147,38 @@ namespace FreeTorrBot.BotTelegram
             });
             return inlineSettinsBotMenu;
         }
+
+        public static InlineKeyboardMarkup GetSettingsMain()
+        {
+
+            var setTorrSettings = InlineKeyboardButton.WithCallbackData("⚙️ Настройки Torrsever", "torr_settings");
+            var setTorrConfig = InlineKeyboardButton.WithCallbackData("🛠️ Конфиг Torrsever", "torr_config");
+            var setServer = InlineKeyboardButton.WithCallbackData("💻 Настройки сервера", "set_server");
+            var setBot = InlineKeyboardButton.WithCallbackData("🤖 Настройки бота", "set_bot");
+
+            var inlineSettingsMain = new InlineKeyboardMarkup(new[]
+            {
+            new[] {setTorrSettings },
+            new[] {setTorrConfig},
+            new[] {setServer},
+            new[] {setBot}
+            });
+            return inlineSettingsMain;
+
+        }
+
         public static ReplyKeyboardMarkup GetMainKeyboard()
         {
             var butGuardMenu = new KeyboardButton("\uD83D\uDD10 Доступ");
             var butBackupMenu = new KeyboardButton("\uD83D\uDCBE Бекапы");
-            var butSettinsTorrserver = new KeyboardButton("⚙ Настройки Torrserver");
-            var butSettinsBot = new KeyboardButton("\u2699 Настройки бота");
+            var butSettinsTorrserver = new KeyboardButton("⚙ Настройки");
+           // var butSettinsBot = new KeyboardButton("\u2699 Настройки бота");
             
            // var buttonSettings = InlineKeyboardButton.WithCallbackData("⚙️ Настройки", "settings");
             return new ReplyKeyboardMarkup(new[]
             {
         new[] { butGuardMenu,butBackupMenu},
-        new[] { butSettinsTorrserver,butSettinsBot }
+        new[] { butSettinsTorrserver }
             })
             {
                 ResizeKeyboard = true // Это сделает клавиатуру более компактной
