@@ -14,6 +14,7 @@ using static System.Net.Mime.MediaTypeNames;
 using AdTorrBot.BotTelegram.Db;
 using AdTorrBot.BotTelegram;
 using AdTorrBot.BotTelegram.Db.Model;
+using AdTorrBot.ServerManagement;
 
 namespace FreeTorrBot.BotTelegram
 {
@@ -191,8 +192,9 @@ namespace FreeTorrBot.BotTelegram
                 }
                 if (callbackData == "restart_server")
                 {
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Server будет перезагружен \u2705", replyMarkup: KeyboardManager.buttonHideButtots);
                    
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Server будет перезагружен \u2705", replyMarkup: KeyboardManager.buttonHideButtots);
+                    ServerControl.RebootServer();
                     //////Сделать вызов метода по перезагрузке сервера.
                     return;
                 }
@@ -219,11 +221,24 @@ namespace FreeTorrBot.BotTelegram
                     return;
                 }
                 if (callbackData.Contains("set_server_bbr"))
-                { 
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Состояние bbr на сервере: "
-                        , replyMarkup: KeyboardManager.GetSetServerBbrMain());
+                {
+                    bool? enable = callbackData.StartsWith("1") ? true
+                                 : callbackData.StartsWith("0") ? (bool?)false
+                                 : (bool?)null;
+
+                    if (enable.HasValue)
+                    {
+                        await ServerControl.SetBbrState(enable.Value);
+                    }
+
+                    var isBBRActive = ServerInfo.CheckBBRConfig();
+                    string bbrStatus = isBBRActive ? "\u2705" : "\u274C";
+
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Состояние BBR на сервере: " + bbrStatus,
+                        replyMarkup: KeyboardManager.GetSetServerBbrMain(isBBRActive));
                     return;
                 }
+
                 if (callbackData == "set_server")
                     {
                     Console.WriteLine("Настройки сервера");
@@ -251,8 +266,8 @@ namespace FreeTorrBot.BotTelegram
                         await SqlMethods.SwitchTimeZone(AdminChat, timezoneChangeIndicator);
                     }
                     var settingBot = await SqlMethods.GetSettingBot(AdminChat);
-                    var timeLocalServer = Torrserver.GetLocalServerTime();
-                    var localTimeZone = Torrserver.GetLocalServerTimeTimeZone();
+                    var timeLocalServer = ServerInfo.GetLocalServerTime();
+                    var localTimeZone = ServerInfo.GetLocalServerTimeTimeZone();
                     string localTimeZoneString = $"UTC{(localTimeZone >= 0 ? "+" : "")}{localTimeZone}";
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
 

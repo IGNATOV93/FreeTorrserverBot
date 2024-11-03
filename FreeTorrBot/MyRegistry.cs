@@ -8,6 +8,7 @@ using AdTorrBot.BotTelegram;
 using FluentScheduler;
 using FreeTorrserverBot.BotTelegram;
 using AdTorrBot.BotTelegram.Db.Model;
+using AdTorrBot.ServerManagement;
 
 
 namespace FreeTorrserverBot
@@ -22,7 +23,7 @@ namespace FreeTorrserverBot
         private async Task ScheduleJobAsync()
         {
            var setBot = await SqlMethods.GetSettingBot(BotTelegram.TelegramBot.AdminChat);
-            var timeZone = Torrserver.Torrserver.GetLocalServerTimeTimeZone();
+            var timeZone = ServerInfo.GetLocalServerTimeTimeZone();
             double hoursWithTimeZone = timeZone-setBot.TimeZoneOffset;
             int hours = await GetHoursAsync();
             int minutes = await GetMinutesAsync();

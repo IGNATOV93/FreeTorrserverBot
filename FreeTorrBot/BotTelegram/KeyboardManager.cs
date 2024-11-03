@@ -142,19 +142,22 @@ namespace FreeTorrBot.BotTelegram
             });
             return inlineSettinsBotMenu;
         }
-        public static InlineKeyboardMarkup GetSetServerBbrMain() 
-            {
-            var onSetServerBbr = InlineKeyboardButton.WithCallbackData("Вкл", "1set_server_bbr");
-            var offSetServerBbr = InlineKeyboardButton.WithCallbackData("Выкл", "0set_server_bbr");
+        public static InlineKeyboardMarkup GetSetServerBbrMain(bool isActiv)
+        {
+            var setServerBbrButton = isActiv
+                ? InlineKeyboardButton.WithCallbackData("Выкл", "0set_server_bbr")
+                : InlineKeyboardButton.WithCallbackData("Вкл", "1set_server_bbr");
+
             var backSetServerBbr = InlineKeyboardButton.WithCallbackData("↩", "set_server_bbr");
             var inlineSetServerMain = new InlineKeyboardMarkup(new[]
-            {
-                new[] {onSetServerBbr,offSetServerBbr}
-                ,new[] {backSetServerBbr,buttonHideButtots}
-
+                    {
+                new[] { setServerBbrButton },
+                new[] { backSetServerBbr, buttonHideButtots }
             });
+
             return inlineSetServerMain;
         }
+
         public static InlineKeyboardMarkup GetSetServerMain()
         {
             var setServerBbr = InlineKeyboardButton.WithCallbackData("Bbr","set_server_bbr");

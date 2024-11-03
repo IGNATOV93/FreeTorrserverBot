@@ -31,24 +31,8 @@ namespace FreeTorrserverBot.Torrserver
             return;
         }
        
-        public static double GetLocalServerTimeTimeZone()
-        {
-            // Получаем текущее время на сервере
-            DateTime localTime = DateTime.Now;
 
-            // Получаем информацию о текущем часовом поясе
-            TimeZoneInfo localZone = TimeZoneInfo.Local;
 
-            // Получаем смещение от UTC
-            TimeSpan offset = localZone.GetUtcOffset(localTime);
-
-            // Возвращаем смещение в виде double
-            return offset.Hours + offset.Minutes / 60.0; // Приводим минуты к часам
-        }
-        public static string GetLocalServerTime()
-        {
-            return DateTime.Now.ToString("HH:mm"); // Возвращает текущее локальное время на сервере
-        }
         public static async Task ChangeAccountTorrserver(string login,string password,bool setLogin,bool setPassword)
         {
             var newParolRandom = new Random();
@@ -79,6 +63,13 @@ namespace FreeTorrserverBot.Torrserver
 
             await RebootingTorrserver();
         }
+        public static async Task RebootingTorrserver()
+        {
+            var nameProcesTorrserver = BotTelegram.TelegramBot.settingsJson.FilePathTor.Substring(BotTelegram.TelegramBot.settingsJson.FilePathTor.LastIndexOf('/') + 1);
+            Process.Start("killall", nameProcesTorrserver);
+            Process.Start(@$"{FilePathTor}");
+            return;
+        }
         public static string TakeAccountTorrserver()
         {
             try
@@ -103,12 +94,6 @@ namespace FreeTorrserverBot.Torrserver
             }
             return "";
         }
-        public static async Task RebootingTorrserver()
-        {
-            var nameProcesTorrserver = BotTelegram.TelegramBot.settingsJson.FilePathTor.Substring(BotTelegram.TelegramBot.settingsJson.FilePathTor.LastIndexOf('/') + 1);
-            Process.Start("killall",nameProcesTorrserver);
-            Process.Start(@$"{FilePathTor}") ;
-            return;
-        }
+
     }
 }

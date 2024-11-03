@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using FreeTorrserverBot.Torrserver;
+using AdTorrBot.ServerManagement;
 
 namespace AdTorrBot.BotTelegram.Db.Model
 {
@@ -25,7 +26,7 @@ namespace AdTorrBot.BotTelegram.Db.Model
         // Переопределение метода ToString()
         public override  string ToString()
         {
-            var localTime =  Torrserver.GetLocalServerTime();
+            var localTime =  ServerInfo.GetLocalServerTime();
 
             // Получаем локальное смещение времени и часовой пояс пользователя
            // var localTimeZone = Torrserver.GetLocalServerTimeTimeZone();
