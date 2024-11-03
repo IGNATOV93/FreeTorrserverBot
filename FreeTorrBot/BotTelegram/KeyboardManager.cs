@@ -228,7 +228,7 @@ namespace FreeTorrBot.BotTelegram
             return new ReplyKeyboardMarkup(new[]
             {
         new[] { butGuardMenu,butBackupMenu},
-        new[] { butSettinsTorrserver }
+        new[] { butRestartingMenu,butSettinsTorrserver }
             })
             {
                 ResizeKeyboard = true // Это сделает клавиатуру более компактной
