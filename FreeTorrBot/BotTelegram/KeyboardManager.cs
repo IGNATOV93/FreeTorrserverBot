@@ -148,11 +148,11 @@ namespace FreeTorrBot.BotTelegram
                 ? InlineKeyboardButton.WithCallbackData("Выкл", "0set_server_bbr")
                 : InlineKeyboardButton.WithCallbackData("Вкл", "1set_server_bbr");
 
-            var backSetServerBbr = InlineKeyboardButton.WithCallbackData("↩", "set_server_bbr");
+            var backSetServer = InlineKeyboardButton.WithCallbackData("↩", "set_server");
             var inlineSetServerMain = new InlineKeyboardMarkup(new[]
                     {
                 new[] { setServerBbrButton },
-                new[] { backSetServerBbr, buttonHideButtots }
+                new[] { backSetServer, buttonHideButtots }
             });
 
             return inlineSetServerMain;
@@ -164,7 +164,8 @@ namespace FreeTorrBot.BotTelegram
             var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
             var inlineSetServerMain = new InlineKeyboardMarkup(new[]
             {
-                new[] {setServerBbr,buttonBackSettinsMain}
+                new[] {setServerBbr}
+                ,new[] {buttonBackSettinsMain, buttonHideButtots}
 
             } );
             return inlineSetServerMain;
