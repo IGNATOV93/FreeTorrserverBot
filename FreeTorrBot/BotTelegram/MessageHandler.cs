@@ -147,7 +147,7 @@ namespace FreeTorrBot.BotTelegram
             if (text == "⚙ Настройки")
             {
                 await DeleteMessage(idMessage);
-                await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки Torrserver");
+                await botClient.SendTextMessageAsync(AdminChat, "\u2699 Настройки",replyMarkup: KeyboardManager.GetSettingsMain());
                 return;
             }
             if (text == "🔐 Доступ")
@@ -160,7 +160,12 @@ namespace FreeTorrBot.BotTelegram
                     , replyMarkup: KeyboardManager.GetControlTorrserver());
                 return;
             }
-
+            if(text== "🔄 Перезагрузки")
+            {
+                await DeleteMessage(idMessage);
+                await botClient.SendTextMessageAsync(AdminChat, "🔄 Перезагрузки", replyMarkup: KeyboardManager.GetRestartingMain());
+                return;
+            }
             return;
         }
 
@@ -178,6 +183,63 @@ namespace FreeTorrBot.BotTelegram
                     await DeleteMessage(idMessage);
                     return;
                 }
+                if(callbackData== "restart_torrserver")
+                {
+                   await Torrserver.RebootingTorrserver();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Torrserver перезагружен \u2705", replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
+                if (callbackData == "restart_server")
+                {
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Server будет перезагружен \u2705", replyMarkup: KeyboardManager.buttonHideButtots);
+                   
+                    //////Сделать вызов метода по перезагрузке сервера.
+                    return;
+                }
+                if(callbackData== "back_settings_main")
+                {
+                   
+                    await botClient.EditMessageTextAsync(AdminChat,idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
+                    return;
+                }
+                if(callbackData == "torr_settings")
+                {
+                    Console.WriteLine("Настройки Torrserver");
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "⚙️ Настройки Torrserver ."
+                        ,replyMarkup:KeyboardManager.GetTorrSettingsMain()
+                        );
+                    return;
+                }
+                if(callbackData== "torr_config")
+                {
+                    Console.WriteLine("Конфиг Torrserver");
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "🛠️ Конфиг Torrserver ."
+                        ,replyMarkup: KeyboardManager.GetTorrConfigMain()
+                        );
+                    return;
+                }
+                if (callbackData.Contains("set_server_bbr"))
+                { 
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Состояние bbr на сервере: "
+                        , replyMarkup: KeyboardManager.GetSetServerBbrMain());
+                    return;
+                }
+                if (callbackData == "set_server")
+                    {
+                    Console.WriteLine("Настройки сервера");
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "💻 Настройки сервера"
+                        ,replyMarkup:KeyboardManager.GetSetServerMain());
+                    return;
+                }
+                if(callbackData == "set_bot")
+                {
+                    Console.WriteLine("Настройки бота");
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "🤖 Настройки бота"
+                        ,replyMarkup:KeyboardManager.GetSettingsBot()
+                        );
+                    return;
+                }
+                
                 if (callbackData.Contains("time_zone"))
                 {
                     var timezoneChangeIndicator = callbackData.Split("time_zone")[0];
@@ -371,6 +433,7 @@ namespace FreeTorrBot.BotTelegram
              ,"💾 Бекапы"
            //  ,"\u2699 Настройки бота"
              ,"⚙ Настройки"
+             ,"🔄 Перезагрузки"
             };
             return commands.Contains(command);
 
@@ -407,6 +470,12 @@ namespace FreeTorrBot.BotTelegram
             ,"torr_config"
             ,"set_server"
             ,"set_bot"
+
+            ,"back_settings_main"
+            ,"set_server_bbr"
+
+            ,"restart_torrserver"
+            ,"restart_server"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))
@@ -426,7 +495,14 @@ namespace FreeTorrBot.BotTelegram
                     return true;
                 }
             }
-
+            if (command.Contains("set_server_bbr"))
+            {
+                string valuePart = command.Split(command)[0].Trim();
+                if(int.TryParse(valuePart, out _))
+                    {
+                     return true ;
+                    }
+            }
             // Если команда не найдена
             return false;
         }

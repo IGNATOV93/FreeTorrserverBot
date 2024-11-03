@@ -49,15 +49,7 @@ namespace FreeTorrBot.BotTelegram
             });
             return inlineBackupMenu;
         }
-        public static InlineKeyboardMarkup GetBackControlTorrserver()
-        {
-            var backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 ", "сontrolTorrserver");
-            var inlineBackControlTorrserver = new InlineKeyboardMarkup(new[]
-            {
-                new[]{ backGetControlTorrserver,buttonHideButtots}
-            });
-            return inlineBackControlTorrserver;
-        }
+     
         public static InlineKeyboardMarkup GetSetTimeAutoChangePassword()
         {
             var butHourBack = InlineKeyboardButton.WithCallbackData("- 1 час", "-60setAutoPassMinutes");
@@ -131,23 +123,80 @@ namespace FreeTorrBot.BotTelegram
             
             var buttonLeftTime = InlineKeyboardButton.WithCallbackData("\u2B05", "-time_zone");
             var buttonRightTime = InlineKeyboardButton.WithCallbackData("\u27A1", "+time_zone");
+            var buttonBackSettingsBot = InlineKeyboardButton.WithCallbackData("\u21A9", "set_bot");
             var inlineTimeZoneMain = new InlineKeyboardMarkup(new[]
             {
                 new[]{buttonLeftTime, buttonRightTime},
-                new[] {buttonHideButtots}
+                new[] {buttonBackSettingsBot,buttonHideButtots}
             });
             return inlineTimeZoneMain;
         }
         public static InlineKeyboardMarkup GetSettingsBot()
         {
             var buttonTimeZone = InlineKeyboardButton.WithCallbackData("\uD83C\uDF0F Часовой пояс","time_zone");
+            var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
             var inlineSettinsBotMenu = new InlineKeyboardMarkup(new[]
             {
-                new[]{buttonTimeZone, buttonHideButtots }
+                new[]{buttonTimeZone}
+                ,new[]{buttonBackSettinsMain,buttonHideButtots}
             });
             return inlineSettinsBotMenu;
         }
+        public static InlineKeyboardMarkup GetSetServerBbrMain() 
+            {
+            var onSetServerBbr = InlineKeyboardButton.WithCallbackData("Вкл", "1set_server_bbr");
+            var offSetServerBbr = InlineKeyboardButton.WithCallbackData("Выкл", "0set_server_bbr");
+            var backSetServerBbr = InlineKeyboardButton.WithCallbackData("↩", "set_server_bbr");
+            var inlineSetServerMain = new InlineKeyboardMarkup(new[]
+            {
+                new[] {onSetServerBbr,offSetServerBbr}
+                ,new[] {backSetServerBbr,buttonHideButtots}
 
+            });
+            return inlineSetServerMain;
+        }
+        public static InlineKeyboardMarkup GetSetServerMain()
+        {
+            var setServerBbr = InlineKeyboardButton.WithCallbackData("Bbr","set_server_bbr");
+            var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
+            var inlineSetServerMain = new InlineKeyboardMarkup(new[]
+            {
+                new[] {setServerBbr,buttonBackSettinsMain}
+
+            } );
+            return inlineSetServerMain;
+        }
+        public static InlineKeyboardMarkup GetTorrSettingsMain() 
+            {
+            var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
+            var inlineTorrSettingsMain = new InlineKeyboardMarkup(new[]
+          {
+                new[]{buttonBackSettinsMain, buttonHideButtots }
+            });
+            return inlineTorrSettingsMain;
+        }
+        public static InlineKeyboardMarkup GetTorrConfigMain()
+        {
+            var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
+            var inlineTorrConfigMain = new InlineKeyboardMarkup(new[]
+          {
+                new[]{buttonBackSettinsMain, buttonHideButtots }
+            });
+            return inlineTorrConfigMain;
+        }
+        public static InlineKeyboardMarkup GetRestartingMain()
+        {
+            var restartTorrServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Torr", "restart_torrserver");
+            var restartServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Сервера", "restart_server");
+            var inlineRestartingMain = new InlineKeyboardMarkup(new[]
+            {
+                new[]{restartServer, restartTorrServer }
+                ,new[]{buttonHideButtots}
+                
+            });
+            return inlineRestartingMain;
+
+        }
         public static InlineKeyboardMarkup GetSettingsMain()
         {
 
@@ -156,12 +205,12 @@ namespace FreeTorrBot.BotTelegram
             var setServer = InlineKeyboardButton.WithCallbackData("💻 Настройки сервера", "set_server");
             var setBot = InlineKeyboardButton.WithCallbackData("🤖 Настройки бота", "set_bot");
 
+
             var inlineSettingsMain = new InlineKeyboardMarkup(new[]
             {
-            new[] {setTorrSettings },
-            new[] {setTorrConfig},
-            new[] {setServer},
-            new[] {setBot}
+            new[] {setTorrSettings,setTorrConfig},
+            new[] {setServer,setBot}
+            ,new[] {buttonHideButtots}
             });
             return inlineSettingsMain;
 
@@ -171,6 +220,7 @@ namespace FreeTorrBot.BotTelegram
         {
             var butGuardMenu = new KeyboardButton("\uD83D\uDD10 Доступ");
             var butBackupMenu = new KeyboardButton("\uD83D\uDCBE Бекапы");
+            var butRestartingMenu = new KeyboardButton("🔄 Перезагрузки");
             var butSettinsTorrserver = new KeyboardButton("⚙ Настройки");
            // var butSettinsBot = new KeyboardButton("\u2699 Настройки бота");
             
