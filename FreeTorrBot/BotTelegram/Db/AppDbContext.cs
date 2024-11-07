@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using AdTorrBot.BotTelegram.Db.Model;
+using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 namespace AdTorrBot.BotTelegram.Db
 {
     public class AppDbContext : DbContext
@@ -14,6 +15,7 @@ namespace AdTorrBot.BotTelegram.Db
         public virtual DbSet<SettingsTorrserverBot> SettingsTorrserverBot { get; set; }
         public virtual DbSet<User>User { get; set; }
         public virtual DbSet<TextInputFlag> TextInputFlag { get; set; }
+        public virtual DbSet<BitTorrConfig> BitTorrConfig { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Подключение к SQLite базе данных

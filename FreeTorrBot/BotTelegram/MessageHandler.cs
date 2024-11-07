@@ -184,31 +184,40 @@ namespace FreeTorrBot.BotTelegram
                     await DeleteMessage(idMessage);
                     return;
                 }
-                if(callbackData== "restart_torrserver")
+                if (callbackData == "restart_torrserver")
                 {
-                   await Torrserver.RebootingTorrserver();
+                    await Torrserver.RebootingTorrserver();
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "Torrserver перезагружен \u2705", replyMarkup: KeyboardManager.buttonHideButtots);
                     return;
                 }
                 if (callbackData == "restart_server")
                 {
-                   
+
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "Server будет перезагружен \u2705", replyMarkup: KeyboardManager.buttonHideButtots);
                     ServerControl.RebootServer();
                     //////Сделать вызов метода по перезагрузке сервера.
                     return;
                 }
-                if(callbackData== "back_settings_main")
+                if (callbackData == "back_settings_main")
                 {
-                   
-                    await botClient.EditMessageTextAsync(AdminChat,idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
+
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
                     return;
                 }
-                if(callbackData == "torr_settings")
+                if (callbackData.Contains("torrConf"))
                 {
+                    //ОБРАБОТКА кнопок с настройками BitTorrConfig
+
+
+                    return;
+                }
+                if(callbackData.Contains("torrSettings"))
+                {
+                    var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrSettings")[0]);
+
                     Console.WriteLine("Настройки Torrserver");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "⚙️ Настройки Torrserver ."
-                        ,replyMarkup:KeyboardManager.GetTorrSettingsMain()
+                        ,replyMarkup:await KeyboardManager.GetBitTorrConfigMain(AdminChat,startIndexKeySettings)
                         );
                     return;
                 }
@@ -481,7 +490,7 @@ namespace FreeTorrBot.BotTelegram
             ,"+time_zone"
             ,"time_zone"
             //Настройки
-            ,"torr_settings"
+          //  ,"torr_settings"
             ,"torr_config"
             ,"set_server"
             ,"set_bot"
@@ -510,7 +519,14 @@ namespace FreeTorrBot.BotTelegram
                     return true;
                 }
             }
-            if (command.Contains("set_server_bbr"))
+            if (command.Contains("torrSettings"))
+            {
+                return  true ;
+            }
+            if (command.Contains("torrConf"))
+                {
+                return true;
+                }
             {
                 string valuePart = command.Split(command)[0].Trim();
                 if(int.TryParse(valuePart, out _))

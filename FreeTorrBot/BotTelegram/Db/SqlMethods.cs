@@ -1,4 +1,5 @@
 ﻿using AdTorrBot.BotTelegram.Db.Model;
+using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 using FreeTorrserverBot.BotTelegram;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
@@ -14,6 +15,25 @@ namespace AdTorrBot.BotTelegram.Db
    public abstract class SqlMethods
     {
      
+        public static async Task<BitTorrConfig> GetSettingsTorrProfile(string idChat)
+        {
+
+
+            await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var setBitTorr = db.BitTorrConfig.FirstOrDefault(x=>x.IdChat == idChat);
+                return setBitTorr;
+            });
+         var newProfile= new BitTorrConfig() { 
+         IdChat = idChat
+         };
+            await SqlMethods.WithDbContextAsync(async db => {
+                db.BitTorrConfig.Add(newProfile);
+                await db.SaveChangesAsync();
+                return newProfile;
+            });
+            return newProfile;
+        }
         public static async Task SetTimeAutoChangePasswordTorrserver(int minutes)
         {
             await SqlMethods.WithDbContextAsync(async db =>

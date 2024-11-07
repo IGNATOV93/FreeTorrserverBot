@@ -1,8 +1,12 @@
-﻿using System;
+﻿using AdTorrBot.BotTelegram.Db;
+using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace FreeTorrBot.BotTelegram
@@ -19,6 +23,55 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
+
+        public static async Task<InlineKeyboardMarkup> GetBitTorrConfigMain(string idChat, int startIndex)
+        {
+            var config = await SqlMethods.GetSettingsTorrProfile(idChat);
+            int totalItems = typeof(BitTorrConfig).GetProperties().Length-3;
+
+            var properties = typeof(BitTorrConfig).GetProperties()
+                                           .Skip(startIndex+3)
+                                           .Take(6) // Отображаем 6 свойств, начиная с переданного индекса
+                                           .Select(prop => InlineKeyboardButton.WithCallbackData($"{config.GetDescription(prop.Name)}", $"Torr{prop.Name}"))
+                                           .ToArray();
+
+            var keyboardButtons = new List<InlineKeyboardButton[]>();
+
+            // Группируем кнопки по 2 в строке
+            for (int i = 0; i < properties.Length; i += 2)
+            {
+                keyboardButtons.Add(properties.Skip(i).Take(2).ToArray());
+            }
+
+            // Добавляем кнопки "Назад" и "Вперед" для навигации, если это уместно
+            var navigationButtons = new List<InlineKeyboardButton>();
+
+            if (startIndex > 0)
+            {
+                // Добавляем кнопку "Назад", если не находимся в начале списка
+                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("⬅️ Назад", $"{startIndex - 6}torrSettings"));
+            }
+
+            if (startIndex + 6 < totalItems)
+            {
+                // Добавляем кнопку "Вперед", если не достигнут конец списка
+                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("Вперед ➡️", $"{startIndex + 6}torrSettings"));
+            }
+
+            // Добавляем кнопки навигации в клавиатуру, если они есть
+            if (navigationButtons.Any())
+            {
+                keyboardButtons.Add(navigationButtons.ToArray());
+            }
+
+            // Добавляем кнопки "Назад" и "Скрыть" в последний ряд
+            var buttonBackSettingsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
+            var buttonSetBitTorrConfig = InlineKeyboardButton.WithCallbackData("✅", "setTorrSetConfig");
+            keyboardButtons.Add(new[] { buttonBackSettingsMain, buttonSetBitTorrConfig, buttonHideButtots });
+
+            return new InlineKeyboardMarkup(keyboardButtons);
+        }
+
         public static InlineKeyboardMarkup ExitTextPassword()
         {
             var buttonExitTextPassword = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода пароля ", "exitTextPassword");
@@ -170,15 +223,7 @@ namespace FreeTorrBot.BotTelegram
             } );
             return inlineSetServerMain;
         }
-        public static InlineKeyboardMarkup GetTorrSettingsMain() 
-            {
-            var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
-            var inlineTorrSettingsMain = new InlineKeyboardMarkup(new[]
-          {
-                new[]{buttonBackSettinsMain, buttonHideButtots }
-            });
-            return inlineTorrSettingsMain;
-        }
+
         public static InlineKeyboardMarkup GetTorrConfigMain()
         {
             var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
@@ -204,7 +249,7 @@ namespace FreeTorrBot.BotTelegram
         public static InlineKeyboardMarkup GetSettingsMain()
         {
 
-            var setTorrSettings = InlineKeyboardButton.WithCallbackData("⚙️ Настройки Torrsever", "torr_settings");
+            var setTorrSettings = InlineKeyboardButton.WithCallbackData("⚙️ Настройки Torrsever", "0torrSettings");
             var setTorrConfig = InlineKeyboardButton.WithCallbackData("🛠️ Конфиг Torrsever", "torr_config");
             var setServer = InlineKeyboardButton.WithCallbackData("💻 Настройки сервера", "set_server");
             var setBot = InlineKeyboardButton.WithCallbackData("🤖 Настройки бота", "set_bot");
