@@ -23,6 +23,17 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Размер кеша")]
         public string CacheSize { get; set; } = "67108864";
 
+        [Description("Чтение вперед")]
+        public string ReaderReadAHead { get; set; } = "95";
+
+        [Description("Предв.  📥 кеша")]
+        public string PreloadCache { get; set; } = "50";
+
+        [Description("Использ. диска")]
+        public string UseDisk { get; set; } = "false";
+        [Description("Вкл. \uD83D\uDD0E Rutor")]
+        public string EnableRutorSearch { get; set; } = "false";
+
         [Description("Лимит соединений")]
         public string ConnectionsLimit { get; set; } = "25";
 
@@ -55,10 +66,6 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         [Description("Включение IPv6")]
         public string EnableIPv6 { get; set; } = "false";
-
-        [Description("Вкл. \uD83D\uDD0E Rutor")]
-        public string EnableRutorSearch { get; set; } = "false";
-
         [Description("Принуд. шифрование")]
         public string ForceEncrypt { get; set; } = "false";
 
@@ -67,12 +74,6 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         [Description("Порт просл. пиров")]
         public string PeersListenPort { get; set; } = "0";
-
-        [Description("Предв.  📥 кеша")]
-        public string PreloadCache { get; set; } = "50";
-
-        [Description("Чтение вперед")]
-        public string ReaderReadAHead { get; set; } = "95";
 
         [Description("\uD83D\uDDD1 Кеша при сбросе")]
         public string RemoveCacheOnDrop { get; set; } = "false";
@@ -101,8 +102,7 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Лимит скорости \uD83D\uDCE4")]
         public string UploadRateLimit { get; set; } = "0";
 
-        [Description("Использ. диска")]
-        public string UseDisk { get; set; } = "false";
+
 
         public string GetDescription(string propertyName)
         {
