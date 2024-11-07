@@ -23,24 +23,35 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
-
-        public static async Task<InlineKeyboardMarkup> GetBitTorrConfigMain(string idChat, int startIndex)
+        public static InlineKeyboardMarkup GetShoWTorrConfig()
         {
-            var config = await SqlMethods.GetSettingsTorrProfile(idChat);
+            var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
+               {
+                new[]{InlineKeyboardButton.WithCallbackData("↩", "0torrSettings")
+                      ,InlineKeyboardButton.WithCallbackData("\uD83D\uDD04", "showTorrsetInfo")
+                      ,InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")
+                }
+            });
+            return inlineKeyboarDeleteMessageOnluOnebutton;
+
+        }
+        public static async Task<InlineKeyboardMarkup> GetBitTorrConfigMain(string idChat,BitTorrConfig config, int startIndex)
+        {
+            
             int totalItems = typeof(BitTorrConfig).GetProperties().Length-3;
 
             var properties = typeof(BitTorrConfig).GetProperties()
                                            .Skip(startIndex+3)
-                                           .Take(6) // Отображаем 6 свойств, начиная с переданного индекса
+                                           .Take(5) // Отображаем 5 свойств, начиная с переданного индекса
                                            .Select(prop => InlineKeyboardButton.WithCallbackData($"{config.GetDescription(prop.Name)}", $"Torr{prop.Name}"))
                                            .ToArray();
 
             var keyboardButtons = new List<InlineKeyboardButton[]>();
 
             // Группируем кнопки по 2 в строке
-            for (int i = 0; i < properties.Length; i += 2)
+            for (int i = 0; i < properties.Length; i += 1)
             {
-                keyboardButtons.Add(properties.Skip(i).Take(2).ToArray());
+                keyboardButtons.Add(properties.Skip(i).Take(1).ToArray());
             }
 
             // Добавляем кнопки "Назад" и "Вперед" для навигации, если это уместно
@@ -49,13 +60,13 @@ namespace FreeTorrBot.BotTelegram
             if (startIndex > 0)
             {
                 // Добавляем кнопку "Назад", если не находимся в начале списка
-                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("⬅️ Назад", $"{startIndex - 6}torrSettings"));
+                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("⬅️ Назад", $"{startIndex - 5}torrSettings"));
             }
-
+            navigationButtons.Add(InlineKeyboardButton.WithCallbackData("\u2139", "showTorrsetInfo"));
             if (startIndex + 6 < totalItems)
             {
                 // Добавляем кнопку "Вперед", если не достигнут конец списка
-                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("Вперед ➡️", $"{startIndex + 6}torrSettings"));
+                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("Вперед ➡️", $"{startIndex + 5}torrSettings"));
             }
 
             // Добавляем кнопки навигации в клавиатуру, если они есть

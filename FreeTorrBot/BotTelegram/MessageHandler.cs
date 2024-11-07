@@ -211,13 +211,20 @@ namespace FreeTorrBot.BotTelegram
 
                     return;
                 }
+                if(callbackData == "showTorrsetInfo")
+                {
+                    var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
+                    var resultInfoTorrSettings = config.ToString();
+                    await botClient.EditMessageTextAsync(AdminChat,idMessage, resultInfoTorrSettings,replyMarkup:KeyboardManager.GetShoWTorrConfig());
+                    return;
+                }
                 if(callbackData.Contains("torrSettings"))
                 {
                     var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrSettings")[0]);
-
+                    var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
                     Console.WriteLine("Настройки Torrserver");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "⚙️ Настройки Torrserver ."
-                        ,replyMarkup:await KeyboardManager.GetBitTorrConfigMain(AdminChat,startIndexKeySettings)
+                        ,replyMarkup:await KeyboardManager.GetBitTorrConfigMain(AdminChat,config,startIndexKeySettings)
                         );
                     return;
                 }
@@ -500,6 +507,8 @@ namespace FreeTorrBot.BotTelegram
 
             ,"restart_torrserver"
             ,"restart_server"
+
+            ,"showTorrsetInfo"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))
