@@ -211,6 +211,20 @@ namespace FreeTorrBot.BotTelegram
 
                     return;
                 }
+                if(callbackData == "setTorrSetConfig")
+                {
+                    await Torrserver.RebootingTorrserver();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Настройки Torrserver обновленны! \u2705\r\n" +
+                        "Torrserver перезагружен .", replyMarkup: KeyboardManager.GetShoWTorrConfig());
+                    return;
+                }
+                if(callbackData == "resetTorrSetConfig")
+                {
+                    //ВЫЗОВ МЕТОДА ДЛЯ СБРОСА НАСТРОЕК TORRSERVER .
+                    await Torrserver.ResetConfig();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Настройки Torrserver сброшены по умолчанию ! \u2705",replyMarkup: KeyboardManager.GetShoWTorrConfig());
+                    return;
+                }    
                 if(callbackData == "showTorrsetInfo")
                 {
                     var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
@@ -509,6 +523,8 @@ namespace FreeTorrBot.BotTelegram
             ,"restart_server"
 
             ,"showTorrsetInfo"
+            ,"resetTorrSetConfig"
+            ,"setTorrSetConfig"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

@@ -6,14 +6,22 @@ using Telegram.Bot.Types.ReplyMarkups;
 using FreeTorrBot.BotTelegram.BotSettings.Model;
 using FreeTorrBot.BotTelegram.BotSettings;
 using AdTorrBot.BotTelegram.Db;
+using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
+using System.Text.Json;
+using System;
 
 
 namespace FreeTorrserverBot.Torrserver
 {
     public abstract class Torrserver
+
     {
-        static string filePathTorrserverBd = @$"{TelegramBot.settingsJson.FilePathTorrserverBd}";
-        static string FilePathTor = @$"{TelegramBot.settingsJson.FilePathTor}";
+        static string  nameProcesTorrserver = "TorrServer-linux-amd64";
+        static string filePathTorrMain = TelegramBot.settingsJson.FilePathTorrserver;
+        static string filePathTorrserverDb = @$"{filePathTorrMain}accs.db";
+        static string filePathTorr = @$"{filePathTorrMain}{nameProcesTorrserver}";
+        static string filePathSettingsJson = @$"{filePathTorrMain}settings.json";
+
         public static async Task AutoChangeAccountTorrserver()
         {
             var settings = await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
@@ -30,9 +38,60 @@ namespace FreeTorrserverBot.Torrserver
            
             return;
         }
-       
 
 
+        public static async Task ResetConfig()
+        {
+          await  WriteConfig(new BitTorrConfig() { IdChat=TelegramBot.AdminChat});
+            return;
+        }
+        public static async Task WriteConfig(BitTorrConfig config)
+        {
+            try
+            {
+                // Обернуть объект config в объект-обертку для соблюдения JSON структуры
+                var wrapper = new BitTorrConfigWrapper(config);
+
+                // Сериализация объекта в JSON
+                var jsonString = JsonSerializer.Serialize(wrapper, new JsonSerializerOptions { WriteIndented = true });
+
+                // Запись JSON в файл
+                File.WriteAllText(filePathSettingsJson, jsonString);
+                await SqlMethods.SetSettingsTorrProfile(BotTelegram.TelegramBot.AdminChat,config);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при записи JSON: {ex.Message}");
+                return;
+            }
+            return ;
+        }
+        public static async Task <BitTorrConfig> ReadConfig()
+        {
+            try
+            {
+                var jsonString = File.ReadAllText(filePathSettingsJson);
+                Console.WriteLine("Путь к settings.json: "+filePathSettingsJson);
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true // Игнорирование регистра
+                };
+
+                var config = JsonSerializer.Deserialize<BitTorrConfigWrapper>(jsonString,options)?.BitTorr;
+                if (config == null)
+                {
+                   throw  new Exception ("Ошибка не удалось загрузить конфигурацию из JSON");
+                }
+                await SqlMethods.SetSettingsTorrProfile(jsonString, config);
+                return config;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
         public static async Task ChangeAccountTorrserver(string login,string password,bool setLogin,bool setPassword)
         {
             var newParolRandom = new Random();
@@ -56,7 +115,7 @@ namespace FreeTorrserverBot.Torrserver
             await SqlMethods.SetLoginPasswordSettingsTorrserverBot(TelegramBot.AdminChat, newLogin, newPassword);
             string result = $"{{\"{newLogin}\":\"{newPassword}\"}}";
 
-            using (StreamWriter writer = new StreamWriter(filePathTorrserverBd))
+            using (StreamWriter writer = new StreamWriter(filePathTorrserverDb))
             {
                 writer.WriteLine($"{result}");
             }
@@ -65,16 +124,37 @@ namespace FreeTorrserverBot.Torrserver
         }
         public static async Task RebootingTorrserver()
         {
-            var nameProcesTorrserver = BotTelegram.TelegramBot.settingsJson.FilePathTor.Substring(BotTelegram.TelegramBot.settingsJson.FilePathTor.LastIndexOf('/') + 1);
-            Process.Start("killall", nameProcesTorrserver);
-            Process.Start(@$"{FilePathTor}");
-            return;
+            // Завершаем процесс
+            var killProcess = new ProcessStartInfo
+            {
+                FileName = "killall",
+                Arguments = nameProcesTorrserver,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (var process = Process.Start(killProcess))
+            {
+                await process.WaitForExitAsync(); // Ожидаем завершения процесса killall
+            }
+
+            // Запускаем процесс заново
+            var startProcess = new ProcessStartInfo
+            {
+                FileName =$"{filePathTorrMain}{nameProcesTorrserver}", // Укажите полный путь к файлу, если он не в PATH
+                UseShellExecute = true,
+            };
+
+            Process.Start(startProcess);
         }
+
         public static string TakeAccountTorrserver()
         {
             try
             {
-                using (StreamReader reader = new StreamReader(filePathTorrserverBd))
+                using (StreamReader reader = new StreamReader(filePathTorrserverDb))
                 {
                     string line;
                     string result = "";
@@ -94,6 +174,20 @@ namespace FreeTorrserverBot.Torrserver
             }
             return "";
         }
+        public class BitTorrConfigWrapper
+        {
+            public BitTorrConfig BitTorr { get; set; }
+
+            // Убедитесь, что конструктор без параметров
+            public BitTorrConfigWrapper() { }
+
+            // Конструктор с параметром для удобства
+            public BitTorrConfigWrapper(BitTorrConfig config)
+            {
+                BitTorr = config;  // Просто сохраняем ссылку на объект
+            }
+        }
 
     }
+
 }

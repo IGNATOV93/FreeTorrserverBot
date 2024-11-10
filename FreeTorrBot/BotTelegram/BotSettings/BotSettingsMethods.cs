@@ -38,11 +38,9 @@ namespace FreeTorrBot.BotTelegram.BotSettings
                     settings.AdminChatId = newValue;
                     break;
                 case SettingsField.FilePathTorrserverBd:
-                    settings.FilePathTorrserverBd = newValue;
+                    settings.FilePathTorrserver = newValue;
                     break;
-                case SettingsField.FilePathTor:
-                    settings.FilePathTor = newValue;
-                    break;
+               
             }
 
             SaveSettings(settings);

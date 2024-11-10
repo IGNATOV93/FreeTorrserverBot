@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="BotTelegram\Keyboard\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -77,8 +77,9 @@ namespace FreeTorrBot.BotTelegram
 
             // Добавляем кнопки "Назад" и "Скрыть" в последний ряд
             var buttonBackSettingsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
+            var buttonResetSetBitTorrConfig = InlineKeyboardButton.WithCallbackData("\u267B", "resetTorrSetConfig");
             var buttonSetBitTorrConfig = InlineKeyboardButton.WithCallbackData("✅", "setTorrSetConfig");
-            keyboardButtons.Add(new[] { buttonBackSettingsMain, buttonSetBitTorrConfig, buttonHideButtots });
+            keyboardButtons.Add(new[] { buttonBackSettingsMain, buttonResetSetBitTorrConfig, buttonSetBitTorrConfig, buttonHideButtots });
 
             return new InlineKeyboardMarkup(keyboardButtons);
         }

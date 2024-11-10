@@ -12,8 +12,7 @@ namespace FreeTorrBot.BotTelegram.BotSettings.Model
     {
         public string? YourBotTelegramToken { get; set; }
         public string? AdminChatId { get; set; }
-        public string? FilePathTorrserverBd { get; set; }
-        public string? FilePathTor { get; set; }
+        public string? FilePathTorrserver { get; set; }
         // Метод для проверки корректности настроек
         public void Validate()
         {
@@ -23,11 +22,8 @@ namespace FreeTorrBot.BotTelegram.BotSettings.Model
             if (string.IsNullOrWhiteSpace(AdminChatId))
                 throw new InvalidOperationException("Необходимо указать ID чата администратора.");
 
-            if (string.IsNullOrWhiteSpace(FilePathTorrserverBd))
-                throw new InvalidOperationException("Необходимо указать путь к accs.db .");
-
-            if (string.IsNullOrWhiteSpace(FilePathTor))
-                throw new InvalidOperationException("Необходимо указать путь к исполняемому файлу Torrserver.");
+            if (string.IsNullOrWhiteSpace(FilePathTorrserver))
+                throw new InvalidOperationException("Необходимо указать путь к папке Torrserver");
         }
     }
     

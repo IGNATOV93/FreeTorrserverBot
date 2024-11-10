@@ -1,6 +1,7 @@
 ﻿using AdTorrBot.BotTelegram.Db.Model;
 using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 using FreeTorrserverBot.BotTelegram;
+using FreeTorrserverBot.Torrserver;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System;
@@ -14,26 +15,91 @@ namespace AdTorrBot.BotTelegram.Db
 {
    public abstract class SqlMethods
     {
-     
+
+        public static async Task SetSettingsTorrProfile(string idChat, BitTorrConfig config)
+        {
+            try
+            {
+                // Используем метод для работы с базой данных
+                await SqlMethods.WithDbContextAsync(async db =>
+                {
+                    // Ищем профиль по idChat
+                    var existingProfile = db.BitTorrConfig.FirstOrDefault(x => x.IdChat == idChat);
+
+                    if (existingProfile != null)
+                    {
+                        // Используем SetValues, но исключаем Id
+                        var currentValues = db.Entry(existingProfile).CurrentValues;
+                        var configValues = db.Entry(config).CurrentValues;
+
+                        // Копируем все значения, кроме Id
+                        foreach (var property in currentValues.Properties)
+                        {
+                            if (property.Name != nameof(existingProfile.Id))
+                            {
+                                currentValues[property.Name] = configValues[property.Name];
+                            }
+                        }
+
+                        await db.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        // Если профиль не найден, создаем новый
+                        config.IdChat = idChat; // Присваиваем idChat для нового профиля
+                        db.BitTorrConfig.Add(config);
+                        await db.SaveChangesAsync();
+                    }
+                    return Task.CompletedTask;
+                });
+            }
+            catch (Exception ex)
+            {
+                // Логируем ошибку, если что-то пошло не так
+                Console.WriteLine($"Ошибка при сохранении профиля в базу данных: {ex.Message}");
+            }
+        }
+
         public static async Task<BitTorrConfig> GetSettingsTorrProfile(string idChat)
         {
-
+            BitTorrConfig updatedProfile = new BitTorrConfig() { IdChat=idChat};
 
             await SqlMethods.WithDbContextAsync(async db =>
             {
-                var setBitTorr = db.BitTorrConfig.FirstOrDefault(x=>x.IdChat == idChat);
-                return setBitTorr;
+                // Пытаемся найти профиль по IdChat
+                var existingProfile = db.BitTorrConfig.FirstOrDefault(x => x.IdChat == idChat);
+
+                if (existingProfile != null)
+                {
+                    // Если профиль найден, обновляем его
+                    var newProfile = await Torrserver.ReadConfig();
+                    newProfile.IdChat = idChat;
+                    newProfile.Id=existingProfile.Id;
+
+                    // Обновляем все поля, используя SetValues
+                    db.Entry(existingProfile).CurrentValues.SetValues(newProfile);
+                    await db.SaveChangesAsync();
+
+                    updatedProfile = existingProfile;  // Возвращаем обновленный профиль
+                }
+                else
+                {
+                    // Если профиль не найден, создаем новый
+                    var newProfile = await Torrserver.ReadConfig();
+                    newProfile.IdChat = idChat;
+
+                    db.BitTorrConfig.Add(newProfile);
+                    await db.SaveChangesAsync();
+
+                    updatedProfile = newProfile;  // Возвращаем новый профиль
+                }
+                return Task.CompletedTask;
             });
-         var newProfile= new BitTorrConfig() { 
-         IdChat = idChat
-         };
-            await SqlMethods.WithDbContextAsync(async db => {
-                db.BitTorrConfig.Add(newProfile);
-                await db.SaveChangesAsync();
-                return newProfile;
-            });
-            return newProfile;
+
+            return updatedProfile;
         }
+
+
         public static async Task SetTimeAutoChangePasswordTorrserver(int minutes)
         {
             await SqlMethods.WithDbContextAsync(async db =>

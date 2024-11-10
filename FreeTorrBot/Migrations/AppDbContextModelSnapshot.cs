@@ -87,61 +87,47 @@ namespace AdTorrBot.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("CacheSize")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<long>("CacheSize")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("ConnectionsLimit")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ConnectionsLimit")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("DisableDHT")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("DisableDHT")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("DisablePEX")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("DisablePEX")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("DisableTCP")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("DisableTCP")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("DisableUPNP")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("DisableUPNP")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("DisableUTP")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("DisableUTP")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("DisableUpload")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("DisableUpload")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("DownloadRateLimit")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("DownloadRateLimit")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("EnableDLNA")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("EnableDLNA")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("EnableDebug")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("EnableDebug")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("EnableIPv6")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("EnableIPv6")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("EnableRutorSearch")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("EnableRutorSearch")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("ForceEncrypt")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("ForceEncrypt")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("FriendlyName")
                         .IsRequired()
@@ -155,29 +141,23 @@ namespace AdTorrBot.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PeersListenPort")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("PeersListenPort")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("PreloadCache")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("PreloadCache")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("ReaderReadAHead")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("ReaderReadAHead")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("RemoveCacheOnDrop")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("RemoveCacheOnDrop")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("ResponsiveMode")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("ResponsiveMode")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("RetrackersMode")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("RetrackersMode")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("SslCert")
                         .IsRequired()
@@ -187,25 +167,21 @@ namespace AdTorrBot.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SslPort")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("SslPort")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("TorrentDisconnectTimeout")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("TorrentDisconnectTimeout")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TorrentsSavePath")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("UploadRateLimit")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("UploadRateLimit")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("UseDisk")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("UseDisk")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
