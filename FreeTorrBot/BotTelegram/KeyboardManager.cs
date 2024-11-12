@@ -43,7 +43,7 @@ namespace FreeTorrBot.BotTelegram
             var properties = typeof(BitTorrConfig).GetProperties()
                                            .Skip(startIndex+3)
                                            .Take(5) // Отображаем 5 свойств, начиная с переданного индекса
-                                           .Select(prop => InlineKeyboardButton.WithCallbackData($"{config.GetDescription(prop.Name)}", $"Torr{prop.Name}"))
+                                           .Select(prop => InlineKeyboardButton.WithCallbackData($"{config.GetDescription(prop.Name)}", $"torrSetOne{prop.Name}"))
                                            .ToArray();
 
             var keyboardButtons = new List<InlineKeyboardButton[]>();

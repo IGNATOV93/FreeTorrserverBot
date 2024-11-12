@@ -1,6 +1,6 @@
 ﻿using AdTorrBot.BotTelegram.Db;
+using AdTorrBot.BotTelegram.Handler;
 using FluentScheduler;
-using FreeTorrBot.BotTelegram;
 using FreeTorrBot.BotTelegram.BotSettings;
 using FreeTorrBot.BotTelegram.BotSettings.Model;
 using Microsoft.Extensions.Configuration;
