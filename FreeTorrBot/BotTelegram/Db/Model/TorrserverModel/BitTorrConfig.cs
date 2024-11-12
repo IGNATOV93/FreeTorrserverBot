@@ -5,17 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 {
 
 
     public class BitTorrConfig
     {
+        [JsonIgnore]
         [Key]
         public int Id { get; set; }
-
+        [JsonIgnore]
         public string IdChat { get; set; } = string.Empty;
-
+        [JsonIgnore]
         [Description("Имя профиля")]
         public string NameProfileBot { get; set; } = "default";
 

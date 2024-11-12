@@ -51,6 +51,8 @@ namespace FreeTorrserverBot.Torrserver
             {
                 // Обернуть объект config в объект-обертку для соблюдения JSON структуры
                 var wrapper = new BitTorrConfigWrapper(config);
+                wrapper.BitTorr.Id = 0;
+
 
                 // Сериализация объекта в JSON
                 var jsonString = JsonSerializer.Serialize(wrapper, new JsonSerializerOptions { WriteIndented = true });
@@ -176,8 +178,9 @@ namespace FreeTorrserverBot.Torrserver
         }
         public class BitTorrConfigWrapper
         {
-            public BitTorrConfig BitTorr { get; set; }
 
+            public BitTorrConfig BitTorr { get; set; }
+           
             // Убедитесь, что конструктор без параметров
             public BitTorrConfigWrapper() { }
 
