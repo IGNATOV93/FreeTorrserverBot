@@ -15,6 +15,7 @@ namespace AdTorrBot.BotTelegram.Handler
 
         public static async Task CheckSettingAndExecute(CallbackQuery callbackQuery, string inputSetting)
         {
+            Console.WriteLine($"Пришло в CheckSettingsAndExecute:{inputSetting}");
             var callbackData = callbackQuery.Data;
             var idMessage = callbackQuery.Message.MessageId;  // ID сообщения для редактирования
 
@@ -142,9 +143,8 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, "Неизвестная настройка");
                     break;
             }
-
-            // После выполнения, если необходимо, можно сохранить конфиг:
-            // await Torrserver.SaveConfig(conf);
+            await Torrserver.WriteConfig(conf);
+         
         }
 
         public static async Task SendOrEditMessage(int idMessage, string message)

@@ -3,7 +3,9 @@ using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
@@ -43,7 +45,22 @@ namespace FreeTorrBot.BotTelegram
             var properties = typeof(BitTorrConfig).GetProperties()
                                            .Skip(startIndex+3)
                                            .Take(5) // Отображаем 5 свойств, начиная с переданного индекса
-                                           .Select(prop => InlineKeyboardButton.WithCallbackData($"{config.GetDescription(prop.Name)}", $"torrSetOne{prop.Name}"))
+                                           .Select(prop =>
+                                           {
+                                               // Получаем описание из атрибута DescriptionAttribute
+                                               var descriptionAttr = prop.GetCustomAttribute<DescriptionAttribute>();
+                                               string description = descriptionAttr != null ? descriptionAttr.Description : prop.Name;
+
+                                               // Получаем текущее значение свойства
+                                               var value = prop.GetValue(config);
+
+                                               // Формируем текст кнопки с описанием и значением
+                                               string buttonText = $"{description} ({value})";
+
+                                               // Возвращаем кнопку с callback-данными
+                                               return InlineKeyboardButton.WithCallbackData(buttonText, $"torrSetOne{prop.Name}");
+                                           } 
+                                           )
                                            .ToArray();
 
             var keyboardButtons = new List<InlineKeyboardButton[]>();

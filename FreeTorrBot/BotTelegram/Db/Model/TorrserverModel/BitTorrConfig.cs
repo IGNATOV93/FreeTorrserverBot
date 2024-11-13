@@ -21,88 +21,88 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Имя профиля")]
         public string NameProfileBot { get; set; } = "default";
 
-        [Description("Размер кеша (кб)")]
+        [Description($"Размер кеша")]
         public long CacheSize { get; set; } = 67108864;
 
-        [Description("Опережающий кеш (%)")]
+        [Description("Опережающий кеш")]
         public int ReaderReadAHead { get; set; } = 95;
 
-        [Description("Буфер предзагрузки (%)")]
+        [Description("Буфер предзагрузки")]
         public int PreloadCache { get; set; } = 50;
 
-        [Description("Использование диска (on/off)")]
+        [Description("Использование диска")]
         public bool UseDisk { get; set; } = false;
 
-        [Description("Включение IPv6 (of/off)")]
+        [Description("Включение IPv6")]
         public bool EnableIPv6 { get; set; } = false;
 
-        [Description("Отключение TCP (on/off)")]
+        [Description("Отключение TCP")]
         public bool DisableTCP { get; set; } = false;
 
-        [Description("μTP (Micro Transport Protocol)")]
+        [Description("Отключение μTP (MTP)")]
         public bool DisableUTP { get; set; } = false;
 
         [Description("Отключение PEX")]
         public bool DisablePEX { get; set; } = false;
 
-        [Description("Принуд. шифрование (on/off)")]
+        [Description("Принуд. шифрование")]
         public bool ForceEncrypt { get; set; } = false;
 
-        [Description("Тайм-аут откл. торрентов (сек.)")]
+        [Description("Тайм-аут откл. торрентов")]
         public int TorrentDisconnectTimeout { get; set; } = 30;
 
-        [Description("Торрент-соединения (кол-во)")]
+        [Description("Торрент-соединения")]
         public int ConnectionsLimit { get; set; } = 25;
 
-        [Description("Отключение DHT (on/off)")]
+        [Description("Отключение DHT")]
         public bool DisableDHT { get; set; } = false;
 
-        [Description("Ограничение скорости загрузки (кб.)")]
+        [Description("Ограничение скорости загрузки")]
         public int DownloadRateLimit { get; set; } = 0;
 
-        [Description("Ограничение скорости отдачи (кб.)")]
+        [Description("Ограничение скорости отдачи")]
         public int UploadRateLimit { get; set; } = 0;
 
-        [Description("Порт для входящих подключений (число)")]
+        [Description("Порт для входящих подключений")]
         public int PeersListenPort { get; set; } = 0;
 
-        [Description("Отключение UPNP (on/off)")]
+        [Description("Отключение UPNP")]
         public bool DisableUPNP { get; set; } = false;
 
-        [Description("Включение DLNA (on/off)")]
+        [Description("Включение DLNA")]
         public bool EnableDLNA { get; set; } = false;
 
-        [Description("Имя сервера DLNA (строка)")]
+        [Description("Имя сервера DLNA")]
         public string FriendlyName { get; set; } = "";
 
-        [Description("Вкл. поиск по RuTor (on/off)")]
+        [Description("Вкл. поиск по RuTor")]
         public bool EnableRutorSearch { get; set; } = false;
 
-        [Description("Включение отладки (on/off)")]
+        [Description("Включение отладки")]
         public bool EnableDebug { get; set; } = false;
 
         [Description("Включить быстрый режим чтения")]
         public bool ResponsiveMode { get; set; } = false;
 
-        [Description("Режим ретрекеров (по выбору)")]
+        [Description("Режим ретрекеров")]
         public int RetrackersMode { get; set; } = 1;
 
-        [Description("SSL порт (число)")]
+        [Description("SSL порт")]
         public int SslPort { get; set; } = 0;
 
-        [Description("SSL сертификат (путь)")]
+        [Description("SSL сертификат")]
         public string SslCert { get; set; } = "";
 
-        [Description("SSL ключ (путь)")]
+        [Description("SSL ключ")]
         public string SslKey { get; set; } = "";
 
-        [Description("Отключение отдачи (on/off)")]
+        [Description("Отключение отдачи")]
         public bool DisableUpload { get; set; } = false;
 
-        [Description("Удаление кеша при сбросе (on/off)")]
+        [Description("Удаление кеша при сбросе")]
         public bool RemoveCacheOnDrop { get; set; } = false;
 
-        [Description("Путь сохр. торрентов (путь)")]
+        [Description("Путь сохр. торрентов")]
         public string TorrentsSavePath { get; set; } = "";
 
         public override string ToString()
