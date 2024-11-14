@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 {
 
@@ -14,6 +15,7 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
     {
         [JsonIgnore]
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Автоинкремент для Id
         public int Id { get; set; }
         [JsonIgnore]
         public string IdChat { get; set; } = string.Empty;
@@ -21,13 +23,19 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Имя профиля")]
         public string NameProfileBot { get; set; } = "default";
 
-        [Description($"Размер кеша")]
-        public long CacheSize { get; set; } = 67108864;
+        [Description("Размер кеша MB")]
+        public long CacheSize
+        {
+            get => _cacheSize / (1024 * 1024); // Возвращает значение в мегабайтах
+            set => _cacheSize = value * 1024 * 1024; // Сохраняет значение в байтах
+        }
+        // Приватное поле для хранения значения в байтах
+        private long _cacheSize = 67108864; // Значение по умолчанию в байтах
 
-        [Description("Опережающий кеш")]
+        [Description("Опережающий кеш %")]
         public int ReaderReadAHead { get; set; } = 95;
 
-        [Description("Буфер предзагрузки")]
+        [Description("Буфер предзагрузки %")]
         public int PreloadCache { get; set; } = 50;
 
         [Description("Использование диска")]
@@ -48,19 +56,19 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Принуд. шифрование")]
         public bool ForceEncrypt { get; set; } = false;
 
-        [Description("Тайм-аут откл. торрентов")]
+        [Description("Тайм-аут откл. торрентов сек.")]
         public int TorrentDisconnectTimeout { get; set; } = 30;
 
-        [Description("Торрент-соединения")]
+        [Description("Торрент-соединения кол-во")]
         public int ConnectionsLimit { get; set; } = 25;
 
         [Description("Отключение DHT")]
         public bool DisableDHT { get; set; } = false;
 
-        [Description("Ограничение скорости загрузки")]
+        [Description("Ограничение скорости загрузки кб.")]
         public int DownloadRateLimit { get; set; } = 0;
 
-        [Description("Ограничение скорости отдачи")]
+        [Description("Ограничение скорости отдачи кб.")]
         public int UploadRateLimit { get; set; } = 0;
 
         [Description("Порт для входящих подключений")]

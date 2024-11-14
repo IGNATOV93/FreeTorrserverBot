@@ -33,98 +33,94 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 // Поля типа bool - переключение на противоположное состояние
                 case "usedisk":
-                    bool oldUseDisk = conf.UseDisk;
-                    conf.UseDisk = !oldUseDisk; // Переключаем значение
+                    conf.UseDisk = !conf.UseDisk;
                     await SendOrEditMessage(idMessage, $"Использование диска теперь {(conf.UseDisk ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "enableipv6":
-                    bool oldEnableIPv6 = conf.EnableIPv6;
-                    conf.EnableIPv6 = !oldEnableIPv6;
+                    conf.EnableIPv6 = !conf.EnableIPv6;
                     await SendOrEditMessage(idMessage, $"IPv6 теперь {(conf.EnableIPv6 ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "disablestcp":
-                    bool oldDisableTCP = conf.DisableTCP;
-                    conf.DisableTCP = !oldDisableTCP;
+                    conf.DisableTCP = !conf.DisableTCP;
                     await SendOrEditMessage(idMessage, $"Отключение TCP теперь {(conf.DisableTCP ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "disableutp":
-                    bool oldDisableUTP = conf.DisableUTP;
-                    conf.DisableUTP = !oldDisableUTP;
+                    conf.DisableUTP = !conf.DisableUTP;
                     await SendOrEditMessage(idMessage, $"μTP теперь {(conf.DisableUTP ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "disablepex":
-                    bool oldDisablePEX = conf.DisablePEX;
-                    conf.DisablePEX = !oldDisablePEX;
+                    conf.DisablePEX = !conf.DisablePEX;
                     await SendOrEditMessage(idMessage, $"PEX теперь {(conf.DisablePEX ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "forceencrypt":
-                    bool oldForceEncrypt = conf.ForceEncrypt;
-                    conf.ForceEncrypt = !oldForceEncrypt;
+                    conf.ForceEncrypt = !conf.ForceEncrypt;
                     await SendOrEditMessage(idMessage, $"Принудительное шифрование теперь {(conf.ForceEncrypt ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "disabledht":
-                    bool oldDisableDHT = conf.DisableDHT;
-                    conf.DisableDHT = !oldDisableDHT;
+                    conf.DisableDHT = !conf.DisableDHT;
                     await SendOrEditMessage(idMessage, $"DHT теперь {(conf.DisableDHT ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "disableupnp":
-                    bool oldDisableUPNP = conf.DisableUPNP;
-                    conf.DisableUPNP = !oldDisableUPNP;
+                    conf.DisableUPNP = !conf.DisableUPNP;
                     await SendOrEditMessage(idMessage, $"UPNP теперь {(conf.DisableUPNP ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "enabledlna":
-                    bool oldEnableDLNA = conf.EnableDLNA;
-                    conf.EnableDLNA = !oldEnableDLNA;
+                    conf.EnableDLNA = !conf.EnableDLNA;
                     await SendOrEditMessage(idMessage, $"DLNA теперь {(conf.EnableDLNA ? enabledSymbol : disabledSymbol)}");
                     break;
 
+                case "enablerutorsearch":
+                    conf.EnableRutorSearch = !conf.EnableRutorSearch;
+                    await SendOrEditMessage(idMessage, $"Поиск по RuTor теперь {(conf.EnableRutorSearch ? enabledSymbol : disabledSymbol)}");
+                    break;
+
                 case "enabledebug":
-                    bool oldEnableDebug = conf.EnableDebug;
-                    conf.EnableDebug = !oldEnableDebug;
+                    conf.EnableDebug = !conf.EnableDebug;
                     await SendOrEditMessage(idMessage, $"Режим отладки теперь {(conf.EnableDebug ? enabledSymbol : disabledSymbol)}");
                     break;
 
                 case "responsivemode":
-                    bool oldResponsiveMode = conf.ResponsiveMode;
-                    conf.ResponsiveMode = !oldResponsiveMode;
+                    conf.ResponsiveMode = !conf.ResponsiveMode;
                     await SendOrEditMessage(idMessage, $"Быстрый режим чтения теперь {(conf.ResponsiveMode ? enabledSymbol : disabledSymbol)}");
                     break;
 
-                // Поля, требующие ввода данных
-                case "nameserver":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.");
+                case "disableupload":
+                    conf.DisableUpload = !conf.DisableUpload;
+                    await SendOrEditMessage(idMessage, $"Отключение отдачи теперь {(conf.DisableUpload ? enabledSymbol : disabledSymbol)}");
                     break;
 
-                case "torrentspath":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. Пожалуйста, введите новый путь.");
+                case "removecacheondrop":
+                    conf.RemoveCacheOnDrop = !conf.RemoveCacheOnDrop;
+                    await SendOrEditMessage(idMessage, $"Удаление кеша при сбросе теперь {(conf.RemoveCacheOnDrop ? enabledSymbol : disabledSymbol)}");
                     break;
 
-                case "sslport":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.");
+                // Поля, требующие ввода данных (int, long, string)
+                case "cachesize":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода размера кеша. Пожалуйста, введите новое значение (MB).");
                     break;
 
-                case "sslcert":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату. Пожалуйста, введите путь.");
+                case "readerreadahead":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода значения для опережающего кеша. Пожалуйста, введите новое значение.");
                     break;
 
-                case "sslkey":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу. Пожалуйста, введите путь.");
+                case "preloadcache":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода размера буфера предзагрузки. Пожалуйста, введите новое значение.");
                     break;
 
-                case "cachepath":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к кешу. Пожалуйста, введите путь.");
+                case "torrentdisconnecttimeout":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода тайм-аута отключения торрентов. Пожалуйста, введите новое значение (в секундах).");
                     break;
 
-                case "peerslistenport":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.");
+                case "connectionslimit":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода лимита соединений для торрентов. Пожалуйста, введите новое значение.");
                     break;
 
                 case "downloadratelimit":
@@ -135,14 +131,43 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (кб/с).");
                     break;
 
+                case "peerslistenport":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.");
+                    break;
+
+                case "retrackersmode":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода режима ретрекеров. Пожалуйста, введите новое значение.");
+                    break;
+
+                case "sslport":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.");
+                    break;
+
+                case "nameserver":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.");
+                    break;
+
                 case "torrentssavepath":
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. Пожалуйста, введите новый путь.");
+                    break;
+
+                case "friendlyname":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.");
+                    break;
+
+                case "sslcert":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату. Пожалуйста, введите путь.");
+                    break;
+
+                case "sslkey":
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу. Пожалуйста, введите путь.");
                     break;
 
                 default:
                     await SendOrEditMessage(idMessage, "Неизвестная настройка");
                     break;
             }
+
             await Torrserver.WriteConfig(conf);
          
         }

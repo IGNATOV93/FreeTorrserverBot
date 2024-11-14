@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdTorrBot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241110011605_1011")]
-    partial class _1011
+    [Migration("20241113205129_131101")]
+    partial class _131101
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,6 +74,48 @@ namespace AdTorrBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("FlagPassword")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettCacheSize")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettConnectionsLimit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettDownloadRateLimit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettFriendlyName")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettPeersListenPort")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettPreloadCache")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettReaderReadAHead")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettRetrackersMode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettSslCert")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettSslKey")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettSslPort")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettTorrentDisconnectTimeout")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettTorrentsSavePath")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("FlagTorrSettUploadRateLimit")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("IdChat")

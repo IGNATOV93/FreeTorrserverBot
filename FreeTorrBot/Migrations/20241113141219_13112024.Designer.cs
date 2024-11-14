@@ -2,6 +2,7 @@
 using AdTorrBot.BotTelegram.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdTorrBot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241113141219_13112024")]
+    partial class _13112024
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -71,48 +74,6 @@ namespace AdTorrBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("FlagPassword")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettCacheSize")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettConnectionsLimit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettDownloadRateLimit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettFriendlyName")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettPeersListenPort")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettPreloadCache")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettReaderReadAHead")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettRetrackersMode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettSslCert")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettSslKey")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettSslPort")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettTorrentDisconnectTimeout")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettTorrentsSavePath")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FlagTorrSettUploadRateLimit")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("IdChat")
@@ -226,9 +187,6 @@ namespace AdTorrBot.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdChat", "NameProfileBot")
-                        .IsUnique();
 
                     b.ToTable("BitTorrConfig");
                 });

@@ -37,7 +37,7 @@ namespace FreeTorrserverBot.BotTelegram
                 if (Message?.Text != null)
                 {
                     ChatId = Message.Chat.Id.ToString();
-                    if(ChatId==AdminChat&&await SqlMethods.IsTextInputFlagLogin(AdminChat)) {
+                    if(ChatId==AdminChat&&await SqlMethods.IsTextInputFlagLogin()) {
                       
                         await MessageHandler.HandleUpdate(update);return; }
                     if (ChatId != AdminChat && !MessageHandler.IsTextCommandBot(InputText)) { return; }
@@ -65,7 +65,7 @@ namespace FreeTorrserverBot.BotTelegram
         static public async Task StartBot()
         {
            
-            await SqlMethods.CheckAndInsertDefaultData(AdminChat);
+            await SqlMethods.CheckAndInsertDefaultData();
             JobManager.Initialize(new MyRegistry());
             // Запускаем получение обновлений
             var statrBotTask = Task.Run(() => client.StartReceiving(Update, Error));

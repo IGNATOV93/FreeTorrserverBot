@@ -22,6 +22,16 @@ namespace AdTorrBot.BotTelegram.Db
             optionsBuilder.UseSqlite("Data Source=app.db");
             
         }
-  
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Устанавливаем уникальность для пары полей IdChat и NameProfileBot
+            modelBuilder.Entity<BitTorrConfig>()
+                .HasIndex(b => new { b.IdChat, b.NameProfileBot })
+                .IsUnique();
+        }
+
     }
 }

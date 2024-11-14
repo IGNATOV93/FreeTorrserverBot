@@ -37,31 +37,40 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
-        public static async Task<InlineKeyboardMarkup> GetBitTorrConfigMain(string idChat,BitTorrConfig config, int startIndex)
+        public static async Task<InlineKeyboardMarkup> GetBitTorrConfigMain(string idChat, BitTorrConfig config, int startIndex)
         {
-            
-            int totalItems = typeof(BitTorrConfig).GetProperties().Length-3;
+            // Проверка на null перед выполнением логики метода
+            if (config == null)
+            {
+                Console.WriteLine("Ошибка: Config object is null.");
+                throw new ArgumentNullException(nameof(config), "Config object is null");
+            }
+
+            int totalItems = typeof(BitTorrConfig).GetProperties().Length - 3;
 
             var properties = typeof(BitTorrConfig).GetProperties()
-                                           .Skip(startIndex+3)
-                                           .Take(5) // Отображаем 5 свойств, начиная с переданного индекса
-                                           .Select(prop =>
-                                           {
-                                               // Получаем описание из атрибута DescriptionAttribute
-                                               var descriptionAttr = prop.GetCustomAttribute<DescriptionAttribute>();
-                                               string description = descriptionAttr != null ? descriptionAttr.Description : prop.Name;
+                                         .Skip(startIndex + 3)
+                                         .Take(5) // Отображаем 5 свойств, начиная с переданного индекса
+                                         .Select(prop =>
+                                         {
+                                             // Получаем описание из атрибута DescriptionAttribute
+                                             var descriptionAttr = prop.GetCustomAttribute<DescriptionAttribute>();
+                                             string description = descriptionAttr != null ? descriptionAttr.Description : prop.Name;
 
-                                               // Получаем текущее значение свойства
-                                               var value = prop.GetValue(config);
+                                             // Проверка на null для значения свойства
+                                             var value = prop.GetValue(config) ?? "не задано";
+                                             // Применяем преобразование для конкретного свойства
+                                             if (prop.Name == "CacheSize" && value is long byteValue)
+                                             {
+                                                 value = byteValue / (1024 * 1024); // Преобразуем байты в мегабайты
+                                             }
+                                             // Формируем текст кнопки с описанием и значением
+                                             string buttonText = $"{description} ({value})";
 
-                                               // Формируем текст кнопки с описанием и значением
-                                               string buttonText = $"{description} ({value})";
-
-                                               // Возвращаем кнопку с callback-данными
-                                               return InlineKeyboardButton.WithCallbackData(buttonText, $"torrSetOne{prop.Name}");
-                                           } 
-                                           )
-                                           .ToArray();
+                                             // Возвращаем кнопку с callback-данными
+                                             return InlineKeyboardButton.WithCallbackData(buttonText, $"torrSetOne{prop.Name}");
+                                         })
+                                         .ToArray();
 
             var keyboardButtons = new List<InlineKeyboardButton[]>();
 
@@ -76,17 +85,14 @@ namespace FreeTorrBot.BotTelegram
 
             if (startIndex > 0)
             {
-                // Добавляем кнопку "Назад", если не находимся в начале списка
                 navigationButtons.Add(InlineKeyboardButton.WithCallbackData("⬅️ Назад", $"{startIndex - 5}torrSettings"));
             }
             navigationButtons.Add(InlineKeyboardButton.WithCallbackData("\u2139", "showTorrsetInfo"));
             if (startIndex + 6 < totalItems)
             {
-                // Добавляем кнопку "Вперед", если не достигнут конец списка
                 navigationButtons.Add(InlineKeyboardButton.WithCallbackData("Вперед ➡️", $"{startIndex + 5}torrSettings"));
             }
 
-            // Добавляем кнопки навигации в клавиатуру, если они есть
             if (navigationButtons.Any())
             {
                 keyboardButtons.Add(navigationButtons.ToArray());
@@ -96,10 +102,12 @@ namespace FreeTorrBot.BotTelegram
             var buttonBackSettingsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
             var buttonResetSetBitTorrConfig = InlineKeyboardButton.WithCallbackData("\u267B", "resetTorrSetConfig");
             var buttonSetBitTorrConfig = InlineKeyboardButton.WithCallbackData("✅", "setTorrSetConfig");
-            keyboardButtons.Add(new[] { buttonBackSettingsMain, buttonResetSetBitTorrConfig, buttonSetBitTorrConfig, buttonHideButtots });
+            keyboardButtons.Add(new[] { buttonBackSettingsMain, buttonResetSetBitTorrConfig, buttonSetBitTorrConfig });
 
             return new InlineKeyboardMarkup(keyboardButtons);
         }
+
+
 
         public static InlineKeyboardMarkup ExitTextPassword()
         {

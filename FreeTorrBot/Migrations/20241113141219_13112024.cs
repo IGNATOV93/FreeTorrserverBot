@@ -5,7 +5,7 @@
 namespace AdTorrBot.Migrations
 {
     /// <inheritdoc />
-    public partial class _1011 : Migration
+    public partial class _13112024 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

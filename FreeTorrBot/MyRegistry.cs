@@ -22,7 +22,7 @@ namespace FreeTorrserverBot
 
         private async Task ScheduleJobAsync()
         {
-           var setBot = await SqlMethods.GetSettingBot(BotTelegram.TelegramBot.AdminChat);
+           var setBot = await SqlMethods.GetSettingBot();
             var timeZone = ServerInfo.GetLocalServerTimeTimeZone();
             double hoursWithTimeZone = timeZone-setBot.TimeZoneOffset;
             int hours = await GetHoursAsync();
@@ -69,7 +69,7 @@ namespace FreeTorrserverBot
         private async Task<SettingsTorrserverBot> LoadSettingsAsync()
         {
             
-          return  await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
+          return  await SqlMethods.GetSettingsTorrserverBot();
             // Ваша логика для загрузки настроек
         }
     }

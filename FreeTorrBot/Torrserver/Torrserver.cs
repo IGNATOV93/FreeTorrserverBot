@@ -24,7 +24,7 @@ namespace FreeTorrserverBot.Torrserver
 
         public static async Task AutoChangeAccountTorrserver()
         {
-            var settings = await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
+            var settings = await SqlMethods.GetSettingsTorrserverBot();
             if (settings != null&&settings.IsActiveAutoChange==true)
             {
                 var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
@@ -59,7 +59,7 @@ namespace FreeTorrserverBot.Torrserver
 
                 // Запись JSON в файл
                 File.WriteAllText(filePathSettingsJson, jsonString);
-                await SqlMethods.SetSettingsTorrProfile(BotTelegram.TelegramBot.AdminChat,config);
+                await SqlMethods.SetSettingsTorrProfile(config);
             }
             catch (Exception ex)
             {
@@ -73,7 +73,7 @@ namespace FreeTorrserverBot.Torrserver
             try
             {
                 var jsonString = File.ReadAllText(filePathSettingsJson);
-                Console.WriteLine("Путь к settings.json: "+filePathSettingsJson);
+               // Console.WriteLine("Путь к settings.json: "+filePathSettingsJson);
 
                 var options = new JsonSerializerOptions
                 {
@@ -85,7 +85,9 @@ namespace FreeTorrserverBot.Torrserver
                 {
                    throw  new Exception ("Ошибка не удалось загрузить конфигурацию из JSON");
                 }
-                await SqlMethods.SetSettingsTorrProfile(jsonString, config);
+                
+                await SqlMethods.SetSettingsTorrProfile(config);
+
                 return config;
             }
             catch (Exception ex)
@@ -98,7 +100,7 @@ namespace FreeTorrserverBot.Torrserver
         {
             var newParolRandom = new Random();
             const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-            var settingsTorr = await SqlMethods.GetSettingsTorrserverBot(BotTelegram.TelegramBot.AdminChat);
+            var settingsTorr = await SqlMethods.GetSettingsTorrserverBot();
             string newPassword = string.IsNullOrEmpty(password) ? settingsTorr.Password : password;
             string newLogin = string.IsNullOrEmpty(login) ? settingsTorr.Login : login;
 
@@ -114,7 +116,7 @@ namespace FreeTorrserverBot.Torrserver
                                 .Select(s => s[newParolRandom.Next(s.Length)]).ToArray());
             }
 
-            await SqlMethods.SetLoginPasswordSettingsTorrserverBot(TelegramBot.AdminChat, newLogin, newPassword);
+            await SqlMethods.SetLoginPasswordSettingsTorrserverBot(newLogin, newPassword);
             string result = $"{{\"{newLogin}\":\"{newPassword}\"}}";
 
             using (StreamWriter writer = new StreamWriter(filePathTorrserverDb))
