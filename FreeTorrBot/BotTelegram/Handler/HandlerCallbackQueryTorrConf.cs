@@ -1,4 +1,5 @@
-﻿using FreeTorrBot.BotTelegram;
+﻿using AdTorrBot.BotTelegram.Db;
+using FreeTorrBot.BotTelegram;
 using FreeTorrserverBot.Torrserver;
 using System;
 using System.Collections.Generic;
@@ -104,62 +105,72 @@ namespace AdTorrBot.BotTelegram.Handler
 
                 // Поля, требующие ввода данных (int, long, string)
                 case "cachesize":
+
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода размера кеша. Пожалуйста, введите новое значение (MB).");
                     break;
 
                 case "readerreadahead":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода значения для опережающего кеша. Пожалуйста, введите новое значение.");
                     break;
 
                 case "preloadcache":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода размера буфера предзагрузки. Пожалуйста, введите новое значение.");
                     break;
 
                 case "torrentdisconnecttimeout":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода тайм-аута отключения торрентов. Пожалуйста, введите новое значение (в секундах).");
                     break;
 
                 case "connectionslimit":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода лимита соединений для торрентов. Пожалуйста, введите новое значение.");
                     break;
 
                 case "downloadratelimit":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (кб/с).");
                     break;
 
                 case "uploadratelimit":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (кб/с).");
                     break;
 
                 case "peerslistenport":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.");
                     break;
 
                 case "retrackersmode":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода режима ретрекеров. Пожалуйста, введите новое значение.");
                     break;
 
                 case "sslport":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.");
                     break;
-
-                case "nameserver":
+                case "friendlyname":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.");
                     break;
 
                 case "torrentssavepath":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. Пожалуйста, введите новый путь.");
                     break;
 
-                case "friendlyname":
-                    await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.");
-                    break;
-
                 case "sslcert":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату. Пожалуйста, введите путь.");
                     break;
 
                 case "sslkey":
+                    await SqlMethods.SwitchTorSettingsInputFlag(setting, true);
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу. Пожалуйста, введите путь.");
                     break;
 

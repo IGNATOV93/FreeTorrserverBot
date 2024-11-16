@@ -74,7 +74,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (InputTextValidator.ValidateLoginAndPassword(text))
                 {
                     await Torrserver.ChangeAccountTorrserver(text, "", true, false);
-                    await SqlMethods.SwitchTextInputFlagLogin(false);
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin",false);
                     Console.WriteLine("Смена логина выполнена.\r\n" +
                         "Вы вышли с режима ввода логина !");
                     await botClient.SendTextMessageAsync(AdminChat
@@ -101,7 +101,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (InputTextValidator.ValidateLoginAndPassword(text))
                 {
                     await Torrserver.ChangeAccountTorrserver("", text, false, true);
-                    await SqlMethods.SwitchTextInputFlagPassword(false);
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword",false);
                     Console.WriteLine("Смена пароля выполнена.\r\n" +
                         "Вы вышли с режима ввода пароля !");
                     await botClient.SendTextMessageAsync(AdminChat
@@ -314,7 +314,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 {
                     await DeleteMessage(idMessage);
                     Console.WriteLine("Выход из ввода пароля.");
-                    await SqlMethods.SwitchTextInputFlagPassword(false);
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword", false);
                     await botClient.SendTextMessageAsync(AdminChat
                                                          , $"Вы вышли из режима ввода пароля \u2705"
                                                          , replyMarkup: KeyboardManager.GetDeleteThisMessage());
@@ -323,7 +323,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 {
                     await DeleteMessage(idMessage);
                     Console.WriteLine("Выход из ввода логина.");
-                    await SqlMethods.SwitchTextInputFlagLogin(false);
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin", false);
                     await botClient.SendTextMessageAsync(AdminChat
                                                          , $"Вы вышли из режима ввода логина \u2705"
                                                          , replyMarkup: KeyboardManager.GetDeleteThisMessage());
@@ -349,7 +349,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData == "set_login_manually")
                 {
                     Console.WriteLine("В режите ввода логина.");
-                    await SqlMethods.SwitchTextInputFlagLogin(true);
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin",true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                         , "\u2757 Вы в режиме ввода логина .\r\n" +
                                                         "Напишите желаемый логин.\r\n" +
@@ -361,7 +361,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData == "set_password_manually")
                 {
                     Console.WriteLine("В режите ввода пароля.");
-                    await SqlMethods.SwitchTextInputFlagPassword(true);
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword",true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                         , "\u2757 Вы в режиме ввода пароля .\r\n" +
                                                         "Напишите желаемый пароль.\r\n" +

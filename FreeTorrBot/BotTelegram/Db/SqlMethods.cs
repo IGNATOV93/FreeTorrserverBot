@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -205,6 +206,62 @@ namespace AdTorrBot.BotTelegram.Db
 
         }
 
+
+        public static async Task<bool> SwitchTorSettingsInputFlag(string nameFlag, bool flag)
+        {
+            return await WithDbContextAsync(async db =>
+            {
+                try
+                {
+                    // Получаем объект из базы данных
+                    var textInputFlags = await db.TextInputFlag.FirstOrDefaultAsync(x => x.IdChat == adminChat);
+                    if (textInputFlags == null)
+                    {
+                        Console.WriteLine($"Объект с IdChat = {adminChat} не найден.");
+                        return false;
+                    }
+
+                    // Вывод всех свойств и их текущих значений для отладки
+                    Console.WriteLine("Список свойств и их текущих значений:");
+                    foreach (var prop in typeof(TextInputFlag).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                    {
+                        var value = prop.GetValue(textInputFlags);
+                        Console.WriteLine($"[{prop.Name}] = {value}");
+                    }
+
+                    // Ищем свойство по имени
+                    var property = typeof(TextInputFlag).GetProperty(nameFlag, BindingFlags.Public | BindingFlags.Instance);
+                    if (property == null)
+                    {
+                        Console.WriteLine($"Свойство [{nameFlag}] не найдено в классе TextInputFlag.");
+                        return false;
+                    }
+
+                    // Проверяем, что свойство имеет тип bool и его можно изменить
+                    if (property.CanWrite && property.PropertyType == typeof(bool))
+                    {
+                        property.SetValue(textInputFlags, flag); // Обновляем значение свойства
+                        Console.WriteLine($"Свойство {nameFlag} успешно обновлено на {flag}.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Свойство {nameFlag} нельзя изменить или оно не является типом bool.");
+                        return false;
+                    }
+
+                    // Сохраняем изменения в базе данных
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка при обновлении свойства {nameFlag}: {ex.Message}");
+                    return false;
+                }
+            });
+        }
+
+
         public static async Task SwitchTimeZone(string indicator)
         {
             await WithDbContextAsync(async db =>
@@ -215,26 +272,7 @@ namespace AdTorrBot.BotTelegram.Db
                 return Task.CompletedTask;
             });
         }
-        public static async Task SwitchTextInputFlagPassword( bool value)
-        {
-            await WithDbContextAsync(async db =>
-            {
-                var textInputFlags = db.TextInputFlag.FirstOrDefault(x => x.IdChat == adminChat);
-                textInputFlags.FlagPassword = value;
-                await db.SaveChangesAsync();
-                return Task.CompletedTask;
-            });
-        }
-        public static async Task SwitchTextInputFlagLogin(bool value)
-        {
-            await WithDbContextAsync(async db =>
-            {
-                var textInputFlags = db.TextInputFlag.FirstOrDefault(x => x.IdChat == adminChat);
-                textInputFlags.FlagLogin=value;
-                await db.SaveChangesAsync();
-                return Task.CompletedTask;
-            });
-        }
+  
         public static async Task SwitchAutoChangePassTorrserver(bool isActive)
         {
            await SqlMethods.WithDbContextAsync(async db =>
