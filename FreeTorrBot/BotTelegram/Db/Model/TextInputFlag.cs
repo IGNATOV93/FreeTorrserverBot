@@ -22,7 +22,7 @@ namespace AdTorrBot.BotTelegram.Db.Model
         public bool FlagPassword { get; set; }=false;
 
 
-        [Description($"Ввод: Размер кеша кб.")]
+        [Description($"Ввод: Размер кеша мб.")]
         public bool FlagTorrSettCacheSize { get; set; } = false;
 
         [Description("Ввод: Опережающий кеш %")]

@@ -32,7 +32,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 var textInputFlags = await SqlMethods.GetTextInputFlag();
                 if (textInputFlags.CheckAllBooleanFlags())
                 {
-                    await HandlerTextInputMessage(update.Message, textInputFlags);
+                    await HandlerCallbackQueryTorrSett.HandlerTextInputMessage(update.Message, textInputFlags);
                     return;
                 }
 
@@ -62,67 +62,7 @@ namespace AdTorrBot.BotTelegram.Handler
             }
             return;
         }
-        private static async Task HandlerTextInputMessage(Message message, TextInputFlag textInputFlag)
-        {
-            var text = message.Text;
-            var idMessage = message.MessageId;
-            // Обрабатываем обычное текстовое сообщение
-            if (textInputFlag.FlagLogin)
-            {
-                Console.WriteLine("Обработка  TextInputFlagLogin");
-                await DeleteMessage(idMessage);
-                if (InputTextValidator.ValidateLoginAndPassword(text))
-                {
-                    await Torrserver.ChangeAccountTorrserver(text, "", true, false);
-                    await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin",false);
-                    Console.WriteLine("Смена логина выполнена.\r\n" +
-                        "Вы вышли с режима ввода логина !");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                         , $"Ваш  новый логин \u27A1 {text}" +
-                                                         " установлен \u2705"
-                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
-                }
-                else
-                {
-                    Console.WriteLine("Смена логина не удалась.");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                          , "\u2757 Вы в режиме ввода логина .\r\n" +
-                                                        "Напишите желаемый логин.\r\n" +
-                                                        "\u2757 Login может содержать только английские буквы и цифры\r\n." +
-                                                        "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.ExitTextLogin());
-                }
-                return;
-            }
-            if (textInputFlag.FlagPassword)
-            {
-                Console.WriteLine("Обработка  TextInputFlagPassword");
-                await DeleteMessage(idMessage);
-                if (InputTextValidator.ValidateLoginAndPassword(text))
-                {
-                    await Torrserver.ChangeAccountTorrserver("", text, false, true);
-                    await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword",false);
-                    Console.WriteLine("Смена пароля выполнена.\r\n" +
-                        "Вы вышли с режима ввода пароля !");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                         , $"Ваш  новый пароль \u27A1 {text}" +
-                                                         " установлен \u2705"
-                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
-                }
-                else
-                {
-                    Console.WriteLine("Смена пароля не удалась.");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                          , "\u2757 Вы в режиме ввода пароля .\r\n" +
-                                                        "Напишите желаемый пароль.\r\n" +
-                                                        "\u2757 Password может содержать только английские буквы и цифры\r\n." +
-                                                        "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.ExitTextPassword());
-                }
-
-            }
-            return;
-        }
+   
         private static async Task HandlerTextButtonAndCommandMessage(Message message)
         {
             var text = message.Text;
@@ -309,24 +249,17 @@ namespace AdTorrBot.BotTelegram.Handler
 
                 }
 
-
-                if (callbackData == "exitTextPassword")
+                if (callbackData.Contains("exit"))
                 {
+                    var property = callbackData.Split("exit")[1];
                     await DeleteMessage(idMessage);
-                    Console.WriteLine("Выход из ввода пароля.");
-                    await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword", false);
+                    Console.WriteLine($"Выход из ввода {property}");
+                    await SqlMethods.SwitchTorSettingsInputFlag(property, false);
+                    var result = ParsingMethods.GetExitMessage(property);
                     await botClient.SendTextMessageAsync(AdminChat
-                                                         , $"Вы вышли из режима ввода пароля \u2705"
+                                                         , result
                                                          , replyMarkup: KeyboardManager.GetDeleteThisMessage());
-                }
-                if (callbackData == "exitTextLogin")
-                {
-                    await DeleteMessage(idMessage);
-                    Console.WriteLine("Выход из ввода логина.");
-                    await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin", false);
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                         , $"Вы вышли из режима ввода логина \u2705"
-                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    return;
                 }
                 if (callbackData == "manage_login_password")
                 {
@@ -355,7 +288,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                                         "Напишите желаемый логин.\r\n" +
                                                         "\u2757 Login может содержать только английские буквы и цифры.\r\n" +
                                                          "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.ExitTextLogin());
+                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagLogin"));
                     return;
                 }
                 if (callbackData == "set_password_manually")
@@ -367,7 +300,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                                         "Напишите желаемый пароль.\r\n" +
                                                         "\u2757 Password может содержать только английские буквы и цифры.\r\n" +
                                                          "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.ExitTextPassword());
+                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagPassword"));
                     return;
 
                 }
@@ -506,8 +439,6 @@ namespace AdTorrBot.BotTelegram.Handler
             //,"print_login"
             ,"сontrolTorrserver"
             ,"setAutoPassMinutes"
-            ,"exitTextLogin"
-            ,"exitTextPassword"
             ,"-time_zone"
             ,"+time_zone"
             ,"time_zone"
@@ -532,7 +463,10 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 return true;
             }
-
+            if (commands.Contains("exit"))
+            {
+                return true;
+            }
             // Если команда содержит "setAutoPassMinutes", проверим формат
             if (command.Contains("setAutoPassMinutes"))
             {

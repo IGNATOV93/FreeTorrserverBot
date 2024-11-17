@@ -1,4 +1,5 @@
 ﻿using AdTorrBot.BotTelegram.Db;
+using AdTorrBot.BotTelegram.Db.Model;
 using AdTorrBot.BotTelegram.Handler;
 using FluentScheduler;
 using FreeTorrBot.BotTelegram.BotSettings;
@@ -37,10 +38,14 @@ namespace FreeTorrserverBot.BotTelegram
                 if (Message?.Text != null)
                 {
                     ChatId = Message.Chat.Id.ToString();
-                    if(ChatId==AdminChat&&await SqlMethods.IsTextInputFlagLogin()) {
-                      
-                        await MessageHandler.HandleUpdate(update);return; }
-                    if (ChatId != AdminChat && !MessageHandler.IsTextCommandBot(InputText)) { return; }
+                    var textInputFlags = await SqlMethods.GetTextInputFlag();
+                    if (ChatId==AdminChat&&textInputFlags.CheckAllBooleanFlags()) 
+                     {  
+                      await MessageHandler.HandleUpdate(update)
+                      ;return;
+                     }
+                    if (ChatId != AdminChat && !MessageHandler.IsTextCommandBot(InputText)) 
+                     { return; }
 
                     await MessageHandler.HandleUpdate(update);
                     return;

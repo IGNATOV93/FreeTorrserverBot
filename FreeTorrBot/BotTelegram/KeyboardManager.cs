@@ -106,27 +106,16 @@ namespace FreeTorrBot.BotTelegram
 
             return new InlineKeyboardMarkup(keyboardButtons);
         }
-
-
-
-        public static InlineKeyboardMarkup ExitTextPassword()
+        public static InlineKeyboardMarkup CreateExitTorrSettInputButton(string callbackData)
         {
-            var buttonExitTextPassword = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода пароля ", "exitTextPassword");
-            var inlineExitTextPasswoed = new InlineKeyboardMarkup(new[]
-           {
-                 new[]{ buttonExitTextPassword }
-            });
-            return inlineExitTextPasswoed;
+            var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода","exit"+callbackData);
+            var inlineKeyboard = new InlineKeyboardMarkup(new[]
+            {
+        new[] { buttonExit }
+        });
+            return inlineKeyboard;
         }
-        public static InlineKeyboardMarkup ExitTextLogin()
-        {
-            var buttonExitTextLogin = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода логина ","exitTextLogin");
-            var inlineExitTextLogin= new InlineKeyboardMarkup(new[]
-           {
-                 new[]{ buttonExitTextLogin }
-            });
-            return inlineExitTextLogin;
-        }
+       
         public static InlineKeyboardMarkup GetMainBackups()
         {
             var butBackupTorrserver = InlineKeyboardButton.WithCallbackData("\u2601 \u26A1 Бекап torrserver ","backupTorr");

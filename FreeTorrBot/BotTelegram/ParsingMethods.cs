@@ -9,6 +9,63 @@ namespace AdTorrBot.BotTelegram
     
      public abstract class ParsingMethods
       {
+        public static string GetExitMessage(string field)
+        {
+            // Используем switch или if для определения сообщения в зависимости от поля
+            switch (field)
+            {
+                case "FlagLogin":
+                    return "Вы вышли из режима ввода логина Torrserver. ✅";
+
+                case "FlagPassword":
+                    return "Вы вышли из режима ввода пароля Torrserver. ✅";
+
+                case "FlagTorrSettCacheSize":
+                    return "Вы вышли из режима ввода размера кеша (МБ). ✅";
+
+                case "FlagTorrSettReaderReadAHead":
+                    return "Вы вышли из режима ввода значения опережающего кеша (%). ✅";
+
+                case "FlagTorrSettPreloadCache":
+                    return "Вы вышли из режима ввода значения буфера предзагрузки (%). ✅";
+
+                case "FlagTorrSettTorrentDisconnectTimeout":
+                    return "Вы вышли из режима ввода тайм-аута отключения торрентов (сек). ✅";
+
+                case "FlagTorrSettConnectionsLimit":
+                    return "Вы вышли из режима ввода лимита соединений для торрентов. ✅";
+
+                case "FlagTorrSettDownloadRateLimit":
+                    return "Вы вышли из режима ввода ограничения скорости загрузки (кб/с). ✅";
+
+                case "FlagTorrSettUploadRateLimit":
+                    return "Вы вышли из режима ввода ограничения скорости отдачи (кб/с). ✅";
+
+                case "FlagTorrSettPeersListenPort":
+                    return "Вы вышли из режима ввода порта для входящих подключений. ✅";
+
+                case "FlagTorrSettFriendlyName":
+                    return "Вы вышли из режима ввода имени сервера DLNA. ✅";
+
+                case "FlagTorrSettRetrackersMode":
+                    return "Вы вышли из режима ввода режима ретрекеров. ✅";
+
+                case "FlagTorrSettSslPort":
+                    return "Вы вышли из режима ввода SSL порта. ✅";
+
+                case "FlagTorrSettSslCert":
+                    return "Вы вышли из режима ввода пути к SSL сертификату. ✅";
+
+                case "FlagTorrSettSslKey":
+                    return "Вы вышли из режима ввода пути к SSL ключу. ✅";
+
+                case "FlagTorrSettTorrentsSavePath":
+                    return "Вы вышли из режима ввода пути для сохранения торрентов. ✅";
+
+                default:
+                    return "Неизвестное поле. ✅";
+            }
+        }
 
         public static string UpdateTimeString(string time,int minutesToAdd)
         {
