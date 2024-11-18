@@ -16,6 +16,8 @@ namespace AdTorrBot.BotTelegram.Db.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string? IdChat { get; set; }
+
+        public string? LastTextFlagTrue { get; set; }
         [Description($"Ввод: Логин Torrserver")]
         public bool FlagLogin { get; set; }=false;
         [Description($"Ввод: пароль Torrserver")]

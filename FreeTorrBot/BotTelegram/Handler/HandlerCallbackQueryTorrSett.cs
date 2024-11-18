@@ -21,72 +21,75 @@ namespace AdTorrBot.BotTelegram.Handler
         {
             var text = message.Text;
             var idMessage = message.MessageId;
-            Console.WriteLine($"Зашел в HandlerTextInputMessage");
-            // Обрабатываем обычное текстовое сообщение
-            if (textInputFlag.FlagLogin)
+            var lastTextFlagTrue = textInputFlag.LastTextFlagTrue;
+
+            Console.WriteLine($"Зашел в HandlerTextInputMessage. Последний активный флаг: {lastTextFlagTrue}");
+
+            if (string.IsNullOrEmpty(lastTextFlagTrue))
             {
-                Console.WriteLine("Обработка  TextInputFlagLogin");
-                await DeleteMessage(idMessage);
-                if (InputTextValidator.ValidateLoginAndPassword(text))
-                {
-                    await Torrserver.ChangeAccountTorrserver(text, "", true, false);
-                    await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin", false);
-                    Console.WriteLine("Смена логина выполнена.\r\n" +
-                        "Вы вышли с режима ввода логина !");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                         , $"Ваш  новый логин \u27A1 {text}" +
-                                                         " установлен \u2705"
-                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
-                }
-                else
-                {
-                    Console.WriteLine("Смена логина не удалась.");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                          , "\u2757 Вы в режиме ввода логина .\r\n" +
-                                                        "Напишите желаемый логин.\r\n" +
-                                                        "\u2757 Login может содержать только английские буквы и цифры\r\n." +
-                                                        "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagLogin"));
-                }
+                Console.WriteLine("Нет активного режима ввода.");
                 return;
             }
-            if (textInputFlag.FlagPassword)
+
+            // Удаляем сообщение, чтобы пользователь не видел текстового ввода
+            await DeleteMessage(idMessage);
+
+            // Обработка в зависимости от последнего активного флага
+            switch (lastTextFlagTrue)
             {
-                Console.WriteLine("Обработка  TextInputFlagPassword");
-                await DeleteMessage(idMessage);
-                if (InputTextValidator.ValidateLoginAndPassword(text))
-                {
-                    await Torrserver.ChangeAccountTorrserver("", text, false, true);
-                    await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword", false);
-                    Console.WriteLine("Смена пароля выполнена.\r\n" +
-                        "Вы вышли с режима ввода пароля !");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                         , $"Ваш  новый пароль \u27A1 {text}" +
-                                                         " установлен \u2705"
-                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
-                }
-                else
-                {
-                    Console.WriteLine("Смена пароля не удалась.");
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                          , "\u2757 Вы в режиме ввода пароля .\r\n" +
-                                                        "Напишите желаемый пароль.\r\n" +
-                                                        "\u2757 Password может содержать только английские буквы и цифры\r\n." +
-                                                        "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagPassword"));
-                }
-                return;
+                case "FlagLogin":
+                    Console.WriteLine("Обработка TextInputFlagLogin");
+                    if (InputTextValidator.ValidateLoginAndPassword(text))
+                    {
+                        await Torrserver.ChangeAccountTorrserver(text, "", true, false);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin", false);
+                        Console.WriteLine("Смена логина выполнена.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Ваш новый логин ➡️ {text} установлен ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Смена логина не удалась.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Вы в режиме ввода логина.\n" +
+                            "Напишите желаемый логин.\n" +
+                            "⚠️ Логин может содержать только английские буквы и цифры. Ограничение: 10 символов.",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagLogin"));
+                    }
+                    break;
+
+                case "FlagPassword":
+                    Console.WriteLine("Обработка TextInputFlagPassword");
+                    if (InputTextValidator.ValidateLoginAndPassword(text))
+                    {
+                        await Torrserver.ChangeAccountTorrserver("", text, false, true);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword", false);
+                        Console.WriteLine("Смена пароля выполнена.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Ваш новый пароль ➡️ {text} установлен ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Смена пароля не удалась.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Вы в режиме ввода пароля.\n" +
+                            "Напишите желаемый пароль.\n" +
+                            "⚠️ Пароль может содержать только английские буквы и цифры. Ограничение: 10 символов.",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagPassword"));
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine($"Обработка для {lastTextFlagTrue} пока не реализована.");
+                    await botClient.SendTextMessageAsync(AdminChat,
+                        $"Вы в режиме ввода данных для настройки: {lastTextFlagTrue}. Пока обработка не поддерживается.",
+                        replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    break;
             }
-            else
-            {
-                Console.WriteLine("Данный ввод еще не обработан");
-                await botClient.SendTextMessageAsync(AdminChat
-                                                      , "Вы в режиме ввода данных{ввод режима не обработан}"
-                                                   );
-            }
- 
-            return;
         }
+
 
 
         public static async Task CheckSettingAndExecute(CallbackQuery callbackQuery, string inputSetting)

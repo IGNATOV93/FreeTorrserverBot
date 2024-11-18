@@ -197,6 +197,7 @@ namespace AdTorrBot.BotTelegram.Db
             {
                 var textInputFlags = await db.TextInputFlag.FirstOrDefaultAsync(x => x.IdChat == adminChat);
                 var flagLogin = textInputFlags?.FlagLogin ?? false;
+
                 Console.WriteLine($"flaglogin:{flagLogin}");
 
                 return flagLogin;
@@ -241,6 +242,11 @@ namespace AdTorrBot.BotTelegram.Db
                     if (property.CanWrite && property.PropertyType == typeof(bool))
                     {
                         property.SetValue(textInputFlags, flag); // Обновляем значение свойства
+                        if (flag)
+                        {
+                            property.SetValue("LastTextFlagTrue",nameFlag);
+                        }
+                        
                         Console.WriteLine($"Свойство {nameFlag} успешно обновлено на {flag}.");
                     }
                     else
