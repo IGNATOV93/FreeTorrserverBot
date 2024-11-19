@@ -33,7 +33,7 @@ namespace AdTorrBot.BotTelegram.Handler
 
             // Удаляем сообщение, чтобы пользователь не видел текстового ввода
             await DeleteMessage(idMessage);
-
+            var setTorr = await SqlMethods.GetSettingsTorrProfile(AdminChat);
             // Обработка в зависимости от последнего активного флага
             switch (lastTextFlagTrue)
             {
@@ -80,7 +80,42 @@ namespace AdTorrBot.BotTelegram.Handler
                             replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagPassword"));
                     }
                     break;
-
+                case "FlagTorrSettCacheSize":
+                    Console.WriteLine("Обработка FlagTorrSettCacheSize");
+                    if (int.TryParse(text, out int cacheSize) && cacheSize > 0)
+                    {
+                        setTorr.CacheSize = cacheSize;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr); // Здесь ваш метод обновления размера кэша
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettCacheSize", false);
+                        Console.WriteLine($"Размер кэша успешно обновлен: {cacheSize} MB.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Размер кэша успешно обновлен ➡️ {cacheSize} MB ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе размера кэша.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите размер кэша в MB (целое число больше 0).",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettCacheSize"));
+                    }
+                    break;
+                // Шаблон для остальных флагов
+                case "FlagTorrSettReaderReadAHead":
+                case "FlagTorrSettPreloadCache":
+                case "FlagTorrSettTorrentDisconnectTimeout":
+                case "FlagTorrSettConnectionsLimit":
+                case "FlagTorrSettDownloadRateLimit":
+                case "FlagTorrSettUploadRateLimit":
+                case "FlagTorrSettPeersListenPort":
+                case "FlagTorrSettFriendlyName":
+                case "FlagTorrSettRetrackersMode":
+                case "FlagTorrSettSslPort":
+                case "FlagTorrSettSslCert":
+                case "FlagTorrSettSslKey":
+                case "FlagTorrSettTorrentsSavePath":
                 default:
                     Console.WriteLine($"Обработка для {lastTextFlagTrue} пока не реализована.");
                     await botClient.SendTextMessageAsync(AdminChat,

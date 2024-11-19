@@ -25,6 +25,9 @@ namespace AdTorrBot.BotTelegram.Db
     {
 
         public static readonly string adminChat = TelegramBot.AdminChat;
+
+
+       
         public static async Task SetSettingsTorrProfile( BitTorrConfig config)
         {
             Console.WriteLine($"Запуск SetSettingsTorrProfile.");
@@ -244,7 +247,8 @@ namespace AdTorrBot.BotTelegram.Db
                         property.SetValue(textInputFlags, flag); // Обновляем значение свойства
                         if (flag)
                         {
-                            property.SetValue("LastTextFlagTrue",nameFlag);
+                            textInputFlags.LastTextFlagTrue =nameFlag;
+                         
                         }
                         
                         Console.WriteLine($"Свойство {nameFlag} успешно обновлено на {flag}.");

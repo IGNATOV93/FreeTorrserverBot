@@ -23,12 +23,16 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Имя профиля")]
         public string NameProfileBot { get; set; } = "default";
 
+        [JsonConverter(typeof(CacheSizeConverter))]
         [Description("Размер кеша MB")]
         public long CacheSize
         {
             get => _cacheSize / (1024 * 1024); // Возвращает значение в мегабайтах
             set => _cacheSize = value * 1024 * 1024; // Сохраняет значение в байтах
         }
+
+        
+
         // Приватное поле для хранения значения в байтах
         private long _cacheSize = 67108864; // Значение по умолчанию в байтах
 

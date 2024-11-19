@@ -2,6 +2,7 @@
 using AdTorrBot.BotTelegram.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdTorrBot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241119014537_191120241")]
+    partial class _191120241
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -134,6 +137,10 @@ namespace AdTorrBot.Migrations
 
                     b.Property<long>("CacheSize")
                         .HasColumnType("INTEGER");
+
+                    b.Property<long>("CacheSizeInBytes")
+                        .HasColumnType("INTEGER")
+                        .HasAnnotation("Relational:JsonPropertyName", "CacheSize");
 
                     b.Property<int>("ConnectionsLimit")
                         .HasColumnType("INTEGER");

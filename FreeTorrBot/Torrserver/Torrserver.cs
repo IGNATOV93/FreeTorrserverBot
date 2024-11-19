@@ -96,6 +96,7 @@ namespace FreeTorrserverBot.Torrserver
                 return null;
             }
         }
+
         public static async Task ChangeAccountTorrserver(string login,string password,bool setLogin,bool setPassword)
         {
             var newParolRandom = new Random();
