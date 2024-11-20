@@ -1,5 +1,6 @@
 ﻿using AdTorrBot.BotTelegram.Db;
 using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
+using FreeTorrserverBot.Torrserver;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -107,11 +108,28 @@ namespace FreeTorrBot.BotTelegram
         public static InlineKeyboardMarkup CreateExitTorrSettInputButton(string callbackData)
         {
             var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода","exit"+callbackData);
-            var inlineKeyboard = new InlineKeyboardMarkup(new[]
+           
+            // Логика добавления дополнительных кнопок
+            var additionalButtons = new List<InlineKeyboardButton>();
+            if (callbackData.Contains("TorrSettCacheSize")) 
             {
-        new[] { buttonExit }
-        });
-            return inlineKeyboard;
+                
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-10мб", "-TorrSettCacheSize"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+10мб", "+TorrSettCacheSize"));
+            }
+            // Формируем общий массив кнопок
+            var buttons = new List<InlineKeyboardButton[]>();
+
+            // Добавляем дополнительные кнопки, если они есть
+            if (additionalButtons.Count > 0)
+            {
+                buttons.Add(additionalButtons.ToArray());
+            }
+
+            // Добавляем кнопку выхода
+            buttons.Add(new[] { buttonExit });
+
+            return new InlineKeyboardMarkup(buttons);
         }
        
         public static InlineKeyboardMarkup GetMainBackups()

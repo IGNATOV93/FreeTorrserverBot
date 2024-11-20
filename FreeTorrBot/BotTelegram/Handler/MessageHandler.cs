@@ -145,6 +145,12 @@ namespace AdTorrBot.BotTelegram.Handler
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
                     return;
                 }
+                if (callbackData.Contains("TorrSettCacheSize"))
+                    {
+
+                    }
+
+                
                 if (callbackData.Contains("torrSetOne"))
                 {
                     var set = callbackData.Split("torrSetOne")[1];
@@ -453,7 +459,7 @@ namespace AdTorrBot.BotTelegram.Handler
 
             ,"restart_torrserver"
             ,"restart_server"
-
+            
             ,"showTorrsetInfo"
             ,"resetTorrSetConfig"
             ,"setTorrSetConfig"
@@ -466,6 +472,10 @@ namespace AdTorrBot.BotTelegram.Handler
             if (commands.Contains("exit"))
             {
                 return true;
+            }
+            if (commands.Contains("TorrSett"))
+            {
+                return true ;
             }
             // Если команда содержит "setAutoPassMinutes", проверим формат
             if (command.Contains("setAutoPassMinutes"))

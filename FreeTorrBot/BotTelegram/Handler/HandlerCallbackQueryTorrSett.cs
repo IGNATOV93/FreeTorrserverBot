@@ -220,72 +220,86 @@ namespace AdTorrBot.BotTelegram.Handler
                     
                         case "cachesize":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettCacheSize", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода размера кеша. Пожалуйста, введите новое значение (MB).", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettCacheSize"));
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода размера кеша. Пожалуйста, введите новое значение (MB).\r\n" +
+                        $"Сейчас: {conf.CacheSize} МБ", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettCacheSize"));
                             break;
 
                         case "readerreadahead":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettReaderReadAHead", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода значения для опережающего кеша. Пожалуйста, введите новое значение.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettReaderReadAHead"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода значения для опережающего кеша. Пожалуйста, введите новое значение.\r\n" +
+                                $"Сейчас: {conf.ReaderReadAHead} %", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettReaderReadAHead"));
                             break;
 
                         case "preloadcache":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPreloadCache", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода размера буфера предзагрузки. Пожалуйста, введите новое значение.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettPreloadCache"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода размера буфера предзагрузки. Пожалуйста, введите новое значение.\r\n" +
+                                $"Сейчас: {conf.PreloadCache} %", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettPreloadCache"));
                             break;
 
                         case "torrentdisconnecttimeout":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentDisconnectTimeout", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода тайм-аута отключения торрентов. Пожалуйста, введите новое значение (в секундах).", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettTorrentDisconnectTimeout"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода тайм-аута отключения торрентов. Пожалуйста, введите новое значение (в секундах).\r\n" +
+                                $"Сейчас: {conf.TorrentDisconnectTimeout} сек.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettTorrentDisconnectTimeout"));
                             break;
 
                         case "connectionslimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettConnectionsLimit", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода лимита соединений для торрентов. Пожалуйста, введите новое значение.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettConnectionsLimit"));
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода лимита соединений для торрентов. Пожалуйста, введите новое значение.\r\n" +
+                        $"Сейчас: {conf.ConnectionsLimit} соед. ", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettConnectionsLimit"));
                             break;
 
                         case "downloadratelimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettDownloadRateLimit", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (кб/с).", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettDownloadRateLimit"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (кб/с).\r\n" +
+                                $"Сейчас: {conf.DownloadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettDownloadRateLimit"));
                             break;
 
                         case "uploadratelimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettUploadRateLimit", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (кб/с).", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettUploadRateLimit"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (кб/с).\r\n" +
+                                $"Сейчас: {conf.UploadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettUploadRateLimit"));
                             break;
 
                         case "peerslistenport":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPeersListenPort", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettPeersListenPort"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.\r\n" +
+                                $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettPeersListenPort"));
                             break;
 
                         case "retrackersmode":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettRetrackersMode", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода режима ретрекеров. Пожалуйста, введите новое значение.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettRetrackersMode"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода режима ретрекеров. Пожалуйста, введите новое значение.\r\n" +
+                                $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettRetrackersMode"));
                             break;
 
                         case "sslport":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslPort", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslPort"));
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.\r\n" +
+                        $"Сейчас: {conf.SslPort} порт", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslPort"));
                             break;
 
                         case "friendlyname":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettFriendlyName"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.\r\n" +
+                                $"Сейчас: {conf.FriendlyName} имя.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettFriendlyName"));
                             break;
 
                         case "torrentssavepath":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentsSavePath", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. Пожалуйста, введите новый путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettTorrentsSavePath"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. Пожалуйста, введите новый путь.\r\n" +
+                                $"Сейчас: {conf.TorrentsSavePath} путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettTorrentsSavePath"));
                             break;
 
                         case "sslcert":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslCert", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату. Пожалуйста, введите путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslCert"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату. Пожалуйста, введите путь.\r\n" +
+                                $"Сейчас: {conf.SslCert} путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslCert"));
                             break;
 
                         case "sslkey":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslKey", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу. Пожалуйста, введите путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslKey"));
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу. Пожалуйста, введите путь.\r\n" +
+                                $"Сейчас: {conf.SslKey} путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslKey"));
                             break;
 
                         default:
