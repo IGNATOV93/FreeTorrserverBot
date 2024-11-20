@@ -56,17 +56,15 @@ namespace FreeTorrBot.BotTelegram
                                              // Получаем описание из атрибута DescriptionAttribute
                                              var descriptionAttr = prop.GetCustomAttribute<DescriptionAttribute>();
                                              string description = descriptionAttr != null ? descriptionAttr.Description : prop.Name;
-
+                                            
                                              // Проверка на null для значения свойства
                                              var value = prop.GetValue(config) ?? "не задано";
-                                             // Применяем преобразование для конкретного свойства
-                                             if (prop.Name == "CacheSize" && value is long byteValue)
-                                             {
-                                                 value = byteValue / (1024 * 1024); // Преобразуем байты в мегабайты
-                                             }
+                                            
                                              // Формируем текст кнопки с описанием и значением
                                              string buttonText = $"{description} ({value})";
 
+                                             // Логирование для отладки [Не удалять|Для нормальной инициализации полей с set]
+                                             Console.WriteLine($"Свойство {prop.Name}, значение: {value}");
                                              // Возвращаем кнопку с callback-данными
                                              return InlineKeyboardButton.WithCallbackData(buttonText, $"torrSetOne{prop.Name}");
                                          })
