@@ -107,15 +107,24 @@ namespace FreeTorrBot.BotTelegram
         }
         public static InlineKeyboardMarkup CreateExitTorrSettInputButton(string callbackData)
         {
-            var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода","exit"+callbackData);
-           
+            // Кнопка выхода
+            var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода", "exit" + callbackData);
+
             // Логика добавления дополнительных кнопок
             var additionalButtons = new List<InlineKeyboardButton>();
-            if (callbackData.Contains("TorrSettCacheSize")) 
+            if (callbackData.Contains("TorrSettCacheSize"))
             {
-                
-                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-10мб", "-TorrSettCacheSize"));
-                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+10мб", "+TorrSettCacheSize"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-10 МБ", "-TorrSettCacheSize"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+10 МБ", "+TorrSettCacheSize"));
+               
+            }
+            if(callbackData.Contains("FlagLogin")||callbackData.Contains("FlagPassword"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("↩", "manage_login_password"));
+            }    
+            if (callbackData.Contains("TorrSett"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("↩", "0torrSettings"));
             }
             // Формируем общий массив кнопок
             var buttons = new List<InlineKeyboardButton[]>();
@@ -123,15 +132,16 @@ namespace FreeTorrBot.BotTelegram
             // Добавляем дополнительные кнопки, если они есть
             if (additionalButtons.Count > 0)
             {
-                buttons.Add(additionalButtons.ToArray());
+                buttons.Add(additionalButtons.ToArray()); // Кнопки в строку
             }
 
-            // Добавляем кнопку выхода
+            // Добавляем кнопку выхода в отдельную строку
             buttons.Add(new[] { buttonExit });
 
             return new InlineKeyboardMarkup(buttons);
         }
-       
+
+
         public static InlineKeyboardMarkup GetMainBackups()
         {
             var butBackupTorrserver = InlineKeyboardButton.WithCallbackData("\u2601 \u26A1 Бекап torrserver ","backupTorr");

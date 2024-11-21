@@ -46,7 +46,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         Console.WriteLine("Смена логина выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,
                             $"Ваш новый логин ➡️ {text} установлен ✅",
-                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                            replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
                     }
                     else
                     {
@@ -68,7 +68,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         Console.WriteLine("Смена пароля выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,
                             $"Ваш новый пароль ➡️ {text} установлен ✅",
-                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                            replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
                     }
                     else
                     {

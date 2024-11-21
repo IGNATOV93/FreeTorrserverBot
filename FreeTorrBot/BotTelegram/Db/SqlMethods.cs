@@ -210,7 +210,43 @@ namespace AdTorrBot.BotTelegram.Db
 
         }
 
+        public static async Task<bool> SwitchOffInputFlag()
+        {
+            return await WithDbContextAsync(async db =>
+            {
+                try
+                {
+                    // Получаем объект из базы данных
+                    var textInputFlags = await db.TextInputFlag.FirstOrDefaultAsync(x => x.IdChat == adminChat);
+                    if (textInputFlags == null)
+                    {
+                        Console.WriteLine($"Объект textInputFlags с IdChat = {adminChat} не найден.");
+                        return false;
+                       
+                    }
+                    else
+                    {
+                        var properties = typeof(TextInputFlag).GetProperties()
+                     .Where(p => p.PropertyType == typeof(bool));
 
+                        foreach (var prop in properties)
+                        {
+                            prop.SetValue(textInputFlags, false);
+                        }
+                        db.TextInputFlag.Update(textInputFlags);
+                        await db.SaveChangesAsync();
+                        return true;
+                    }
+                    
+                }
+                catch (Exception e)
+                {
+                   return false;
+                }
+               
+            });
+          
+        }
         public static async Task<bool> SwitchTorSettingsInputFlag(string nameFlag, bool flag)
         {
             return await WithDbContextAsync(async db =>

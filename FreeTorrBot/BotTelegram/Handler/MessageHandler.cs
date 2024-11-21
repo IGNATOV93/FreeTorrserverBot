@@ -182,6 +182,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData.Contains("torrSettings"))
                 {
                     var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrSettings")[0]);
+                    await SqlMethods.SwitchOffInputFlag();
                     var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
                     Console.WriteLine("Настройки Torrserver");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "⚙️ Настройки Torrserver ."
@@ -270,6 +271,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData == "manage_login_password")
                 {
                     Console.WriteLine("Управление логином и паролем Torrserver");
+                    await SqlMethods.SwitchOffInputFlag();
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "Управление логином и паролем Torrserver ."
 
                      , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
