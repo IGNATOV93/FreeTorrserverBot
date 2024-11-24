@@ -145,16 +145,13 @@ namespace AdTorrBot.BotTelegram.Handler
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
                     return;
                 }
-                if (callbackData.Contains("TorrSettCacheSize"))
-                    {
-
-                    }
+               
 
                 
                 if (callbackData.Contains("torrSetOne"))
                 {
-                    var set = callbackData.Split("torrSetOne")[1];
-                    await HandlerCallbackQueryTorrSett.CheckSettingAndExecute(callbackQuery, set);
+                    
+                    await HandlerCallbackQueryTorrSett.CheckSettingAndExecute(callbackQuery, callbackData);
 
                     return;
                 }
@@ -296,7 +293,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                                         "Напишите желаемый логин.\r\n" +
                                                         "\u2757 Login может содержать только английские буквы и цифры.\r\n" +
                                                          "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagLogin"));
+                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagLogin", 0 ));
                     return;
                 }
                 if (callbackData == "set_password_manually")
@@ -308,7 +305,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                                         "Напишите желаемый пароль.\r\n" +
                                                         "\u2757 Password может содержать только английские буквы и цифры.\r\n" +
                                                          "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagPassword"));
+                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagPassword",0));
                     return;
 
                 }

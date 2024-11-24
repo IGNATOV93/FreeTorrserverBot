@@ -61,13 +61,16 @@ namespace FreeTorrBot.BotTelegram
                                              // Проверка на null для значения свойства
                                              var value = prop.GetValue(config) ?? "не задано";
                                             
+                                             bool isNumeric = prop.PropertyType== typeof(int)||prop.PropertyType==typeof(long);
+                                             // Устанавливаем значение для callbackData
+                                             int valueCallbackData = isNumeric && value != null ? Convert.ToInt32(value) : 0;
                                              // Формируем текст кнопки с описанием и значением
                                              string buttonText = $"{description} ({value})";
 
                                              // Логирование для отладки [Не удалять|Для нормальной инициализации полей с set]
                                              Console.WriteLine($"Свойство {prop.Name}, значение: {value}");
                                              // Возвращаем кнопку с callback-данными
-                                             return InlineKeyboardButton.WithCallbackData(buttonText, $"torrSetOne{prop.Name}");
+                                             return InlineKeyboardButton.WithCallbackData(buttonText, $"{valueCallbackData}torrSetOne{prop.Name}");
                                          })
                                          .ToArray();
 
@@ -105,17 +108,28 @@ namespace FreeTorrBot.BotTelegram
 
             return new InlineKeyboardMarkup(keyboardButtons);
         }
-        public static InlineKeyboardMarkup CreateExitTorrSettInputButton(string callbackData)
+        public static InlineKeyboardMarkup CreateExitTorrSettInputButton(string callbackData,long value)
         {
             // Кнопка выхода
             var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода", "exit" + callbackData);
-
+            
             // Логика добавления дополнительных кнопок
             var additionalButtons = new List<InlineKeyboardButton>();
             if (callbackData.Contains("TorrSettCacheSize"))
             {
-                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-10 МБ", "-TorrSettCacheSize"));
-                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+10 МБ", "+TorrSettCacheSize"));
+                //Мин 32 Макс 256
+                var backValue = value-32;
+                var nextValue = value+32;
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("64 МБ", $"{64}torrSetOneCacheSize"));
+                if (value>=64) 
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-32 МБ", $"{backValue}torrSetOneCacheSize"));
+                }
+                if (value <= 224)
+                {
+                   additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+32 МБ", $"{nextValue}torrSetOneCacheSize"));
+                }
+               
                
             }
             if(callbackData.Contains("FlagLogin")||callbackData.Contains("FlagPassword"))
