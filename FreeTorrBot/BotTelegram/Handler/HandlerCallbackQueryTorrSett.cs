@@ -86,7 +86,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         setTorr.CacheSize = cacheSize;
                         await Torrserver.WriteConfig(setTorr);
-                        await SqlMethods.SetSettingsTorrProfile(setTorr); // Здесь ваш метод обновления размера кэша
+                        await SqlMethods.SetSettingsTorrProfile(setTorr); 
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettCacheSize", false);
                         Console.WriteLine($"Размер кэша успешно обновлен: {cacheSize} MB.");
                         await botClient.SendTextMessageAsync(AdminChat,
@@ -100,12 +100,56 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите размер кэша в MB (целое число от 32 до 256).\r\n\r\n" +
                             $"Сейчас {setTorr.CacheSize} MB",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettCacheSize", setTorr.CacheSize));
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettCacheSize", setTorr.CacheSize));
                     }
                     break;
                 // Шаблон для остальных флагов
                 case "FlagTorrSettReaderReadAHead":
+                    Console.WriteLine("FlagTorrSettReaderReadAHead");
+                    if (int.TryParse(text, out int readHead) && (readHead > 4 && readHead < 101))
+                    {
+                        setTorr.ReaderReadAHead = readHead;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr); 
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettReaderReadAHead", false);
+                        Console.WriteLine($"Опережающий кэш обновлен: {readHead} MB.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Опережающий кэш успешно обновлен ➡️ {readHead} % ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе опережающего кэша.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите опережающий кэш (целое число от 5 до 100).\r\n\r\n" +
+                            $"Сейчас {setTorr.ReaderReadAHead} %",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettReaderReadAHead", setTorr.ReaderReadAHead));
+                    }
+                    break;
                 case "FlagTorrSettPreloadCache":
+                    Console.WriteLine("FlagTorrSettPreloadCache");
+                    if (int.TryParse(text, out int preLoadCache) && (preLoadCache > 4 && preLoadCache < 101))
+                    {
+                        setTorr.ReaderReadAHead = preLoadCache;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPreloadCache", false);
+                        Console.WriteLine($"Буфер предзагрузки обновлен: {preLoadCache} %.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Буфер предзагрузки успешно обновлен ➡️ {preLoadCache} % ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе буфера предзагрузки.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите буфер предзагрузки (целое число от 5 до 100).\r\n\r\n" +
+                            $"Сейчас {setTorr.PreloadCache} %",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettPreloadCache", setTorr.PreloadCache));
+                    }
+                    break;
                 case "FlagTorrSettTorrentDisconnectTimeout":
                 case "FlagTorrSettConnectionsLimit":
                 case "FlagTorrSettDownloadRateLimit":
@@ -230,14 +274,18 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "readerreadahead":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettReaderReadAHead", true);
+                         conf.ReaderReadAHead=value;
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода значения для опережающего кеша. Пожалуйста, введите новое значение.\r\n" +
-                                $"Сейчас: {conf.ReaderReadAHead} %", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettReaderReadAHead", conf.ReaderReadAHead));
+                                "Min 5% - Max 100%\r\n\r\n" +
+                                $"Сейчас: {conf.ReaderReadAHead} %", KeyboardManager.CreateExitTorrSettInputButton("TorrSettReaderReadAHead", conf.ReaderReadAHead));
                             break;
 
                         case "preloadcache":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPreloadCache", true);
+                         conf.PreloadCache=value;
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода размера буфера предзагрузки. Пожалуйста, введите новое значение.\r\n" +
-                                $"Сейчас: {conf.PreloadCache} %", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettPreloadCache", conf.CacheSize));
+                                "Min 5% - Max 100%\r\n\r\n" +
+                                $"Сейчас: {conf.PreloadCache} %", KeyboardManager.CreateExitTorrSettInputButton("TorrSettPreloadCache", conf.PreloadCache));
                             break;
 
                         case "torrentdisconnecttimeout":

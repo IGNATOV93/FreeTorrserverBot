@@ -120,7 +120,11 @@ namespace FreeTorrBot.BotTelegram
                 //Мин 32 Макс 256
                 var backValue = value-32;
                 var nextValue = value+32;
-                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("64 МБ", $"{64}torrSetOneCacheSize"));
+                
+                if (value != 64)
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("64 МБ", $"{64}torrSetOneCacheSize"));
+                }
                 if (value>=64) 
                 {
                     additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-32 МБ", $"{backValue}torrSetOneCacheSize"));
@@ -128,11 +132,47 @@ namespace FreeTorrBot.BotTelegram
                 if (value <= 224)
                 {
                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+32 МБ", $"{nextValue}torrSetOneCacheSize"));
-                }
-               
-               
+                } 
             }
-            if(callbackData.Contains("FlagLogin")||callbackData.Contains("FlagPassword"))
+            if (callbackData.Contains("TorrSettReaderReadAHead"))
+            {
+                //Мин 5 Макс 100
+                var backValue = value - 5;
+                var nextValue = value + 5;
+                
+                if (value != 95)
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("95 %", $"{95}torrSetOneReaderReadAHead"));
+                }
+                if (value >= 10)
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-5 %", $"{backValue}torrSetOneReaderReadAHead"));
+                }
+                if (value <= 95)
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+5 %", $"{nextValue}torrSetOneReaderReadAHead"));
+                }
+            }
+            if (callbackData.Contains("TorrSettPreloadCache"))
+            {
+                //Мин 5 Макс 100
+                var backValue = value - 5;
+                var nextValue = value + 5;
+
+                if (value != 50)
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("50 %", $"{50}torrSetOnePreloadCache"));
+                }
+                if (value >= 10)
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-5 %", $"{backValue}torrSetOnePreloadCache"));
+                }
+                if (value <= 95)
+                {
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+5 %", $"{nextValue}torrSetOnePreloadCache"));
+                }
+            }
+            if (callbackData.Contains("FlagLogin")||callbackData.Contains("FlagPassword"))
             {
                 additionalButtons.Add(InlineKeyboardButton.WithCallbackData("↩", "manage_login_password"));
             }    
