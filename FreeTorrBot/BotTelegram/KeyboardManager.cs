@@ -112,26 +112,38 @@ namespace FreeTorrBot.BotTelegram
         {
             // Кнопка выхода
             var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода", "exit" + callbackData);
-            
+            string tset = "torrSetOne";
             // Логика добавления дополнительных кнопок
             var additionalButtons = new List<InlineKeyboardButton>();
+
+            if (callbackData.Contains("TorrSettConnectionsLimit"))
+            {
+                
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("25 шт.", $"{25}{tset}ConnectionsLimit"));
+                
+            }
+            if (callbackData.Contains("TorrSettTorrentDisconnectTimeout")) 
+            {
+                
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("30 сек.", $"{30}{tset}TorrentDisconnectTimeout"));
+                
+            }
             if (callbackData.Contains("TorrSettCacheSize"))
             {
                 //Мин 32 Макс 256
                 var backValue = value-32;
                 var nextValue = value+32;
                 
-                if (value != 64)
-                {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("64 МБ", $"{64}torrSetOneCacheSize"));
-                }
+                
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("64 МБ", $"{64}{tset}CacheSize"));
+                
                 if (value>=64) 
                 {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-32 МБ", $"{backValue}torrSetOneCacheSize"));
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-32 МБ", $"{backValue}{tset}CacheSize"));
                 }
                 if (value <= 224)
                 {
-                   additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+32 МБ", $"{nextValue}torrSetOneCacheSize"));
+                   additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+32 МБ", $"{nextValue}{tset}CacheSize"));
                 } 
             }
             if (callbackData.Contains("TorrSettReaderReadAHead"))
@@ -140,17 +152,16 @@ namespace FreeTorrBot.BotTelegram
                 var backValue = value - 5;
                 var nextValue = value + 5;
                 
-                if (value != 95)
-                {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("95 %", $"{95}torrSetOneReaderReadAHead"));
-                }
+                
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("95 %", $"{95}{tset}ReaderReadAHead"));
+                
                 if (value >= 10)
                 {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-5 %", $"{backValue}torrSetOneReaderReadAHead"));
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-5 %", $"{backValue}{tset}ReaderReadAHead"));
                 }
                 if (value <= 95)
                 {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+5 %", $"{nextValue}torrSetOneReaderReadAHead"));
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+5 %", $"{nextValue}{tset}ReaderReadAHead"));
                 }
             }
             if (callbackData.Contains("TorrSettPreloadCache"))
@@ -159,17 +170,16 @@ namespace FreeTorrBot.BotTelegram
                 var backValue = value - 5;
                 var nextValue = value + 5;
 
-                if (value != 50)
-                {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("50 %", $"{50}torrSetOnePreloadCache"));
-                }
+                
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("50 %", $"{50}{tset}PreloadCache"));
+                
                 if (value >= 10)
                 {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-5 %", $"{backValue}torrSetOnePreloadCache"));
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("-5 %", $"{backValue}{tset}PreloadCache"));
                 }
                 if (value <= 95)
                 {
-                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+5 %", $"{nextValue}torrSetOnePreloadCache"));
+                    additionalButtons.Add(InlineKeyboardButton.WithCallbackData("+5 %", $"{nextValue}{tset}PreloadCache"));
                 }
             }
             if (callbackData.Contains("FlagLogin")||callbackData.Contains("FlagPassword"))

@@ -151,7 +151,51 @@ namespace AdTorrBot.BotTelegram.Handler
                     }
                     break;
                 case "FlagTorrSettTorrentDisconnectTimeout":
+                    Console.WriteLine("FlagTorrSettTorrentDisconnectTimeout");
+                    if (int.TryParse(text, out int torrentDisconnectTimeout) && (torrentDisconnectTimeout > 0))
+                    {
+                        setTorr.TorrentDisconnectTimeout = torrentDisconnectTimeout;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentDisconnectTimeout", false);
+                        Console.WriteLine($"Тайм-аут отключения торрента обновлен: {torrentDisconnectTimeout} %.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Тайм-аут отключения торрента успешно обновлен ➡️ {torrentDisconnectTimeout} сек. ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе буфера предзагрузки.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите тайм-аут отключения торрента (целое число от 1).\r\n\r\n" +
+                            $"Сейчас {setTorr.PreloadCache} сек.",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentDisconnectTimeout", setTorr.TorrentDisconnectTimeout));
+                    }
+                    break;
                 case "FlagTorrSettConnectionsLimit":
+                    Console.WriteLine("FlagTorrSettConnectionsLimit");
+                    if (int.TryParse(text, out int connectionsLimit) && (connectionsLimit > 0))
+                    {
+                        setTorr.ConnectionsLimit = connectionsLimit;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettConnectionsLimit", false);
+                        Console.WriteLine($"Торрент соединения обновлены: {connectionsLimit} шт.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Торрент соединения успешно обновлены ➡️ {connectionsLimit} шт. ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе торрент соединений.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите кол-во торрент соединений (целое число от 0).\r\n\r\n" +
+                            $"Сейчас {setTorr.ConnectionsLimit} сек.",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettConnectionsLimit", setTorr.ConnectionsLimit));
+                    }
+                    break;
                 case "FlagTorrSettDownloadRateLimit":
                 case "FlagTorrSettUploadRateLimit":
                 case "FlagTorrSettPeersListenPort":
@@ -290,38 +334,40 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "torrentdisconnecttimeout":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentDisconnectTimeout", true);
+                           conf.TorrentDisconnectTimeout=value;
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода тайм-аута отключения торрентов. Пожалуйста, введите новое значение (в секундах).\r\n" +
-                                $"Сейчас: {conf.TorrentDisconnectTimeout} сек.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettTorrentDisconnectTimeout", conf.TorrentDisconnectTimeout));
+                                $"Сейчас: {conf.TorrentDisconnectTimeout} сек.", KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentDisconnectTimeout", conf.TorrentDisconnectTimeout));
                             break;
 
                         case "connectionslimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettConnectionsLimit", true);
+                            conf.ConnectionsLimit=value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода лимита соединений для торрентов. Пожалуйста, введите новое значение.\r\n" +
-                        $"Сейчас: {conf.ConnectionsLimit} соед. ", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettConnectionsLimit", conf.ConnectionsLimit));
+                        $"Сейчас: {conf.ConnectionsLimit} соед. ", KeyboardManager.CreateExitTorrSettInputButton("TorrSettConnectionsLimit", conf.ConnectionsLimit));
                             break;
 
                         case "downloadratelimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettDownloadRateLimit", true);
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (кб/с).\r\n" +
-                                $"Сейчас: {conf.DownloadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettDownloadRateLimit", conf.DownloadRateLimit));
+                                $"Сейчас: {conf.DownloadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettDownloadRateLimit", conf.DownloadRateLimit));
                             break;
 
                         case "uploadratelimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettUploadRateLimit", true);
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (кб/с).\r\n" +
-                                $"Сейчас: {conf.UploadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettUploadRateLimit", conf.UploadRateLimit));
+                                $"Сейчас: {conf.UploadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettUploadRateLimit", conf.UploadRateLimit));
                             break;
 
                         case "peerslistenport":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPeersListenPort", true);
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.\r\n" +
-                                $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettPeersListenPort", conf.PeersListenPort));
+                                $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitTorrSettInputButton("TorrSettPeersListenPort", conf.PeersListenPort));
                             break;
 
                         case "retrackersmode":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettRetrackersMode", true);
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода режима ретрекеров. Пожалуйста, введите новое значение.\r\n" +
-                                $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettRetrackersMode", conf.RetrackersMode));
+                                $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitTorrSettInputButton("TorrSettRetrackersMode", conf.RetrackersMode));
                             break;
 
                         case "sslport":
@@ -366,9 +412,24 @@ namespace AdTorrBot.BotTelegram.Handler
 
         public static async Task SendOrEditMessage(int idMessage, string message, InlineKeyboardMarkup keyCallback)
         {
-            await botClient.EditMessageTextAsync(AdminChat,idMessage, "\u2699 Настройки Torrserver\r\n" + message,replyMarkup: keyCallback);
-            return;
+            try
+            {
+                // Пытаемся изменить сообщение
+                await botClient.EditMessageTextAsync(
+                    AdminChat,
+                    idMessage,
+                    "\u2699 Настройки Torrserver\r\n" + message,
+                    replyMarkup: keyCallback
+                );
+            }
+            catch (Telegram.Bot.Exceptions.ApiRequestException ex) when (ex.Message.Contains("message is not modified"))
+            {
+                // Игнорируем ошибку, если сообщение не изменено
+                Console.WriteLine($"Сообщение {idMessage} не изменено, так как текст идентичен текущему.");
+            }
+          
         }
+
 
 
     }
