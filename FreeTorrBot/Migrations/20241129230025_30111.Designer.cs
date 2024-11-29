@@ -2,6 +2,7 @@
 using AdTorrBot.BotTelegram.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdTorrBot.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241129230025_30111")]
+    partial class _30111
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -156,7 +159,7 @@ namespace AdTorrBot.Migrations
                     b.Property<bool>("DisableUpload")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("DownloadRateLimit")
+                    b.Property<int>("DownloadRateLimit")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("EnableDLNA")
@@ -222,7 +225,7 @@ namespace AdTorrBot.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("UploadRateLimit")
+                    b.Property<int>("UploadRateLimit")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("UseDisk")

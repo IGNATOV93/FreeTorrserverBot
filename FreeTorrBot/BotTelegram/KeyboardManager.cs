@@ -115,7 +115,14 @@ namespace FreeTorrBot.BotTelegram
             string tset = "torrSetOne";
             // Логика добавления дополнительных кнопок
             var additionalButtons = new List<InlineKeyboardButton>();
-
+            if (callbackData.Contains("TorrSettUploadRateLimit"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("0", $"{0}{tset}UploadRateLimit"));
+            }
+            if (callbackData.Contains("TorrSettDownloadRateLimit"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("0",$"{0}{tset}DownloadRateLimit"));
+            }
             if (callbackData.Contains("TorrSettConnectionsLimit"))
             {
                 

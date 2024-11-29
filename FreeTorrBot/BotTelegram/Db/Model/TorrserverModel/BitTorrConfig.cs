@@ -30,11 +30,9 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
             get => _cacheSize / (1024 * 1024); // Возвращает значение в мегабайтах
             set => _cacheSize = value * 1024 * 1024; // Сохраняет значение в байтах
         }
-
-        
-
         // Приватное поле для хранения значения в байтах
         private long _cacheSize = 67108864; // Значение по умолчанию в байтах
+
 
         [Description("Опережающий кеш %")]
         public int ReaderReadAHead { get; set; } = 95;
@@ -69,11 +67,27 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Отключение DHT")]
         public bool DisableDHT { get; set; } = false;
 
-        [Description("Ограничение скорости загрузки кб.")]
-        public int DownloadRateLimit { get; set; } = 0;
 
-        [Description("Ограничение скорости отдачи кб.")]
-        public int UploadRateLimit { get; set; } = 0;
+        [JsonConverter(typeof(CacheSizeConverter))]
+        [Description("Ограничение скорости загрузки мб/сек")]
+        public long DownloadRateLimit
+        {
+            get => _downloadRateLimit /1024; // Возвращает значение в мегабайтах
+            set => _downloadRateLimit = value * 1024; // Сохраняет значение в кбайтах ;
+        }
+        // Приватное поле для хранения значения в байтах
+        private long _downloadRateLimit = 0; // Значение по умолчанию в байтах
+
+
+        [JsonConverter(typeof(CacheSizeConverter))]
+        [Description("Ограничение скорости отдачи мб/сек")]
+        public long UploadRateLimit 
+        {
+            get => _uploadRateLimit / 1024; // Возвращает значение в мегабайтах
+            set => _uploadRateLimit = value * 1024; // Сохраняет значение в кбайтах ;
+        } 
+        private long _uploadRateLimit = 0;
+
 
         [Description("Порт для входящих подключений")]
         public int PeersListenPort { get; set; } = 0;

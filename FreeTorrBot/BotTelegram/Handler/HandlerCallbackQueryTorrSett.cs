@@ -197,7 +197,51 @@ namespace AdTorrBot.BotTelegram.Handler
                     }
                     break;
                 case "FlagTorrSettDownloadRateLimit":
+                    Console.WriteLine("FlagTorrSettDownloadRateLimit");
+                    if (int.TryParse(text, out int downloadRateLimit) && (downloadRateLimit > 0))
+                    {
+                        setTorr.DownloadRateLimit = downloadRateLimit;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettDownloadRateLimit", false);
+                        Console.WriteLine($"Ограничение скорости загрузки обновлены: {downloadRateLimit} мб/сек");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Ограничение скорости загрузки успешно обновлены ➡️ {downloadRateLimit} мб/сек ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе ограничение скорости загрузки мб/сек");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите ограничение скорости загрузки в мб/сек (целое число от 0).\r\n\r\n" +
+                            $"Сейчас {setTorr.DownloadRateLimit} мб/сек",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettDownloadRateLimit", setTorr.DownloadRateLimit));
+                    }
+                    break;
                 case "FlagTorrSettUploadRateLimit":
+                    Console.WriteLine("FlagTorrSettUploadRateLimit");
+                    if (int.TryParse(text, out int uploadRateLimit) && (uploadRateLimit > 0))
+                    {
+                        setTorr.UploadRateLimit = uploadRateLimit;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettUploadRateLimit", false);
+                        Console.WriteLine($"Ограничение скорости отдачи обновлены: {uploadRateLimit} мб/сек");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Ограничение скорости отдачи успешно обновлены ➡️ {uploadRateLimit} мб/сек ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе ограничение скорости отдачи мб/сек");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите ограничение скорости отдачи в мб/сек (целое число от 0).\r\n\r\n" +
+                            $"Сейчас {setTorr.UploadRateLimit} мб/сек",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettUploadRateLimit", setTorr.UploadRateLimit));
+                    }
+                    break;
                 case "FlagTorrSettPeersListenPort":
                 case "FlagTorrSettFriendlyName":
                 case "FlagTorrSettRetrackersMode":
@@ -348,14 +392,16 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "downloadratelimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettDownloadRateLimit", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (кб/с).\r\n" +
-                                $"Сейчас: {conf.DownloadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettDownloadRateLimit", conf.DownloadRateLimit));
+                             conf.DownloadRateLimit=value;
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (мб/с).\r\n" +
+                                $"Сейчас: {conf.DownloadRateLimit} мб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettDownloadRateLimit", conf.DownloadRateLimit));
                             break;
 
                         case "uploadratelimit":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettUploadRateLimit", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (кб/с).\r\n" +
-                                $"Сейчас: {conf.UploadRateLimit} кб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettUploadRateLimit", conf.UploadRateLimit));
+                            conf.UploadRateLimit=value;
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (мб/с).\r\n" +
+                                $"Сейчас: {conf.UploadRateLimit} мб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettUploadRateLimit", conf.UploadRateLimit));
                             break;
 
                         case "peerslistenport":
