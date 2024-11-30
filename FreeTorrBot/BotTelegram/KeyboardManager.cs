@@ -117,7 +117,7 @@ namespace FreeTorrBot.BotTelegram
             var additionalButtons = new List<InlineKeyboardButton>();
             if (callbackData.Contains("TorrSettFriendlyName"))
             {
-                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{0}{tset}PeersListenPort"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{0}{tset}FriendlyName"));
             }
             if (callbackData.Contains("TorrSettPeersListenPort"))
             {

@@ -491,10 +491,10 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "friendlyname":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", true);
-                    conf.NameProfileBot = "";
+                         conf.FriendlyName = "";
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.\r\n" +
                                 "Ограничение 30 символов" +
-                                $"Сейчас: {conf.FriendlyName} имя.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettFriendlyName",0));
+                                $"Сейчас: {conf.FriendlyName} .", KeyboardManager.CreateExitTorrSettInputButton("TorrSettFriendlyName",0));
                             break;
 
                         case "torrentssavepath":
