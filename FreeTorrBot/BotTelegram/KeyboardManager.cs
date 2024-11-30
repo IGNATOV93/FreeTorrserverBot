@@ -115,6 +115,14 @@ namespace FreeTorrBot.BotTelegram
             string tset = "torrSetOne";
             // Логика добавления дополнительных кнопок
             var additionalButtons = new List<InlineKeyboardButton>();
+            if (callbackData.Contains("TorrSettFriendlyName"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{0}{tset}PeersListenPort"));
+            }
+            if (callbackData.Contains("TorrSettPeersListenPort"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("0 (авто)", $"{0}{tset}PeersListenPort"));
+            }
             if (callbackData.Contains("TorrSettUploadRateLimit"))
             {
                 additionalButtons.Add(InlineKeyboardButton.WithCallbackData("0", $"{0}{tset}UploadRateLimit"));

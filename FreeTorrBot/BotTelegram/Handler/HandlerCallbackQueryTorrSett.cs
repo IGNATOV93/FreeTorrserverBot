@@ -12,6 +12,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using static System.Net.Mime.MediaTypeNames;
 using Telegram.Bot.Types.ReplyMarkups;
+using AdTorrBot.ServerManagement;
 
 namespace AdTorrBot.BotTelegram.Handler
 {
@@ -243,7 +244,69 @@ namespace AdTorrBot.BotTelegram.Handler
                     }
                     break;
                 case "FlagTorrSettPeersListenPort":
+                    Console.WriteLine("FlagTorrSettPeersListenPort");
+                    if (int.TryParse(text, out int flagTorrSettPeersListenPort) &&
+                        (flagTorrSettPeersListenPort == 0 || (flagTorrSettPeersListenPort > 1023 && flagTorrSettPeersListenPort < 65536)))
+                    {
+                        //Нужна проверка что порт свободен !!
+                        if ( ServerManagement.ServerInfo.IsPortAvailable(flagTorrSettPeersListenPort))
+                        {
+                            setTorr.PeersListenPort = flagTorrSettPeersListenPort;
+                            await Torrserver.WriteConfig(setTorr);
+                            await SqlMethods.SetSettingsTorrProfile(setTorr);
+                            await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPeersListenPort", false);
+                            Console.WriteLine($"Порт успешно обновлен: {flagTorrSettPeersListenPort} ");
+                            await botClient.SendTextMessageAsync(AdminChat,
+                                $"Порт успешно обновлен ➡️ {flagTorrSettPeersListenPort} ✅",
+                                replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                        }
+                        else
+                        {
+                            Console.WriteLine("Ошибка при вводе порта (порт занят)!");
+                            await botClient.SendTextMessageAsync(AdminChat,
+                                "❗ Неверный ввод (порт занят).\n" +
+                                "Введите порт (целое число от 1024 до 65535).\r\n\r\n" +
+                                $"Сейчас {setTorr.UploadRateLimit}",
+                                replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettPeersListenPort", setTorr.PeersListenPort));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе порта !");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите порт (целое число от 1024 до 65535).\r\n\r\n" +
+                            $"Сейчас {setTorr.PeersListenPort}",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettPeersListenPort", setTorr.PeersListenPort));
+                    }
+                    break;
                 case "FlagTorrSettFriendlyName":
+                    Console.WriteLine("FlagTorrSettFriendlyName");
+                    if (text?.Length<31)
+                    {
+                        setTorr.FriendlyName = text;
+                        if (text == "0")
+                        {
+                            setTorr.FriendlyName = "";
+                        }
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", false);
+                        Console.WriteLine($"Имя сервера DLNA обновлено: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Имя сервера DLNA успешно обновлено:  {text}",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе имени сервера DLNA !");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите имя сервера DLNA (max 30 символов).\r\n\r\n" +
+                            $"Сейчас: {setTorr.FriendlyName}",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettFriendlyName", 0));
+                    }
+                    break;
                 case "FlagTorrSettRetrackersMode":
                 case "FlagTorrSettSslPort":
                 case "FlagTorrSettSslCert":
@@ -350,10 +413,12 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, $"Удаление кеша при сбросе теперь {(conf.RemoveCacheOnDrop ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
                     break;
 
-                    // Поля, требующие ввода данных (int, long, string)
-                    
-                        case "cachesize":
+                // Поля, требующие ввода данных (int, long, string)
+                //НЕ ЗАБЫВАТЬ ПРОПИСЫВАТЬ СОХРАНЕНИЕ ДАННЫХ пример =>>>>>>>>  conf.PeersListenPort=value;
+
+                case "cachesize":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettCacheSize", true);
+                            
                            conf.CacheSize=value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода размера кеша. Пожалуйста, введите новое значение (MB).\r\n" +
                         "Min 32MB - Max 256MB\r\n\r\n" +
@@ -406,7 +471,9 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "peerslistenport":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPeersListenPort", true);
+                            conf.PeersListenPort=value;
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.\r\n" +
+                                $"Порт должен быть в диапазоне от 1024 до 65535.\r\n" +
                                 $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitTorrSettInputButton("TorrSettPeersListenPort", conf.PeersListenPort));
                             break;
 
@@ -424,7 +491,9 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "friendlyname":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", true);
+                    conf.NameProfileBot = "";
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.\r\n" +
+                                "Ограничение 30 символов" +
                                 $"Сейчас: {conf.FriendlyName} имя.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettFriendlyName",0));
                             break;
 

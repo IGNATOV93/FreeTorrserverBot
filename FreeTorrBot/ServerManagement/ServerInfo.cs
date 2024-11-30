@@ -5,12 +5,30 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Net.Sockets;
+using System.Net;
 namespace AdTorrBot.ServerManagement
 {
     public class ServerInfo
     {
 
-
+        public static bool IsPortAvailable(int port)
+        {
+            try
+            {
+                using (var tcpListener = new TcpListener(IPAddress.Any, port))
+                {
+                    tcpListener.Start();
+                    Console.WriteLine($"Порт {port} свободен.");
+                    return true; // Порт свободен
+                }
+            }
+            catch (SocketException)
+            {
+                Console.WriteLine($"Порт {port} занят.");
+                return false; // Порт занят
+            }
+        }
         public static bool CheckBBRConfig()
         {
             string path = "/etc/sysctl.conf";
