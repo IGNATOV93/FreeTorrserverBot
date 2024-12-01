@@ -111,10 +111,21 @@ namespace FreeTorrBot.BotTelegram
         public static InlineKeyboardMarkup CreateExitTorrSettInputButton(string callbackData,long value)
         {
             // Кнопка выхода
-            var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода", "exit" + callbackData);
+            var buttonExit = InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода", "exitFlag" + callbackData);
             string tset = "torrSetOne";
+            // Формируем общий массив кнопок
+            var buttons = new List<InlineKeyboardButton[]>();
             // Логика добавления дополнительных кнопок
             var additionalButtons = new List<InlineKeyboardButton>();
+            
+            if (callbackData.Contains("TorrSettRetrackersMode"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("0", $"{0}{tset}RetrackersMode"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("1", $"{1}{tset}RetrackersMode"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("2", $"{2}{tset}RetrackersMode"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("3", $"{3}{tset}RetrackersMode"));
+
+            }
             if (callbackData.Contains("TorrSettFriendlyName"))
             {
                 additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{0}{tset}FriendlyName"));
@@ -205,8 +216,7 @@ namespace FreeTorrBot.BotTelegram
             {
                 additionalButtons.Add(InlineKeyboardButton.WithCallbackData("↩", "0torrSettings"));
             }
-            // Формируем общий массив кнопок
-            var buttons = new List<InlineKeyboardButton[]>();
+            
 
             // Добавляем дополнительные кнопки, если они есть
             if (additionalButtons.Count > 0)

@@ -56,7 +56,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Вы в режиме ввода логина.\n" +
                             "Напишите желаемый логин.\n" +
                             "⚠️ Логин может содержать только английские буквы и цифры. Ограничение: 10 символов.",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagLogin",0));
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("Login",0));
                     }
                     break;
 
@@ -78,7 +78,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Вы в режиме ввода пароля.\n" +
                             "Напишите желаемый пароль.\n" +
                             "⚠️ Пароль может содержать только английские буквы и цифры. Ограничение: 10 символов.",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("FlagPassword", 0));
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("Password", 0));
                     }
                     break;
                 case "FlagTorrSettCacheSize":
@@ -245,19 +245,19 @@ namespace AdTorrBot.BotTelegram.Handler
                     break;
                 case "FlagTorrSettPeersListenPort":
                     Console.WriteLine("FlagTorrSettPeersListenPort");
-                    if (int.TryParse(text, out int flagTorrSettPeersListenPort) &&
-                        (flagTorrSettPeersListenPort == 0 || (flagTorrSettPeersListenPort > 1023 && flagTorrSettPeersListenPort < 65536)))
+                    if (int.TryParse(text, out int peersListenPort) &&
+                        (peersListenPort == 0 || (peersListenPort > 1023 && peersListenPort < 65536)))
                     {
                         //Нужна проверка что порт свободен !!
-                        if ( ServerManagement.ServerInfo.IsPortAvailable(flagTorrSettPeersListenPort))
+                        if ( ServerManagement.ServerInfo.IsPortAvailable(peersListenPort))
                         {
-                            setTorr.PeersListenPort = flagTorrSettPeersListenPort;
+                            setTorr.PeersListenPort = peersListenPort;
                             await Torrserver.WriteConfig(setTorr);
                             await SqlMethods.SetSettingsTorrProfile(setTorr);
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPeersListenPort", false);
-                            Console.WriteLine($"Порт успешно обновлен: {flagTorrSettPeersListenPort} ");
+                            Console.WriteLine($"Порт успешно обновлен: {peersListenPort} ");
                             await botClient.SendTextMessageAsync(AdminChat,
-                                $"Порт успешно обновлен ➡️ {flagTorrSettPeersListenPort} ✅",
+                                $"Порт успешно обновлен ➡️ {peersListenPort} ✅",
                                 replyMarkup: KeyboardManager.GetDeleteThisMessage());
                         }
                         else
@@ -308,6 +308,33 @@ namespace AdTorrBot.BotTelegram.Handler
                     }
                     break;
                 case "FlagTorrSettRetrackersMode":
+                    Console.WriteLine("FlagTorrSettRetrackersMode");
+                    if ((int.TryParse(text, out int retrackersMode) && retrackersMode >= 0 && retrackersMode < 4))
+                    {
+                        setTorr.RetrackersMode = retrackersMode;
+                        
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", false);
+                        Console.WriteLine($"Режим ретрекеров обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Режим ретрекеров успешно обновлен:  {text}",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе режима ретрекеров!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите число (0-3).\r\n\r\n" +
+                            $"Сейчас: {setTorr.RetrackersMode}\r\n" +
+                            "0-ничего не делать\r\n"+
+                            "1-добавлять (по умолчанию)\r\n"+
+                            "2-удалять\r\n"+
+                            "3-заменять\r\n",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettRetrackersMode", setTorr.RetrackersMode));
+                    }
+                    break;
                 case "FlagTorrSettSslPort":
                 case "FlagTorrSettSslCert":
                 case "FlagTorrSettSslKey":
@@ -479,7 +506,12 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "retrackersmode":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettRetrackersMode", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода режима ретрекеров. Пожалуйста, введите новое значение.\r\n" +
+                           conf.RetrackersMode=value;
+                            await SendOrEditMessage(idMessage, "Вы в режиме ввода режима ретрекеров. Пожалуйста, введите новое значение (целое число 0-3).\r\n" +
+                                "0 - ничего не делать\r\n" +
+                                "1 - добавлять (по умолчанию)\r\n" +
+                                "2 - удалять\r\n" +
+                                "3 - заменять\r\n" +
                                 $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitTorrSettInputButton("TorrSettRetrackersMode", conf.RetrackersMode));
                             break;
 
@@ -493,26 +525,26 @@ namespace AdTorrBot.BotTelegram.Handler
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", true);
                          conf.FriendlyName = "";
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.\r\n" +
-                                "Ограничение 30 символов" +
+                                "Ограничение 30 символов\r\n" +
                                 $"Сейчас: {conf.FriendlyName} .", KeyboardManager.CreateExitTorrSettInputButton("TorrSettFriendlyName",0));
                             break;
 
                         case "torrentssavepath":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentsSavePath", true);
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. Пожалуйста, введите новый путь.\r\n" +
-                                $"Сейчас: {conf.TorrentsSavePath} путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettTorrentsSavePath",0));
+                                $"Сейчас: {conf.TorrentsSavePath} путь.", KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentsSavePath",0));
                             break;
 
                         case "sslcert":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslCert", true);
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату. Пожалуйста, введите путь.\r\n" +
-                                $"Сейчас: {conf.SslCert} путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslCert", 0));
+                                $"Сейчас: {conf.SslCert} путь.", KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslCert", 0));
                             break;
 
                         case "sslkey":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslKey", true);
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу. Пожалуйста, введите путь.\r\n" +
-                                $"Сейчас: {conf.SslKey} путь.", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslKey",0));
+                                $"Сейчас: {conf.SslKey} путь.", KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslKey",0));
                             break;
 
                         default:
