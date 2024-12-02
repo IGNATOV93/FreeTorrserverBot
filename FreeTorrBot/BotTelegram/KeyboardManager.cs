@@ -117,7 +117,14 @@ namespace FreeTorrBot.BotTelegram
             var buttons = new List<InlineKeyboardButton[]>();
             // Логика добавления дополнительных кнопок
             var additionalButtons = new List<InlineKeyboardButton>();
-            
+            if (callbackData.Contains("TorrSettTorrentsSavePath"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}TorrentsSavePath"));
+            }
+            if (callbackData.Contains("TorrSettSslPort"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("0 (8091)", $"{0}{tset}SslPort"));
+            }
             if (callbackData.Contains("TorrSettRetrackersMode"))
             {
                 additionalButtons.Add(InlineKeyboardButton.WithCallbackData("0", $"{0}{tset}RetrackersMode"));
@@ -128,7 +135,7 @@ namespace FreeTorrBot.BotTelegram
             }
             if (callbackData.Contains("TorrSettFriendlyName"))
             {
-                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{0}{tset}FriendlyName"));
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}FriendlyName"));
             }
             if (callbackData.Contains("TorrSettPeersListenPort"))
             {

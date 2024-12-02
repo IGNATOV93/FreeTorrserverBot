@@ -336,9 +336,72 @@ namespace AdTorrBot.BotTelegram.Handler
                     }
                     break;
                 case "FlagTorrSettSslPort":
+                    Console.WriteLine("FlagTorrSettSslPort");
+                    if (int.TryParse(text, out int sslPort) &&
+                        (sslPort == 0 || (sslPort > 1023 && sslPort < 65536)))
+                    {
+                        //Нужна проверка что порт свободен !!
+                        if (ServerManagement.ServerInfo.IsPortAvailable(sslPort))
+                        {
+                            setTorr.SslPort = sslPort;
+                            await Torrserver.WriteConfig(setTorr);
+                            await SqlMethods.SetSettingsTorrProfile(setTorr);
+                            await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslPort", false);
+                            Console.WriteLine($"Порт успешно обновлен: {sslPort} ");
+                            await botClient.SendTextMessageAsync(AdminChat,
+                                $"Порт ssl успешно обновлен ➡️ {sslPort} ✅",
+                                replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                        }
+                        else
+                        {
+                            Console.WriteLine("Ошибка при вводе порта ssl (порт занят)!");
+                            await botClient.SendTextMessageAsync(AdminChat,
+                                "❗ Неверный ввод (порт занят).\n" +
+                                "Введите порт ssl (целое число от 1024 до 65535).\r\n\r\n" +
+                                "0 - (8091)по умолчанию.\r\n" +
+                                $"Сейчас {setTorr.SslPort}",
+                                replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslPort", setTorr.SslPort));
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе порта ssl !");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите порт ssl (целое число от 1024 до 65535).\r\n\r\n" +
+                            "0 - (8091)по умолчанию.\r\n" +
+                            $"Сейчас {setTorr.SslPort}",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslPort", setTorr.SslPort));
+                    }
+                    break;
                 case "FlagTorrSettSslCert":
                 case "FlagTorrSettSslKey":
                 case "FlagTorrSettTorrentsSavePath":
+                    Console.WriteLine("FlagTorrSettTorrentsSavePath");
+                    if (InputTextValidator.IsValidPath(text))
+                    {
+                        setTorr.TorrentsSavePath = text;
+                        await Torrserver.WriteConfig(setTorr);
+                        await SqlMethods.SetSettingsTorrProfile(setTorr);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentsSavePath", false);
+                        Console.WriteLine($"Путь сохр. торрентов обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Путь сохр. торрентов успешно обновлен:  \r\n" +
+                            $"{text}",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        
+                        Console.WriteLine("Ошибка при вводе пути сохр. торрентов !");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\r\n" +
+                            "Введите путь сохр. торрентов (max 4096 символов).\r\n\r\n" +
+                            $"Пример: /home/user/Documents\r\n" +
+                            $"Сейчас: {setTorr.TorrentsSavePath}",
+                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentsSavePath", 0));
+                    }
+                    break;
                 default:
                     Console.WriteLine($"Обработка для {lastTextFlagTrue} пока не реализована.");
                     await botClient.SendTextMessageAsync(AdminChat,
@@ -517,13 +580,19 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "sslport":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslPort", true);
+                    conf.SslPort=value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.\r\n" +
-                        $"Сейчас: {conf.SslPort} порт", KeyboardManager.CreateExitTorrSettInputButton("FlagTorrSettSslPort", conf.SslPort));
+                        "0 - (8091)по умолчанию.\r\n" +
+                        $"Сейчас: {conf.SslPort} порт", KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslPort", conf.SslPort));
                             break;
 
                         case "friendlyname":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", true);
-                         conf.FriendlyName = "";
+                    if (value == 1)
+                    {
+                        conf.FriendlyName = "";
+                    }
+                   
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.\r\n" +
                                 "Ограничение 30 символов\r\n" +
                                 $"Сейчас: {conf.FriendlyName} .", KeyboardManager.CreateExitTorrSettInputButton("TorrSettFriendlyName",0));
@@ -531,8 +600,15 @@ namespace AdTorrBot.BotTelegram.Handler
 
                         case "torrentssavepath":
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentsSavePath", true);
-                            await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. Пожалуйста, введите новый путь.\r\n" +
-                                $"Сейчас: {conf.TorrentsSavePath} путь.", KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentsSavePath",0));
+
+                    if (value == 1)
+                    {
+                        conf.TorrentsSavePath = "";
+                    }
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. \r\n" +
+                               "Введите путь сохр. торрентов (max 4096 символов).\r\n\r\n" +
+                               $"Пример: /home/user/Documents\r\n" +
+                                $"Сейчас: {conf.TorrentsSavePath}", KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentsSavePath",0));
                             break;
 
                         case "sslcert":
