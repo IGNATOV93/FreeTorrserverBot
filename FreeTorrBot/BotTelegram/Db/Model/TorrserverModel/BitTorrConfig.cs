@@ -40,6 +40,12 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Буфер предзагрузки %")]
         public int PreloadCache { get; set; } = 50;
 
+        [Description("Вкл. поиск по RuTor")]
+        public bool EnableRutorSearch { get; set; } = false;
+
+        [Description("Включение отладки")]
+        public bool EnableDebug { get; set; } = false;
+
         [Description("Использование диска")]
         public bool UseDisk { get; set; } = false;
 
@@ -100,12 +106,6 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         [Description("Имя сервера DLNA")]
         public string FriendlyName { get; set; } = "";
-
-        [Description("Вкл. поиск по RuTor")]
-        public bool EnableRutorSearch { get; set; } = false;
-
-        [Description("Включение отладки")]
-        public bool EnableDebug { get; set; } = false;
 
         [Description("Включить быстрый режим чтения")]
         public bool ResponsiveMode { get; set; } = false;
