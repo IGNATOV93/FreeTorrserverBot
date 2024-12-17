@@ -2,6 +2,7 @@
 using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 using FreeTorrserverBot.BotTelegram;
 using FreeTorrserverBot.Torrserver;
+using FreeTorrserverBot.Torrserver.BitTor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -111,7 +112,7 @@ namespace AdTorrBot.BotTelegram.Db
                     }
 
                     // Логируем чтение нового профиля
-                    BitTorrConfig newProfile = await Torrserver.ReadConfig();
+                    BitTorrConfig newProfile = await BitTorrConfigation.ReadConfig();
                     if (newProfile != null)
                     {
                         Console.WriteLine("Конфигурация прочитана успешно.");

@@ -2,7 +2,8 @@
 using AdTorrBot.BotTelegram.Db;
 using AdTorrBot.BotTelegram.Db.Model;
 using FreeTorrBot.BotTelegram;
-using FreeTorrserverBot.Torrserver;
+using FreeTorrserverBot.Torrserver.ServerArgs;
+using FreeTorrserverBot.Torrserver.BitTor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     Console.WriteLine("Обработка TextInputFlagLogin");
                     if (InputTextValidator.ValidateLoginAndPassword(text))
                     {
-                        await Torrserver.ChangeAccountTorrserver(text, "", true, false);
+                        await FreeTorrserverBot.Torrserver.Torrserver.ChangeAccountTorrserver(text, "", true, false);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin", false);
                         Console.WriteLine("Смена логина выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,
@@ -64,7 +65,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     Console.WriteLine("Обработка TextInputFlagPassword");
                     if (InputTextValidator.ValidateLoginAndPassword(text))
                     {
-                        await Torrserver.ChangeAccountTorrserver("", text, false, true);
+                        await FreeTorrserverBot.Torrserver.Torrserver.ChangeAccountTorrserver("", text, false, true);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword", false);
                         Console.WriteLine("Смена пароля выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,
@@ -86,7 +87,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (int.TryParse(text, out int cacheSize) && (cacheSize >31&&cacheSize<257))
                     {
                         setTorr.CacheSize = cacheSize;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr); 
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettCacheSize", false);
                         Console.WriteLine($"Размер кэша успешно обновлен: {cacheSize} MB.");
@@ -110,7 +111,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (int.TryParse(text, out int readHead) && (readHead > 4 && readHead < 101))
                     {
                         setTorr.ReaderReadAHead = readHead;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr); 
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettReaderReadAHead", false);
                         Console.WriteLine($"Опережающий кэш обновлен: {readHead} MB.");
@@ -133,7 +134,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (int.TryParse(text, out int preLoadCache) && (preLoadCache > 4 && preLoadCache < 101))
                     {
                         setTorr.ReaderReadAHead = preLoadCache;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPreloadCache", false);
                         Console.WriteLine($"Буфер предзагрузки обновлен: {preLoadCache} %.");
@@ -156,7 +157,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (int.TryParse(text, out int torrentDisconnectTimeout) && (torrentDisconnectTimeout > 0))
                     {
                         setTorr.TorrentDisconnectTimeout = torrentDisconnectTimeout;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentDisconnectTimeout", false);
                         Console.WriteLine($"Тайм-аут отключения торрента обновлен: {torrentDisconnectTimeout} %.");
@@ -179,7 +180,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (int.TryParse(text, out int connectionsLimit) && (connectionsLimit > 0))
                     {
                         setTorr.ConnectionsLimit = connectionsLimit;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettConnectionsLimit", false);
                         Console.WriteLine($"Торрент соединения обновлены: {connectionsLimit} шт.");
@@ -202,7 +203,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (int.TryParse(text, out int downloadRateLimit) && (downloadRateLimit > 0))
                     {
                         setTorr.DownloadRateLimit = downloadRateLimit;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettDownloadRateLimit", false);
                         Console.WriteLine($"Ограничение скорости загрузки обновлены: {downloadRateLimit} мб/сек");
@@ -225,7 +226,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (int.TryParse(text, out int uploadRateLimit) && (uploadRateLimit > 0))
                     {
                         setTorr.UploadRateLimit = uploadRateLimit;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettUploadRateLimit", false);
                         Console.WriteLine($"Ограничение скорости отдачи обновлены: {uploadRateLimit} мб/сек");
@@ -252,7 +253,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         if ( ServerManagement.ServerInfo.IsPortAvailable(peersListenPort))
                         {
                             setTorr.PeersListenPort = peersListenPort;
-                            await Torrserver.WriteConfig(setTorr);
+                            await BitTorrConfigation.WriteConfig(setTorr);
                             await SqlMethods.SetSettingsTorrProfile(setTorr);
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettPeersListenPort", false);
                             Console.WriteLine($"Порт успешно обновлен: {peersListenPort} ");
@@ -289,7 +290,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         {
                             setTorr.FriendlyName = "";
                         }
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", false);
                         Console.WriteLine($"Имя сервера DLNA обновлено: {text}");
@@ -313,7 +314,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         setTorr.RetrackersMode = retrackersMode;
                         
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettFriendlyName", false);
                         Console.WriteLine($"Режим ретрекеров обновлен: {text}");
@@ -344,7 +345,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         if (ServerManagement.ServerInfo.IsPortAvailable(sslPort))
                         {
                             setTorr.SslPort = sslPort;
-                            await Torrserver.WriteConfig(setTorr);
+                            await BitTorrConfigation.WriteConfig(setTorr);
                             await SqlMethods.SetSettingsTorrProfile(setTorr);
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslPort", false);
                             Console.WriteLine($"Порт успешно обновлен: {sslPort} ");
@@ -379,7 +380,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (InputTextValidator.IsValidPath(text)&&text.EndsWith(".pem",StringComparison.OrdinalIgnoreCase))
                     {
                         setTorr.SslCert = text;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslCert", false);
                         Console.WriteLine($"Путь SSL сертификата обновлен: {text}");
@@ -405,7 +406,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (InputTextValidator.IsValidPath(text) && text.EndsWith(".pem", StringComparison.OrdinalIgnoreCase))
                     {
                         setTorr.SslKey = text;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslKey", false);
                         Console.WriteLine($"Путь SSL ключа обновлен: {text}");
@@ -431,7 +432,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     if (InputTextValidator.IsValidPath(text))
                     {
                         setTorr.TorrentsSavePath = text;
-                        await Torrserver.WriteConfig(setTorr);
+                        await BitTorrConfigation.WriteConfig(setTorr);
                         await SqlMethods.SetSettingsTorrProfile(setTorr);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentsSavePath", false);
                         Console.WriteLine($"Путь сохр. торрентов обновлен: {text}");
@@ -470,7 +471,7 @@ namespace AdTorrBot.BotTelegram.Handler
             var idMessage = callbackQuery.Message.MessageId;  // ID сообщения для редактирования
 
             // Прочитаем конфиг
-            var conf = await Torrserver.ReadConfig();
+            var conf = await BitTorrConfigation.ReadConfig();
 
             // Преобразуем строку в нижний регистр для удобства сравнения
             string setting = inputSetting.Split("torrSetOne")[1].ToLower();
@@ -691,7 +692,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     }
 
 
-                    await Torrserver.WriteConfig(conf);
+                    await BitTorrConfigation.WriteConfig(conf);
          
         }
 

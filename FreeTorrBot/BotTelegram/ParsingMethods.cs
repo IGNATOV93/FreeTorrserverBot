@@ -9,6 +9,7 @@ namespace AdTorrBot.BotTelegram
     
      public abstract class ParsingMethods
       {
+
         public static string GetExitMessage(string field)
         {
             // Используем switch или if для определения сообщения в зависимости от поля

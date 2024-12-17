@@ -16,6 +16,8 @@ using AdTorrBot.BotTelegram;
 using AdTorrBot.BotTelegram.Db.Model;
 using AdTorrBot.ServerManagement;
 using FreeTorrBot.BotTelegram;
+using FreeTorrserverBot.Torrserver.BitTor;
+
 
 namespace AdTorrBot.BotTelegram.Handler
 {
@@ -165,7 +167,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData == "resetTorrSetConfig")
                 {
                     //ВЫЗОВ МЕТОДА ДЛЯ СБРОСА НАСТРОЕК TORRSERVER .
-                    await Torrserver.ResetConfig();
+                    await BitTorrConfigation.ResetConfig();
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "Настройки Torrserver сброшены по умолчанию ! \u2705", replyMarkup: KeyboardManager.GetShoWTorrConfig());
                     return;
                 }
