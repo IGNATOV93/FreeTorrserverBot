@@ -3,6 +3,7 @@ using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 using FreeTorrserverBot.BotTelegram;
 using FreeTorrserverBot.Torrserver;
 using FreeTorrserverBot.Torrserver.BitTor;
+using FreeTorrserverBot.Torrserver.ServerArgs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -28,7 +29,147 @@ namespace AdTorrBot.BotTelegram.Db
         public static readonly string adminChat = TelegramBot.AdminChat;
 
 
-       
+        public static async Task SetArgsConfigTorrProfile(ServerArgsConfig config)
+        {
+            Console.WriteLine($"Запуск SetArgsConfigTorrProfile.");
+            try
+            {
+                // Используем метод для работы с базой данных
+                await SqlMethods.WithDbContextAsync(async db =>
+                {
+                    // Проверяем, существует ли профиль с таким же IdChat и NameProfileBot
+                    var existingProfile = await db.ServerArgsConfig
+                                                  .FirstOrDefaultAsync(x => x.IdChat == adminChat && x.NameProfileBot == config.NameProfileBot);
+
+                    if (existingProfile != null)
+                    {
+                        // Если профиль найден с таким же IdChat и NameProfileBot, обновляем его
+                        Console.WriteLine($"Профиль adminChat = {adminChat} и NameProfileBot = {existingProfile?.NameProfileBot} найден, обновляем профиль.");
+
+                        existingProfile = config;
+
+
+
+                        await db.SaveChangesAsync();
+                        Console.WriteLine("Профиль обновлен успешно.");
+                    }
+                    else
+                    {
+                        // Проверяем, существует ли профиль с таким IdChat, но другим NameProfileBot
+                        var profileWithSameIdChat = await db.ServerArgsConfig
+                                                             .FirstOrDefaultAsync(x => x.IdChat == adminChat);
+
+                        if (profileWithSameIdChat != null)
+                        {
+                            Console.WriteLine($"Профиль adminChat = {adminChat} уже существует, но с другим NameProfileBot.");
+                            // Если профиль существует с таким IdChat, но с другим NameProfileBot.
+
+                        }
+
+                        // Если профиль с таким IdChat и NameProfileBot не найден, создаем новый
+                        Console.WriteLine($"Профиль adminChat = {adminChat} и NameProfileBot = {profileWithSameIdChat?.NameProfileBot} не найден, создаем новый.");
+                        config.IdChat = adminChat; // Присваиваем idChat для нового профиля
+                        db.ServerArgsConfig.Add(config);
+                        await db.SaveChangesAsync();
+                        Console.WriteLine("Новый профиль args добавлен в базу данных.");
+                    }
+                    return Task.CompletedTask;
+                });
+            }
+            catch (Exception ex)
+            {
+                // Логируем ошибку
+                Console.WriteLine($"Ошибка при сохранении профиля args в базу данных: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                    Console.WriteLine($"Stack trace: {ex.InnerException.StackTrace}");
+                }
+            }
+        }
+
+        public static async Task<ServerArgsConfig> GetArgsConfigTorrProfile(string idChat)
+        {
+            Console.WriteLine($"Запуск GetArgsConfigTorrProfile.");
+            ServerArgsConfig updatedProfile = null;
+
+            try
+            {
+                await SqlMethods.WithDbContextAsync(async db =>
+                {
+                    // Пытаемся найти профиль по IdChat
+                    var existingProfile = await db.ServerArgsConfig.FirstOrDefaultAsync(x => x.IdChat == idChat);
+
+                    if (existingProfile != null)
+                    {
+                        Console.WriteLine($"Профиль  найден adminChat = {idChat}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Профиль adminChat = {idChat} не найден.");
+                    }
+
+                    // Логируем чтение нового профиля
+                    ServerArgsConfig newProfile = ServerArgsConfiguration.ReadConfigArgs(); 
+                    if (newProfile != null)
+                    {
+                        Console.WriteLine("Конфигурация прочитана успешно.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка: Конфигурация не была прочитана.");
+                    }
+
+                    newProfile.IdChat = idChat; // Устанавливаем idChat для нового или обновленного профиля
+
+                    if (existingProfile != null)
+                    {
+                        // Если профиль найден, обновляем его
+                        Console.WriteLine("Обновляем профиль (args).");
+                        foreach (var property in typeof(ServerArgsConfig).GetProperties())
+                        {
+                            // Игнорируем свойство Id
+                            if (property.Name != "Id")
+                            {
+                                var newValue = property.GetValue(newProfile);
+                                property.SetValue(existingProfile, newValue);
+                            }
+                        }
+
+                        await db.SaveChangesAsync();
+                        updatedProfile = existingProfile; // Возвращаем обновленный профиль
+                    }
+                    else
+                    {
+                        // Если профиль не найден, создаем новый
+                        Console.WriteLine("Добавляем новый профиль.");
+                        db.ServerArgsConfig.Add(newProfile);
+                        await db.SaveChangesAsync();
+                        updatedProfile = newProfile; // Возвращаем новый профиль
+                    }
+                    return Task.CompletedTask;
+                });
+            }
+            catch (Exception ex)
+            {
+                // Логируем ошибку
+                Console.WriteLine($"Ошибка при получении или обновлении профиля args: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                    Console.WriteLine($"Stack trace: {ex.InnerException.StackTrace}");
+                }
+            }
+
+            return updatedProfile;
+        }
+
+
+
+
+
+
+
         public static async Task SetSettingsTorrProfile( BitTorrConfig config)
         {
             Console.WriteLine($"Запуск SetSettingsTorrProfile.");

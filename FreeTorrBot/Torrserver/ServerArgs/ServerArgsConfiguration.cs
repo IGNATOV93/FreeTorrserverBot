@@ -43,17 +43,27 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
         }
 
         // Метод для чтения конфигурации из файла
-        public static ServerArgsConfig ReadConfigArgs(string filePath)
+        public static ServerArgsConfig ReadConfigArgs()
         {
-            var configLine = File.ReadAllText(filePath);  // Чтение всего содержимого файла
-            return ParseConfigArgs(configLine);  // Парсим строку в объект конфигурации
+            // Проверка, существует ли файл
+            if (!File.Exists(filePathTorrserverConfig))
+            {
+                // Если файл не существует, создаем его и записываем начальную конфигурацию
+                var defaultConfig = new ServerArgsConfig(); // Предположим, что у вас есть класс по умолчанию для конфигурации
+                WriteConfigArgs(defaultConfig); // Используем ваш метод для записи конфигурации
+            }
+
+            // Чтение всего содержимого файла
+            var configLine = File.ReadAllText(filePathTorrserverConfig);
+            return ParseConfigArgs(configLine); // Парсим строку в объект конфигурации
         }
 
+
         // Метод для записи конфигурации в файл
-        public static void WriteConfigArgs(string filePath, ServerArgsConfig config)
+        public static void WriteConfigArgs (ServerArgsConfig config)
         {
             var configLine = SerializeConfigArgs(config); // Сериализуем объект конфигурации в строку
-            File.WriteAllText(filePath, configLine); // Записываем строку в файл
+            File.WriteAllText(filePathTorrserverConfig, configLine); // Записываем строку в файл
         }
 
         // Метод для парсинга строки конфигурации в объект ServerArgsConfig

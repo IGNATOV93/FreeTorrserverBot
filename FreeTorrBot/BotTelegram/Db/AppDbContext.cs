@@ -16,6 +16,7 @@ namespace AdTorrBot.BotTelegram.Db
         public virtual DbSet<User>User { get; set; }
         public virtual DbSet<TextInputFlag> TextInputFlag { get; set; }
         public virtual DbSet<BitTorrConfig> BitTorrConfig { get; set; }
+        public virtual DbSet<ServerArgsConfig> ServerArgsConfig { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Подключение к SQLite базе данных

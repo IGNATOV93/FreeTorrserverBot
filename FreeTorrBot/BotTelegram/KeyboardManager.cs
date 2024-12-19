@@ -380,14 +380,75 @@ namespace FreeTorrBot.BotTelegram
             return inlineSetServerMain;
         }
 
-        public static InlineKeyboardMarkup GetTorrConfigMain()
+        public static InlineKeyboardMarkup GetTorrConfigMain(string idChat, ServerArgsConfig config, int startIndex)
         {
-            var buttonBackSettinsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
-            var inlineTorrConfigMain = new InlineKeyboardMarkup(new[]
-          {
-                new[]{buttonBackSettinsMain, buttonHideButtots }
-            });
-            return inlineTorrConfigMain;
+            // Проверка на null перед выполнением логики метода
+            if (config == null)
+            {
+                Console.WriteLine("Ошибка: Config object is null.");
+                throw new ArgumentNullException(nameof(config), "Config object is null");
+            }
+
+            int totalItems = typeof(ServerArgsConfig).GetProperties().Length - 3;
+
+            var properties = typeof(ServerArgsConfig).GetProperties()
+                                         .Skip(startIndex + 3)
+                                         .Take(5) // Отображаем 5 свойств, начиная с переданного индекса
+                                         .Select(prop =>
+                                         {
+                                             // Получаем описание из атрибута DescriptionAttribute
+                                             var descriptionAttr = prop.GetCustomAttribute<DescriptionAttribute>();
+                                             string description = descriptionAttr != null ? descriptionAttr.Description : prop.Name;
+
+                                             // Проверка на null для значения свойства
+                                             var value = prop.GetValue(config) ?? "не задано";
+
+                                             bool isNumeric = prop.PropertyType == typeof(int) || prop.PropertyType == typeof(long);
+                                             // Устанавливаем значение для callbackData
+                                             int valueCallbackData = isNumeric && value != null ? Convert.ToInt32(value) : 0;
+                                             // Формируем текст кнопки с описанием и значением
+                                             string buttonText = $"{description} ({value})";
+
+                                             // Логирование для отладки [Не удалять|Для нормальной инициализации полей с set]
+                                             Console.WriteLine($"Свойство {prop.Name}, значение: {value}");
+                                             // Возвращаем кнопку с callback-данными
+                                             return InlineKeyboardButton.WithCallbackData(buttonText, $"{valueCallbackData}torrConfigSetOne{prop.Name}");
+                                         })
+                                         .ToArray();
+
+            var keyboardButtons = new List<InlineKeyboardButton[]>();
+
+            // Группируем кнопки по 2 в строке
+            for (int i = 0; i < properties.Length; i += 1)
+            {
+                keyboardButtons.Add(properties.Skip(i).Take(1).ToArray());
+            }
+
+            // Добавляем кнопки "Назад" и "Вперед" для навигации, если это уместно
+            var navigationButtons = new List<InlineKeyboardButton>();
+
+            if (startIndex > 0)
+            {
+                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("⬅️ Назад", $"{startIndex - 5}torrArgsSettings"));
+            }
+            navigationButtons.Add(InlineKeyboardButton.WithCallbackData("\u2139", "showTorrArgssetInfo"));
+            if (startIndex + 6 < totalItems)
+            {
+                navigationButtons.Add(InlineKeyboardButton.WithCallbackData("Вперед ➡️", $"{startIndex + 5}torrArgsSettings"));
+            }
+
+            if (navigationButtons.Any())
+            {
+                keyboardButtons.Add(navigationButtons.ToArray());
+            }
+
+            // Добавляем кнопки "Назад" и "Скрыть" в последний ряд
+            var buttonBackSettingsMain = InlineKeyboardButton.WithCallbackData("↩", "back_settings_main");
+            var buttonResetSetArgsTorrConfig = InlineKeyboardButton.WithCallbackData("\u267B", "resetTorrArgsSetConfig");
+            var buttonSetArgsTorrConfig = InlineKeyboardButton.WithCallbackData("✅", "setTorrArgsSetConfig");
+            keyboardButtons.Add(new[] { buttonBackSettingsMain, buttonResetSetArgsTorrConfig, buttonSetArgsTorrConfig });
+
+            return new InlineKeyboardMarkup(keyboardButtons);
         }
         public static InlineKeyboardMarkup GetRestartingMain()
         {
@@ -406,7 +467,7 @@ namespace FreeTorrBot.BotTelegram
         {
 
             var setTorrSettings = InlineKeyboardButton.WithCallbackData("⚙️ Настройки Torrsever", "0torrSettings");
-            var setTorrConfig = InlineKeyboardButton.WithCallbackData("🛠️ Конфиг Torrsever", "torr_config");
+            var setTorrConfig = InlineKeyboardButton.WithCallbackData("🛠️ Конфиг Torrsever", "0torrArgsSettings");
             var setServer = InlineKeyboardButton.WithCallbackData("💻 Настройки сервера", "set_server");
             var setBot = InlineKeyboardButton.WithCallbackData("🤖 Настройки бота", "set_bot");
 

@@ -189,11 +189,15 @@ namespace AdTorrBot.BotTelegram.Handler
                         );
                     return;
                 }
-                if (callbackData == "torr_config")
+                if (callbackData.Contains("torrArgsSettings"))
                 {
-                    Console.WriteLine("Конфиг Torrserver");
+                    // torr_config
+                    var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrArgsSettings")[0]);
+                    await SqlMethods.SwitchOffInputFlag();
+                    var config = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
+                    Console.WriteLine("Настройки Torrserver");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "🛠️ Конфиг Torrserver ."
-                        , replyMarkup: KeyboardManager.GetTorrConfigMain()
+                        , replyMarkup: KeyboardManager.GetTorrConfigMain(AdminChat, config, startIndexKeySettings)
                         );
                     return;
                 }
@@ -451,7 +455,7 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"time_zone"
             //Настройки
           //  ,"torr_settings"
-            ,"torr_config"
+            ,"torrArgsSettings"
             ,"set_server"
             ,"set_bot"
 
@@ -477,6 +481,10 @@ namespace AdTorrBot.BotTelegram.Handler
             if (commands.Contains("TorrSett"))
             {
                 return true ;
+            }
+            if (commands.Contains("torrArgsSettings"))
+            {
+                return true;
             }
             // Если команда содержит "setAutoPassMinutes", проверим формат
             if (command.Contains("setAutoPassMinutes"))
