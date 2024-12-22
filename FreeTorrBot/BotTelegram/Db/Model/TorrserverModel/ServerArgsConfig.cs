@@ -38,13 +38,21 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Веб-порт сервера")]
         public int? Port { get; set; } = 8090; // --port
 
+        [ConfigOption("logpath")]
+        [Description("Путь для логов сервера")]
+        public string? LogPath { get; set; } // --logpath, -l
+
+        [ConfigOption("path")]
+        [Description("Путь к базе данных и конфигурации")]
+        public string? Path { get; set; } // --path, -d
+
         [ConfigOption("httpauth")]
         [Description("Включение HTTP-аутентификации")]
         public bool HttpAuth { get; set; } = false; // --httpauth
 
         [ConfigOption("readonlymode")]
         [Description("Режим только для чтения")]
-        public bool ReadOnlyMode { get; set; } = false; // --readonlymode
+        public bool ReadOnlyMode { get; set; } = false; // --rdb, -r
 
         [ConfigOption("ssl")]
         [Description("Включение HTTPS")]
@@ -62,13 +70,8 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
         [Description("Путь к SSL-ключу")]
         public string? SslKey { get; set; } // --sslkey
 
-        [ConfigOption("path")]
-        [Description("Путь к базе данных и конфигурации")]
-        public string? Path { get; set; } // --path
 
-        [ConfigOption("logpath")]
-        [Description("Путь для логов сервера")]
-        public string? LogPath { get; set; } // --logpath
+
 
         [ConfigOption("weblogpath")]
         [Description("Путь для логов веб-доступа")]
@@ -92,23 +95,24 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         [ConfigOption("pubipv4")]
         [Description("Публичный IPv4")]
-        public string? PubIPv4 { get; set; } // --pubipv4
+        public string? PubIPv4 { get; set; } // --pubipv4, -4
 
         [ConfigOption("pubipv6")]
         [Description("Публичный IPv6")]
-        public string? PubIPv6 { get; set; } // --pubipv6
+        public string? PubIPv6 { get; set; } // --pubipv6, -6
 
         [ConfigOption("searchwa")]
         [Description("Разрешить поиск без аутентификации")]
-        public bool SearchWa { get; set; } = false; // --searchwa
+        public bool SearchWa { get; set; } = false; // --searchwa, -s
 
         [ConfigOption("help")]
         [Description("Показать справку")]
-        public bool Help { get; set; } = false; // --help
+        public bool Help { get; set; } = false; // --help, -h
 
         [ConfigOption("version")]
         [Description("Показать версию программы")]
         public bool Version { get; set; } = false; // --version
+
 
 
 

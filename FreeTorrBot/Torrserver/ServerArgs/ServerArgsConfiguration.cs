@@ -48,6 +48,7 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
             // Проверка, существует ли файл
             if (!File.Exists(filePathTorrserverConfig))
             {
+                Console.WriteLine("Конфиг args torrserver не найден,делаем по дефолту его .");
                 // Если файл не существует, создаем его и записываем начальную конфигурацию
                 var defaultConfig = new ServerArgsConfig(); // Предположим, что у вас есть класс по умолчанию для конфигурации
                 WriteConfigArgs(defaultConfig); // Используем ваш метод для записи конфигурации
@@ -55,6 +56,7 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
 
             // Чтение всего содержимого файла
             var configLine = File.ReadAllText(filePathTorrserverConfig);
+            Console.WriteLine(configLine);
             return ParseConfigArgs(configLine); // Парсим строку в объект конфигурации
         }
 
@@ -67,39 +69,63 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
         }
 
         // Метод для парсинга строки конфигурации в объект ServerArgsConfig
+
         public static ServerArgsConfig ParseConfigArgs(string configLine)
         {
-            var options = new ServerArgsConfig();  // Новый объект конфигурации
+            var config = new ServerArgsConfig();
 
-            // Используем регулярное выражение для извлечения строки параметров из DAEMON_OPTIONS
-            var match = Regex.Match(configLine, @"DAEMON_OPTIONS\s*=\s*""(.*)""");
-            if (!match.Success) return options; // Если не удалось извлечь параметры, возвращаем пустой объект
-
-            var parameters = match.Groups[1].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);  // Разбиваем строку на параметры
-
-            // Перебор всех параметров
-            foreach (var parameter in parameters)
+            // Ищем строку DAEMON_OPTIONS
+            var match = Regex.Match(configLine, @"DAEMON_OPTIONS\s*=\s*""([^""]*)""");
+            if (!match.Success)
             {
-                if (parameter.StartsWith("--"))  // Проверка, что параметр начинается с "--"
-                {
-                    var parts = parameter.Split(new[] { '=' }, 2);  // Разделяем параметр на ключ и значение
-                    var key = parts[0].TrimStart('-');  // Извлекаем ключ
-                    var value = parts.Length > 1 ? parts[1] : "true";  // Если значение не указано, присваиваем "true"
+                Console.WriteLine("Конфигурация не найдена или строка некорректна.");
+                return config;
+            }
 
-                    // Поиск свойства с атрибутом ConfigOption, где ключ совпадает с параметром
+            var args = match.Groups[1].Value.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var arg in args)
+            {
+                // Проверяем флаги вида "--key=value"
+                if (arg.StartsWith("--"))
+                {
+                    var parts = arg.Substring(2).Split(new[] { '=' }, 2);
+                    var key = parts[0].ToLower();
+                    var value = parts.Length > 1 ? parts[1] : "true";
+
+                    // Найти свойство с соответствующим ключом
                     var property = typeof(ServerArgsConfig).GetProperties()
                         .FirstOrDefault(p => p.GetCustomAttribute<ConfigOptionAttribute>()?.Key == key);
 
                     if (property != null)
                     {
-                        var convertedValue = Convert.ChangeType(value, property.PropertyType);  // Преобразуем значение в нужный тип
-                        property.SetValue(options, convertedValue);  // Устанавливаем значение свойства объекта конфигурации
+                        try
+                        {
+                            // Преобразуем значение в нужный тип
+                            object convertedValue = property.PropertyType switch
+                            {
+                                Type t when t == typeof(int?) => int.TryParse(value, out int intValue) ? intValue : (int?)null,
+                                Type t when t == typeof(bool) => value.ToLower() == "true",
+                                _ => value
+                            };
+
+                            property.SetValue(config, convertedValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Ошибка парсинга ключа {key}: {ex.Message}");
+                        }
                     }
                 }
             }
 
-            return options;  // Возвращаем объект конфигурации с установленными значениями
+            return config;
         }
+
+
+
+
+
+
     }
 
 }

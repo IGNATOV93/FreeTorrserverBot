@@ -195,7 +195,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrArgsSettings")[0]);
                     await SqlMethods.SwitchOffInputFlag();
                     var config = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
-                    Console.WriteLine("Настройки Torrserver");
+                    Console.WriteLine("Настройки Torrserver(args) ");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "🛠️ Конфиг Torrserver ."
                         , replyMarkup: KeyboardManager.GetTorrConfigMain(AdminChat, config, startIndexKeySettings)
                         );

@@ -2,6 +2,7 @@
 using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 using FreeTorrserverBot.Torrserver;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -388,9 +389,10 @@ namespace FreeTorrBot.BotTelegram
                 Console.WriteLine("Ошибка: Config object is null.");
                 throw new ArgumentNullException(nameof(config), "Config object is null");
             }
+            Console.WriteLine($"Свойство Port, значение: {config.Port}");
 
             int totalItems = typeof(ServerArgsConfig).GetProperties().Length - 3;
-
+            Console.WriteLine($"Вывод 5 свойств конфига args.");
             var properties = typeof(ServerArgsConfig).GetProperties()
                                          .Skip(startIndex + 3)
                                          .Take(5) // Отображаем 5 свойств, начиная с переданного индекса
