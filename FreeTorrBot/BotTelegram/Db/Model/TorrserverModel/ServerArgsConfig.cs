@@ -60,7 +60,7 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         [ConfigOption("sslport")]
         [Description("HTTPS порт")]
-        public int? SslPort { get; set; } = 8091; // --sslport
+        public int? SslPort { get; set; }  // --sslport
 
         [ConfigOption("sslcert")]
         [Description("Путь к SSL-сертификату")]

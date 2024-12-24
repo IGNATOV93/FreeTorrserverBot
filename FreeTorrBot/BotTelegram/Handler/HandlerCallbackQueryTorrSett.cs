@@ -57,7 +57,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Вы в режиме ввода логина.\n" +
                             "Напишите желаемый логин.\n" +
                             "⚠️ Логин может содержать только английские буквы и цифры. Ограничение: 10 символов.",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("Login",0));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("Login",0));
                     }
                     break;
 
@@ -79,7 +79,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Вы в режиме ввода пароля.\n" +
                             "Напишите желаемый пароль.\n" +
                             "⚠️ Пароль может содержать только английские буквы и цифры. Ограничение: 10 символов.",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("Password", 0));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("Password", 0));
                     }
                     break;
                 case "FlagTorrSettCacheSize":
@@ -102,7 +102,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите размер кэша в MB (целое число от 32 до 256).\r\n\r\n" +
                             $"Сейчас {setTorr.CacheSize} MB",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettCacheSize", setTorr.CacheSize));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettCacheSize", setTorr.CacheSize));
                     }
                     break;
                 // Шаблон для остальных флагов
@@ -126,7 +126,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите опережающий кэш (целое число от 5 до 100).\r\n\r\n" +
                             $"Сейчас {setTorr.ReaderReadAHead} %",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettReaderReadAHead", setTorr.ReaderReadAHead));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettReaderReadAHead", setTorr.ReaderReadAHead));
                     }
                     break;
                 case "FlagTorrSettPreloadCache":
@@ -149,7 +149,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите буфер предзагрузки (целое число от 5 до 100).\r\n\r\n" +
                             $"Сейчас {setTorr.PreloadCache} %",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettPreloadCache", setTorr.PreloadCache));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPreloadCache", setTorr.PreloadCache));
                     }
                     break;
                 case "FlagTorrSettTorrentDisconnectTimeout":
@@ -172,7 +172,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите тайм-аут отключения торрента (целое число от 1).\r\n\r\n" +
                             $"Сейчас {setTorr.PreloadCache} сек.",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentDisconnectTimeout", setTorr.TorrentDisconnectTimeout));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentDisconnectTimeout", setTorr.TorrentDisconnectTimeout));
                     }
                     break;
                 case "FlagTorrSettConnectionsLimit":
@@ -195,7 +195,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите кол-во торрент соединений (целое число от 0).\r\n\r\n" +
                             $"Сейчас {setTorr.ConnectionsLimit} сек.",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettConnectionsLimit", setTorr.ConnectionsLimit));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettConnectionsLimit", setTorr.ConnectionsLimit));
                     }
                     break;
                 case "FlagTorrSettDownloadRateLimit":
@@ -218,7 +218,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите ограничение скорости загрузки в мб/сек (целое число от 0).\r\n\r\n" +
                             $"Сейчас {setTorr.DownloadRateLimit} мб/сек",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettDownloadRateLimit", setTorr.DownloadRateLimit));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettDownloadRateLimit", setTorr.DownloadRateLimit));
                     }
                     break;
                 case "FlagTorrSettUploadRateLimit":
@@ -241,7 +241,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите ограничение скорости отдачи в мб/сек (целое число от 0).\r\n\r\n" +
                             $"Сейчас {setTorr.UploadRateLimit} мб/сек",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettUploadRateLimit", setTorr.UploadRateLimit));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettUploadRateLimit", setTorr.UploadRateLimit));
                     }
                     break;
                 case "FlagTorrSettPeersListenPort":
@@ -268,7 +268,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                 "❗ Неверный ввод (порт занят).\n" +
                                 "Введите порт (целое число от 1024 до 65535).\r\n\r\n" +
                                 $"Сейчас {setTorr.UploadRateLimit}",
-                                replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettPeersListenPort", setTorr.PeersListenPort));
+                                replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPeersListenPort", setTorr.PeersListenPort));
                         }
                     }
                     else
@@ -278,7 +278,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите порт (целое число от 1024 до 65535).\r\n\r\n" +
                             $"Сейчас {setTorr.PeersListenPort}",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettPeersListenPort", setTorr.PeersListenPort));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPeersListenPort", setTorr.PeersListenPort));
                     }
                     break;
                 case "FlagTorrSettFriendlyName":
@@ -305,7 +305,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "❗ Неверный ввод.\n" +
                             "Введите имя сервера DLNA (max 30 символов).\r\n\r\n" +
                             $"Сейчас: {setTorr.FriendlyName}",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettFriendlyName", 0));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettFriendlyName", 0));
                     }
                     break;
                 case "FlagTorrSettRetrackersMode":
@@ -333,7 +333,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "1-добавлять (по умолчанию)\r\n"+
                             "2-удалять\r\n"+
                             "3-заменять\r\n",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettRetrackersMode", setTorr.RetrackersMode));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettRetrackersMode", setTorr.RetrackersMode));
                     }
                     break;
                 case "FlagTorrSettSslPort":
@@ -361,7 +361,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                 "Введите порт ssl (целое число от 1024 до 65535).\r\n\r\n" +
                                 "0 - (8091)по умолчанию.\r\n" +
                                 $"Сейчас {setTorr.SslPort}",
-                                replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslPort", setTorr.SslPort));
+                                replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslPort", setTorr.SslPort));
                         }
                     }
                     else
@@ -372,7 +372,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "Введите порт ssl (целое число от 1024 до 65535).\r\n\r\n" +
                             "0 - (8091)по умолчанию.\r\n" +
                             $"Сейчас {setTorr.SslPort}",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslPort", setTorr.SslPort));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslPort", setTorr.SslPort));
                     }
                     break;
                 case "FlagTorrSettSslCert":
@@ -398,7 +398,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "Введите путь SSL сертификата (max 4096 символов).\r\n\r\n" +
                             $"Пример: /etc/letsencrypt/live/domain_name/fullchain.pem\r\n" +
                             $"Сейчас: {setTorr.SslCert}",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslCert", 0));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslCert", 0));
                     }
                     break;
                 case "FlagTorrSettSslKey":
@@ -424,7 +424,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "Введите путь SSL ключа (max 4096 символов).\r\n\r\n" +
                             $"Пример: /etc/letsencrypt/live/доменное_имя/privkey.pem\r\n" +
                             $"Сейчас: {setTorr.SslKey}",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslKey", 0));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslKey", 0));
                     }
                     break;
                 case "FlagTorrSettTorrentsSavePath":
@@ -450,7 +450,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             "Введите путь сохр. торрентов (max 4096 символов).\r\n\r\n" +
                             $"Пример: /home/user/Documents\r\n" +
                             $"Сейчас: {setTorr.TorrentsSavePath}",
-                            replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentsSavePath", 0));
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentsSavePath", 0));
                     }
                     break;
                 default:
@@ -486,72 +486,72 @@ namespace AdTorrBot.BotTelegram.Handler
                 // Поля типа bool - переключение на противоположное состояние
                 case "usedisk":
                     conf.UseDisk = !conf.UseDisk;
-                    await SendOrEditMessage(idMessage, $"Использование диска теперь {(conf.UseDisk ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Использование диска теперь {(conf.UseDisk ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "enableipv6":
                     conf.EnableIPv6 = !conf.EnableIPv6;
-                    await SendOrEditMessage(idMessage, $"IPv6 теперь {(conf.EnableIPv6 ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"IPv6 теперь {(conf.EnableIPv6 ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "disablestcp":
                     conf.DisableTCP = !conf.DisableTCP;
-                    await SendOrEditMessage(idMessage, $"Отключение TCP теперь {(conf.DisableTCP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Отключение TCP теперь {(conf.DisableTCP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "disableutp":
                     conf.DisableUTP = !conf.DisableUTP;
-                    await SendOrEditMessage(idMessage, $"μTP теперь {(conf.DisableUTP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"μTP теперь {(conf.DisableUTP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "disablepex":
                     conf.DisablePEX = !conf.DisablePEX;
-                    await SendOrEditMessage(idMessage, $"PEX теперь {(conf.DisablePEX ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"PEX теперь {(conf.DisablePEX ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "forceencrypt":
                     conf.ForceEncrypt = !conf.ForceEncrypt;
-                    await SendOrEditMessage(idMessage, $"Принудительное шифрование теперь {(conf.ForceEncrypt ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Принудительное шифрование теперь {(conf.ForceEncrypt ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "disabledht":
                     conf.DisableDHT = !conf.DisableDHT;
-                    await SendOrEditMessage(idMessage, $"DHT теперь {(conf.DisableDHT ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"DHT теперь {(conf.DisableDHT ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "disableupnp":
                     conf.DisableUPNP = !conf.DisableUPNP;
-                    await SendOrEditMessage(idMessage, $"UPNP теперь {(conf.DisableUPNP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"UPNP теперь {(conf.DisableUPNP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "enabledlna":
                     conf.EnableDLNA = !conf.EnableDLNA;
-                    await SendOrEditMessage(idMessage, $"DLNA теперь {(conf.EnableDLNA ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"DLNA теперь {(conf.EnableDLNA ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "enablerutorsearch":
                     conf.EnableRutorSearch = !conf.EnableRutorSearch;
-                    await SendOrEditMessage(idMessage, $"Поиск по RuTor теперь {(conf.EnableRutorSearch ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Поиск по RuTor теперь {(conf.EnableRutorSearch ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "enabledebug":
                     conf.EnableDebug = !conf.EnableDebug;
-                    await SendOrEditMessage(idMessage, $"Режим отладки теперь {(conf.EnableDebug ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Режим отладки теперь {(conf.EnableDebug ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "responsivemode":
                     conf.ResponsiveMode = !conf.ResponsiveMode;
-                    await SendOrEditMessage(idMessage, $"Быстрый режим чтения теперь {(conf.ResponsiveMode ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Быстрый режим чтения теперь {(conf.ResponsiveMode ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "disableupload":
                     conf.DisableUpload = !conf.DisableUpload;
-                    await SendOrEditMessage(idMessage, $"Отключение отдачи теперь {(conf.DisableUpload ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Отключение отдачи теперь {(conf.DisableUpload ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 case "removecacheondrop":
                     conf.RemoveCacheOnDrop = !conf.RemoveCacheOnDrop;
-                    await SendOrEditMessage(idMessage, $"Удаление кеша при сбросе теперь {(conf.RemoveCacheOnDrop ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Удаление кеша при сбросе теперь {(conf.RemoveCacheOnDrop ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
                     break;
 
                 // Поля, требующие ввода данных (int, long, string)
@@ -563,7 +563,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.CacheSize = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода размера кеша. Пожалуйста, введите новое значение (MB).\r\n" +
                         "Min 32MB - Max 256MB\r\n\r\n" +
-                        $"Сейчас: {conf.CacheSize} МБ", KeyboardManager.CreateExitTorrSettInputButton("TorrSettCacheSize", conf.CacheSize));
+                        $"Сейчас: {conf.CacheSize} МБ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettCacheSize", conf.CacheSize));
                     break;
 
                 case "readerreadahead":
@@ -571,7 +571,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.ReaderReadAHead = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода значения для опережающего кеша. Пожалуйста, введите новое значение.\r\n" +
                         "Min 5% - Max 100%\r\n\r\n" +
-                        $"Сейчас: {conf.ReaderReadAHead} %", KeyboardManager.CreateExitTorrSettInputButton("TorrSettReaderReadAHead", conf.ReaderReadAHead));
+                        $"Сейчас: {conf.ReaderReadAHead} %", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettReaderReadAHead", conf.ReaderReadAHead));
                     break;
 
                 case "preloadcache":
@@ -579,35 +579,35 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.PreloadCache = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода размера буфера предзагрузки. Пожалуйста, введите новое значение.\r\n" +
                         "Min 5% - Max 100%\r\n\r\n" +
-                        $"Сейчас: {conf.PreloadCache} %", KeyboardManager.CreateExitTorrSettInputButton("TorrSettPreloadCache", conf.PreloadCache));
+                        $"Сейчас: {conf.PreloadCache} %", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPreloadCache", conf.PreloadCache));
                     break;
 
                 case "torrentdisconnecttimeout":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentDisconnectTimeout", true);
                     conf.TorrentDisconnectTimeout = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода тайм-аута отключения торрентов. Пожалуйста, введите новое значение (в секундах).\r\n" +
-                        $"Сейчас: {conf.TorrentDisconnectTimeout} сек.", KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentDisconnectTimeout", conf.TorrentDisconnectTimeout));
+                        $"Сейчас: {conf.TorrentDisconnectTimeout} сек.", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentDisconnectTimeout", conf.TorrentDisconnectTimeout));
                     break;
 
                 case "connectionslimit":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettConnectionsLimit", true);
                     conf.ConnectionsLimit = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода лимита соединений для торрентов. Пожалуйста, введите новое значение.\r\n" +
-                        $"Сейчас: {conf.ConnectionsLimit} соед. ", KeyboardManager.CreateExitTorrSettInputButton("TorrSettConnectionsLimit", conf.ConnectionsLimit));
+                        $"Сейчас: {conf.ConnectionsLimit} соед. ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettConnectionsLimit", conf.ConnectionsLimit));
                     break;
 
                 case "downloadratelimit":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettDownloadRateLimit", true);
                     conf.DownloadRateLimit = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (мб/с).\r\n" +
-                        $"Сейчас: {conf.DownloadRateLimit} мб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettDownloadRateLimit", conf.DownloadRateLimit));
+                        $"Сейчас: {conf.DownloadRateLimit} мб/сек", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettDownloadRateLimit", conf.DownloadRateLimit));
                     break;
 
                 case "uploadratelimit":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettUploadRateLimit", true);
                     conf.UploadRateLimit = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (мб/с).\r\n" +
-                        $"Сейчас: {conf.UploadRateLimit} мб/сек", KeyboardManager.CreateExitTorrSettInputButton("TorrSettUploadRateLimit", conf.UploadRateLimit));
+                        $"Сейчас: {conf.UploadRateLimit} мб/сек", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettUploadRateLimit", conf.UploadRateLimit));
                     break;
 
                 case "peerslistenport":
@@ -615,7 +615,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.PeersListenPort = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.\r\n" +
                         $"Порт должен быть в диапазоне от 1024 до 65535.\r\n" +
-                        $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitTorrSettInputButton("TorrSettPeersListenPort", conf.PeersListenPort));
+                        $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPeersListenPort", conf.PeersListenPort));
                     break;
 
                 case "retrackersmode":
@@ -626,7 +626,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         "1 - добавлять (по умолчанию)\r\n" +
                         "2 - удалять\r\n" +
                         "3 - заменять\r\n" +
-                        $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitTorrSettInputButton("TorrSettRetrackersMode", conf.RetrackersMode));
+                        $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettRetrackersMode", conf.RetrackersMode));
                     break;
 
                 case "sslport":
@@ -634,7 +634,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.SslPort = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.\r\n" +
                         "0 - (8091)по умолчанию.\r\n" +
-                        $"Сейчас: {conf.SslPort} порт", KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslPort", conf.SslPort));
+                        $"Сейчас: {conf.SslPort} порт", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslPort", conf.SslPort));
                     break;
 
                 case "friendlyname":
@@ -646,7 +646,7 @@ namespace AdTorrBot.BotTelegram.Handler
 
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.\r\n" +
                         "Ограничение 30 символов\r\n" +
-                        $"Сейчас: {conf.FriendlyName} .", KeyboardManager.CreateExitTorrSettInputButton("TorrSettFriendlyName", 0));
+                        $"Сейчас: {conf.FriendlyName} .", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettFriendlyName", 0));
                     break;
 
                 case "torrentssavepath":
@@ -659,7 +659,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. \r\n" +
                        "Введите путь сохр. торрентов (max 4096 символов).\r\n\r\n" +
                        $"Пример: /home/user/Documents\r\n" +
-                        $"Сейчас: {conf.TorrentsSavePath}", KeyboardManager.CreateExitTorrSettInputButton("TorrSettTorrentsSavePath", 0));
+                        $"Сейчас: {conf.TorrentsSavePath}", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentsSavePath", 0));
                     break;
 
                 case "sslcert":
@@ -671,7 +671,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату.\r\n" +
                                 "Пожалуйста, введите путь (max 4096 символов).\r\n" +
                                   $"Пример: /etc/letsencrypt/live/domain_name/fullchain.pem\r\n" +
-                                $"Сейчас: {conf.SslCert} ", KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslCert", 0));
+                                $"Сейчас: {conf.SslCert} ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslCert", 0));
                             break;
 
                 case "sslkey":
@@ -683,7 +683,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу.\r\n" +
                                 "Пожалуйста, введите путь (max 4096 символов).\r\n" +
                                 "Пример: /etc/letsencrypt/live/доменное_имя/privkey.pem\r\n" +
-                                $"Сейчас: {conf.SslKey}", KeyboardManager.CreateExitTorrSettInputButton("TorrSettSslKey",0));
+                                $"Сейчас: {conf.SslKey}", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslKey",0));
                             break;
 
                  default:

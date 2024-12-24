@@ -17,6 +17,7 @@ using AdTorrBot.BotTelegram.Db.Model;
 using AdTorrBot.ServerManagement;
 using FreeTorrBot.BotTelegram;
 using FreeTorrserverBot.Torrserver.BitTor;
+using FreeTorrserverBot.Torrserver.ServerArgs;
 
 
 namespace AdTorrBot.BotTelegram.Handler
@@ -161,21 +162,21 @@ namespace AdTorrBot.BotTelegram.Handler
                 {
                     await Torrserver.RebootingTorrserver();
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "Настройки Torrserver обновленны! \u2705\r\n" +
-                        "Torrserver перезагружен .", replyMarkup: KeyboardManager.GetShoWTorrConfig());
+                        "Torrserver перезагружен .", replyMarkup: KeyboardManager.GetShoWBitTorrConfig());
                     return;
                 }
                 if (callbackData == "resetTorrSetConfig")
                 {
                     //ВЫЗОВ МЕТОДА ДЛЯ СБРОСА НАСТРОЕК TORRSERVER .
                     await BitTorrConfigation.ResetConfig();
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Настройки Torrserver сброшены по умолчанию ! \u2705", replyMarkup: KeyboardManager.GetShoWTorrConfig());
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Настройки Torrserver сброшены по умолчанию ! \u2705", replyMarkup: KeyboardManager.GetShoWBitTorrConfig());
                     return;
                 }
                 if (callbackData == "showTorrsetInfo")
                 {
                     var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
                     var resultInfoTorrSettings = config.ToString();
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, resultInfoTorrSettings, replyMarkup: KeyboardManager.GetShoWTorrConfig());
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, resultInfoTorrSettings, replyMarkup: KeyboardManager.GetShoWBitTorrConfig());
                     return;
                 }
                 if (callbackData.Contains("torrSettings"))
@@ -189,6 +190,14 @@ namespace AdTorrBot.BotTelegram.Handler
                         );
                     return;
                 }
+                if(callbackData== "showTorrArgssetInfo")
+                {
+                    var conf = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
+                    var resultStringConfig = ServerArgsConfiguration.SerializeConfigArgs(conf);
+                    var resultInfoArgsConfig = resultStringConfig+"\r\n\r\n"+conf.ToString();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, resultInfoArgsConfig, replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
+                    return;
+                }
                 if (callbackData.Contains("torrArgsSettings"))
                 {
                     // torr_config
@@ -197,7 +206,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     var config = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
                     Console.WriteLine("Настройки Torrserver(args) ");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "🛠️ Конфиг Torrserver ."
-                        , replyMarkup: KeyboardManager.GetTorrConfigMain(AdminChat, config, startIndexKeySettings)
+                        , replyMarkup: KeyboardManager.GetServerArgsConfigMain(AdminChat, config, startIndexKeySettings)
                         );
                     return;
                 }
@@ -299,7 +308,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                                         "Напишите желаемый логин.\r\n" +
                                                         "\u2757 Login может содержать только английские буквы и цифры.\r\n" +
                                                          "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("Login", 0 ));
+                                                        , replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("Login", 0 ));
                     return;
                 }
                 if (callbackData == "set_password_manually")
@@ -311,7 +320,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                                         "Напишите желаемый пароль.\r\n" +
                                                         "\u2757 Password может содержать только английские буквы и цифры.\r\n" +
                                                          "Ограничение на символы:10"
-                                                        , replyMarkup: KeyboardManager.CreateExitTorrSettInputButton("Password",0));
+                                                        , replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("Password",0));
                     return;
 
                 }
@@ -468,6 +477,7 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"showTorrsetInfo"
             ,"resetTorrSetConfig"
             ,"setTorrSetConfig"
+            ,"showTorrArgssetInfo"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))
