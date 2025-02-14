@@ -63,10 +63,43 @@ namespace AdTorrBot.BotTelegram
                 case "FlagTorrSettTorrentsSavePath":
                     return "Вы вышли из режима ввода пути для сохранения торрентов. ✅";
 
+
+
+                case "FlagServerArgsSettLogPath":
+                    return "Вы вышли из режима ввода пути для логов сервера. ✅";
+
+                case "FlagServerArgsSettPath":
+                    return "Вы вышли из режима ввода пути к базе данных и конфигурации. ✅";
+
+                case "FlagServerArgsSettSslPort":
+                    return "Вы вышли из режима ввода HTTPS порта. ✅";
+
+                case "FlagServerArgsSettSslCert":
+                    return "Вы вышли из режима ввода пути к SSL-сертификату. ✅";
+
+                case "FlagServerArgsSettSslKey":
+                    return "Вы вышли из режима ввода пути к SSL-ключу. ✅";
+
+                case "FlagServerArgsSettWebLogPath":
+                    return "Вы вышли из режима ввода пути для логов веб-доступа. ✅";
+
+                case "FlagServerArgsSettTorrentsDir":
+                    return "Вы вышли из режима ввода директории автозагрузки торрентов. ✅";
+
+                case "FlagServerArgsSettTorrentAddr":
+                    return "Вы вышли из режима ввода адреса торрент-клиента. ✅";
+
+                case "FlagServerArgsSettPubIPv4":
+                    return "Вы вышли из режима ввода публичного IPv4. ✅";
+
+                case "FlagServerArgsSettPubIPv6":
+                    return "Вы вышли из режима ввода публичного IPv6. ✅";
+
                 default:
                     return "Неизвестное поле. ✅";
             }
         }
+
 
         public static string UpdateTimeString(string time,int minutesToAdd)
         {

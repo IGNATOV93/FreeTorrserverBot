@@ -455,8 +455,10 @@ namespace AdTorrBot.BotTelegram.Handler
                     break;
                 default:
                     Console.WriteLine($"Обработка для {lastTextFlagTrue} пока не реализована.");
+                    await SqlMethods.SwitchOffInputFlag();
                     await botClient.SendTextMessageAsync(AdminChat,
-                        $"Вы в режиме ввода данных для настройки: {lastTextFlagTrue}. Пока обработка не поддерживается.",
+                        $"Вы покинули режим ввода данных: {lastTextFlagTrue}. данный режим ввода нереализован.",
+                       
                         replyMarkup: KeyboardManager.GetDeleteThisMessage());
                     break;
             }

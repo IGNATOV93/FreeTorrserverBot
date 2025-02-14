@@ -27,7 +27,7 @@ namespace FreeTorrBot.BotTelegram
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
-
+      
         #region BitTorrConfig
         public static async Task<InlineKeyboardMarkup> GetBitTorrConfigMain(string idChat, BitTorrConfig config, int startIndex)
         {
@@ -256,6 +256,7 @@ namespace FreeTorrBot.BotTelegram
                 {
                     new []
                     {
+                        InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода", "exitFlag" + callbackData),
                         InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages"),
                     }
                 });

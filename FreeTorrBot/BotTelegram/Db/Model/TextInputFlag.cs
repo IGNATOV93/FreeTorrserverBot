@@ -67,7 +67,38 @@ namespace AdTorrBot.BotTelegram.Db.Model
         public bool FlagTorrSettTorrentsSavePath { get; set; } = false;
 
         //настройки конфига
+        [Description("Ввод: Веб-порт сервера")]
+        public bool FlagServerArgsSettPort { get; set; } = false;
 
+        [Description("Ввод: Путь для логов сервера")]
+        public bool FlagServerArgsSettLogPath { get; set; } = false;
+
+        [Description("Ввод: Путь к базе данных и конфигурации")]
+        public bool FlagServerArgsSettPath { get; set; } = false;
+
+        [Description("Ввод: HTTPS порт")]
+        public bool FlagServerArgsSettSslPort { get; set; } = false;
+
+        [Description("Ввод: Путь к SSL-сертификату")]
+        public bool FlagServerArgsSettSslCert { get; set; } = false;
+
+        [Description("Ввод: Путь к SSL-ключу")]
+        public bool FlagServerArgsSettSslKey { get; set; } = false;
+
+        [Description("Ввод: Путь для логов веб-доступа")]
+        public bool FlagServerArgsSettWebLogPath { get; set; } = false;
+
+        [Description("Ввод: Директория автозагрузки торрентов")]
+        public bool FlagServerArgsSettTorrentsDir { get; set; } = false;
+
+        [Description("Ввод: Адрес торрент-клиента")]
+        public bool FlagServerArgsSettTorrentAddr { get; set; } = false;
+
+        [Description("Ввод: Публичный IPv4")]
+        public bool FlagServerArgsSettPubIPv4 { get; set; } = false;
+
+        [Description("Ввод: Публичный IPv6")]
+        public bool FlagServerArgsSettPubIPv6 { get; set; } = false;
 
         public bool CheckAllBooleanFlags()
         {
