@@ -1,4 +1,5 @@
-﻿using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
+﻿using AdTorrBot.BotTelegram.Db;
+using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 using FreeTorrserverBot.BotTelegram;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
 
 
         // Метод для чтения конфигурации из файла
-        public static ServerArgsConfig ReadConfigArgs()
+        public static async Task<ServerArgsConfig>  ReadConfigArgs()
         {
             try
             {
@@ -62,7 +63,8 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
                 {
                     Console.WriteLine("Конфигурация (torrserver.config) не найдена. Создаём конфигурацию по умолчанию.");
                     var defaultConfig = new ServerArgsConfig(); // Конфигурация по умолчанию
-                    WriteConfigArgs(defaultConfig); // Записываем её в файл
+                 await   WriteConfigArgs(defaultConfig); // Записываем её в файл
+                   
                     return defaultConfig;
                 }
 
@@ -72,12 +74,14 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
                 {
                     Console.WriteLine("Конфигурация (torrserver.config) пуста. Используем конфигурацию по умолчанию.");
                     var defaultConfig = new ServerArgsConfig();
-                    WriteConfigArgs(defaultConfig);
+                   await WriteConfigArgs(defaultConfig);
+                    
                     return defaultConfig;
                 }
-
+                 var conf = ParseConfigArgs(configLine);
+                  await SqlMethods.SetArgsConfigTorrProfile(conf);
                 // Парсим строку в объект конфигурации
-                return ParseConfigArgs(configLine);
+                return conf;
             }
             catch (Exception ex)
             {
@@ -87,7 +91,7 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
         }
 
         // Метод для записи конфигурации в файл
-        public static void WriteConfigArgs(ServerArgsConfig config)
+        public static async Task WriteConfigArgs(ServerArgsConfig config)
         {
             try
             {
@@ -104,6 +108,7 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
                 // Записываем строку в файл
                 File.WriteAllText(filePathTorrserverConfig, configLine);
                 Console.WriteLine("Конфигурация(torrserver.config) успешно записана.");
+                await SqlMethods.SetArgsConfigTorrProfile(config);
             }
             catch (Exception ex)
             {

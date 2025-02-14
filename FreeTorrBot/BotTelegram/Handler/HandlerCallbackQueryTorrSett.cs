@@ -469,7 +469,7 @@ namespace AdTorrBot.BotTelegram.Handler
             var idMessage = callbackQuery.Message.MessageId;  // ID сообщения для редактирования
 
             // Прочитаем конфиг
-            var conf = ServerArgsConfiguration.ReadConfigArgs();
+            var conf = await ServerArgsConfiguration.ReadConfigArgs();
 
             // Преобразуем строку в нижний регистр для удобства сравнения
             string setting = inputSetting.Split("torrConfigSetOne")[1].ToLower();
@@ -478,16 +478,143 @@ namespace AdTorrBot.BotTelegram.Handler
             // Определяем смайлы в переменных для удобства изменения
             string enabledSymbol = "\u2705";  // ✅
             string disabledSymbol = "\u274C"; // ❌
+            string confName = "Конфиг Torrserver";
             switch (setting)
             {
                 // Поля типа bool - переключение на противоположное состояние
+                case "httpauth":
+                    conf.HttpAuth = !conf.HttpAuth;
+                    await SendOrEditMessage(idMessage, $"HTTP-аутентификация теперь {(conf.HttpAuth ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
 
+                case "readonlymode":
+                    conf.ReadOnlyMode = !conf.ReadOnlyMode;
+                    await SendOrEditMessage(idMessage, $"Режим только для чтения теперь {(conf.ReadOnlyMode ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
+
+                case "ssl":
+                    conf.Ssl = !conf.Ssl;
+                    await SendOrEditMessage(idMessage, $"HTTPS теперь {(conf.Ssl ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
+
+                case "dontkill":
+                    conf.DontKill = !conf.DontKill;
+                    await SendOrEditMessage(idMessage, $"Запрет завершения сервера теперь {(conf.DontKill ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
+
+                case "ui":
+                    conf.Ui = !conf.Ui;
+                    await SendOrEditMessage(idMessage, $"Интерфейс в браузере теперь {(conf.Ui ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
+
+                case "searchwa":
+                    conf.SearchWa = !conf.SearchWa;
+                    await SendOrEditMessage(idMessage, $"Поиск без аутентификации теперь {(conf.SearchWa ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
+
+                case "help":
+                    conf.Help = !conf.Help;
+                    await SendOrEditMessage(idMessage, $"Справка теперь {(conf.Help ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
+
+                case "version":
+                    conf.Version = !conf.Version;
+                    await SendOrEditMessage(idMessage, $"Версия программы теперь {(conf.Version ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
+                    break;
 
 
                 // Поля, требующие ввода данных (int, long, string)
                 //НЕ ЗАБЫВАТЬ ПРОПИСЫВАТЬ СОХРАНЕНИЕ ДАННЫХ пример =>>>>>>>>  conf.PeersListenPort=value;
-                default: return;
+
+                case "port":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPort", true);
+                    conf.Port = value;
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода веб-порта сервера. Пожалуйста, введите новый порт.\r\n" +
+                        $"Сейчас: {conf.Port}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPort", (long)conf.Port), confName);
+                    break;
+
+                case "logpath":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettLogPath", true);
+                    conf.LogPath = value.ToString();
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для логов сервера. Пожалуйста, введите новый путь.\r\n" +
+                        $"Сейчас: {conf.LogPath}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettLogPath", 0), confName);
+                    break;
+
+                case "path":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPath", true);
+                    conf.Path = value.ToString();
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к базе данных и конфигурации. Пожалуйста, введите новый путь.\r\n" +
+                        $"Сейчас: {conf.Path}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPath", 0), confName);
+                    break;
+
+                case "sslport":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettSslPort", true);
+                    conf.SslPort = value;
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода HTTPS порта. Пожалуйста, введите новый порт.\r\n" +
+                        $"Сейчас: {conf.SslPort}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslPort", (long)conf.SslPort), confName);
+                    break;
+
+                case "sslcert":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettSslCert", true);
+                    if (value == 1)
+                    {
+                        conf.SslCert = "";
+                    }
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL-сертификату. Пожалуйста, введите новый путь.\r\n" +
+                        $"Сейчас: {conf.SslCert}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslCert", 0), confName);
+                    break;
+
+                case "sslkey":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettSslKey", true);
+                    if (value == 1)
+                    {
+                        conf.SslKey = "";
+                    }
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL-ключу. Пожалуйста, введите новый путь.\r\n" +
+                        $"Сейчас: {conf.SslKey}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslKey", 0), confName);
+                    break;
+
+                case "weblogpath":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettWebLogPath", true);
+                    conf.WebLogPath = value.ToString();
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для логов веб-доступа. Пожалуйста, введите новый путь.\r\n" +
+                        $"Сейчас: {conf.WebLogPath}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettWebLogPath", 0), confName);
+                    break;
+
+                case "torrentsdir":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettTorrentsDir", true);
+                    conf.TorrentsDir = value.ToString();
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода директории автозагрузки торрентов. Пожалуйста, введите новую директорию.\r\n" +
+                        $"Сейчас: {conf.TorrentsDir}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettTorrentsDir", 0), confName);
+                    break;
+
+                case "torrentaddr":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettTorrentAddr", true);
+                    conf.TorrentAddr = value.ToString();
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода адреса торрент-клиента. Пожалуйста, введите новый адрес.\r\n" +
+                        $"Сейчас: {conf.TorrentAddr}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettTorrentAddr", 0), confName);
+                    break;
+
+                case "pubipv4":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPubIPv4", true);
+                    conf.PubIPv4 = value.ToString();
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода публичного IPv4. Пожалуйста, введите новый IPv4 адрес.\r\n" +
+                        $"Сейчас: {conf.PubIPv4}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPubIPv4", 0), confName);
+                    break;
+
+                case "pubipv6":
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPubIPv6", true);
+                    conf.PubIPv6 = value.ToString();
+                    await SendOrEditMessage(idMessage, "Вы в режиме ввода публичного IPv6. Пожалуйста, введите новый IPv6 адрес.\r\n" +
+                        $"Сейчас: {conf.PubIPv6}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPubIPv6", 0), confName);
+                    break;
+
+                default:
+                    await SendOrEditMessage(idMessage, "Неизвестная настройка", KeyboardManager.buttonHideButtots, confName);
+                    break;
             }
+           await  ServerArgsConfiguration.WriteConfigArgs(conf);
+            return ;
         }
             public static async Task CheckSettingAndExecute(CallbackQuery callbackQuery, string inputSetting)
         {
@@ -505,78 +632,78 @@ namespace AdTorrBot.BotTelegram.Handler
             // Определяем смайлы в переменных для удобства изменения
             string enabledSymbol = "\u2705";  // ✅
             string disabledSymbol = "\u274C"; // ❌
-
+            string confName = "Настройки Torrserver";
             switch (setting)
             {
                 // Поля типа bool - переключение на противоположное состояние
                 case "usedisk":
                     conf.UseDisk = !conf.UseDisk;
-                    await SendOrEditMessage(idMessage, $"Использование диска теперь {(conf.UseDisk ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Использование диска теперь {(conf.UseDisk ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "enableipv6":
                     conf.EnableIPv6 = !conf.EnableIPv6;
-                    await SendOrEditMessage(idMessage, $"IPv6 теперь {(conf.EnableIPv6 ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"IPv6 теперь {(conf.EnableIPv6 ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "disablestcp":
                     conf.DisableTCP = !conf.DisableTCP;
-                    await SendOrEditMessage(idMessage, $"Отключение TCP теперь {(conf.DisableTCP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Отключение TCP теперь {(conf.DisableTCP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "disableutp":
                     conf.DisableUTP = !conf.DisableUTP;
-                    await SendOrEditMessage(idMessage, $"μTP теперь {(conf.DisableUTP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"μTP теперь {(conf.DisableUTP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "disablepex":
                     conf.DisablePEX = !conf.DisablePEX;
-                    await SendOrEditMessage(idMessage, $"PEX теперь {(conf.DisablePEX ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"PEX теперь {(conf.DisablePEX ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "forceencrypt":
                     conf.ForceEncrypt = !conf.ForceEncrypt;
-                    await SendOrEditMessage(idMessage, $"Принудительное шифрование теперь {(conf.ForceEncrypt ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Принудительное шифрование теперь {(conf.ForceEncrypt ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "disabledht":
                     conf.DisableDHT = !conf.DisableDHT;
-                    await SendOrEditMessage(idMessage, $"DHT теперь {(conf.DisableDHT ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"DHT теперь {(conf.DisableDHT ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "disableupnp":
                     conf.DisableUPNP = !conf.DisableUPNP;
-                    await SendOrEditMessage(idMessage, $"UPNP теперь {(conf.DisableUPNP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"UPNP теперь {(conf.DisableUPNP ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "enabledlna":
                     conf.EnableDLNA = !conf.EnableDLNA;
-                    await SendOrEditMessage(idMessage, $"DLNA теперь {(conf.EnableDLNA ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"DLNA теперь {(conf.EnableDLNA ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "enablerutorsearch":
                     conf.EnableRutorSearch = !conf.EnableRutorSearch;
-                    await SendOrEditMessage(idMessage, $"Поиск по RuTor теперь {(conf.EnableRutorSearch ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Поиск по RuTor теперь {(conf.EnableRutorSearch ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "enabledebug":
                     conf.EnableDebug = !conf.EnableDebug;
-                    await SendOrEditMessage(idMessage, $"Режим отладки теперь {(conf.EnableDebug ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Режим отладки теперь {(conf.EnableDebug ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "responsivemode":
                     conf.ResponsiveMode = !conf.ResponsiveMode;
-                    await SendOrEditMessage(idMessage, $"Быстрый режим чтения теперь {(conf.ResponsiveMode ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Быстрый режим чтения теперь {(conf.ResponsiveMode ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "disableupload":
                     conf.DisableUpload = !conf.DisableUpload;
-                    await SendOrEditMessage(idMessage, $"Отключение отдачи теперь {(conf.DisableUpload ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Отключение отдачи теперь {(conf.DisableUpload ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 case "removecacheondrop":
                     conf.RemoveCacheOnDrop = !conf.RemoveCacheOnDrop;
-                    await SendOrEditMessage(idMessage, $"Удаление кеша при сбросе теперь {(conf.RemoveCacheOnDrop ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig());
+                    await SendOrEditMessage(idMessage, $"Удаление кеша при сбросе теперь {(conf.RemoveCacheOnDrop ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWBitTorrConfig(), confName);
                     break;
 
                 // Поля, требующие ввода данных (int, long, string)
@@ -588,7 +715,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.CacheSize = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода размера кеша. Пожалуйста, введите новое значение (MB).\r\n" +
                         "Min 32MB - Max 256MB\r\n\r\n" +
-                        $"Сейчас: {conf.CacheSize} МБ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettCacheSize", conf.CacheSize));
+                        $"Сейчас: {conf.CacheSize} МБ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettCacheSize", conf.CacheSize), confName);
                     break;
 
                 case "readerreadahead":
@@ -596,7 +723,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.ReaderReadAHead = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода значения для опережающего кеша. Пожалуйста, введите новое значение.\r\n" +
                         "Min 5% - Max 100%\r\n\r\n" +
-                        $"Сейчас: {conf.ReaderReadAHead} %", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettReaderReadAHead", conf.ReaderReadAHead));
+                        $"Сейчас: {conf.ReaderReadAHead} %", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettReaderReadAHead", conf.ReaderReadAHead), confName);
                     break;
 
                 case "preloadcache":
@@ -604,35 +731,35 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.PreloadCache = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода размера буфера предзагрузки. Пожалуйста, введите новое значение.\r\n" +
                         "Min 5% - Max 100%\r\n\r\n" +
-                        $"Сейчас: {conf.PreloadCache} %", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPreloadCache", conf.PreloadCache));
+                        $"Сейчас: {conf.PreloadCache} %", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPreloadCache", conf.PreloadCache), confName);
                     break;
 
                 case "torrentdisconnecttimeout":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettTorrentDisconnectTimeout", true);
                     conf.TorrentDisconnectTimeout = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода тайм-аута отключения торрентов. Пожалуйста, введите новое значение (в секундах).\r\n" +
-                        $"Сейчас: {conf.TorrentDisconnectTimeout} сек.", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentDisconnectTimeout", conf.TorrentDisconnectTimeout));
+                        $"Сейчас: {conf.TorrentDisconnectTimeout} сек.", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentDisconnectTimeout", conf.TorrentDisconnectTimeout), confName);
                     break;
 
                 case "connectionslimit":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettConnectionsLimit", true);
                     conf.ConnectionsLimit = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода лимита соединений для торрентов. Пожалуйста, введите новое значение.\r\n" +
-                        $"Сейчас: {conf.ConnectionsLimit} соед. ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettConnectionsLimit", conf.ConnectionsLimit));
+                        $"Сейчас: {conf.ConnectionsLimit} соед. ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettConnectionsLimit", conf.ConnectionsLimit), confName);
                     break;
 
                 case "downloadratelimit":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettDownloadRateLimit", true);
                     conf.DownloadRateLimit = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости загрузки. Пожалуйста, введите новое значение (мб/с).\r\n" +
-                        $"Сейчас: {conf.DownloadRateLimit} мб/сек", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettDownloadRateLimit", conf.DownloadRateLimit));
+                        $"Сейчас: {conf.DownloadRateLimit} мб/сек", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettDownloadRateLimit", conf.DownloadRateLimit), confName);
                     break;
 
                 case "uploadratelimit":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettUploadRateLimit", true);
                     conf.UploadRateLimit = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода ограничения скорости отдачи. Пожалуйста, введите новое значение (мб/с).\r\n" +
-                        $"Сейчас: {conf.UploadRateLimit} мб/сек", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettUploadRateLimit", conf.UploadRateLimit));
+                        $"Сейчас: {conf.UploadRateLimit} мб/сек", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettUploadRateLimit", conf.UploadRateLimit), confName);
                     break;
 
                 case "peerslistenport":
@@ -640,7 +767,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.PeersListenPort = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода порта для входящих подключений. Пожалуйста, введите новый порт.\r\n" +
                         $"Порт должен быть в диапазоне от 1024 до 65535.\r\n" +
-                        $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPeersListenPort", conf.PeersListenPort));
+                        $"Сейчас: {conf.PeersListenPort} порт", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettPeersListenPort", conf.PeersListenPort), confName);
                     break;
 
                 case "retrackersmode":
@@ -651,7 +778,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         "1 - добавлять (по умолчанию)\r\n" +
                         "2 - удалять\r\n" +
                         "3 - заменять\r\n" +
-                        $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettRetrackersMode", conf.RetrackersMode));
+                        $"Сейчас: {conf.RetrackersMode} режим", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettRetrackersMode", conf.RetrackersMode), confName);
                     break;
 
                 case "sslport":
@@ -659,7 +786,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.SslPort = value;
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода SSL порта. Пожалуйста, введите новый порт.\r\n" +
                         "0 - (8091)по умолчанию.\r\n" +
-                        $"Сейчас: {conf.SslPort} порт", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslPort", conf.SslPort));
+                        $"Сейчас: {conf.SslPort} порт", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslPort", conf.SslPort), confName);
                     break;
 
                 case "friendlyname":
@@ -671,7 +798,7 @@ namespace AdTorrBot.BotTelegram.Handler
 
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода имени сервера DLNA. Пожалуйста, введите новое имя.\r\n" +
                         "Ограничение 30 символов\r\n" +
-                        $"Сейчас: {conf.FriendlyName} .", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettFriendlyName", 0));
+                        $"Сейчас: {conf.FriendlyName} .", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettFriendlyName", 0), confName);
                     break;
 
                 case "torrentssavepath":
@@ -684,7 +811,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для сохранения торрентов. \r\n" +
                        "Введите путь сохр. торрентов (max 4096 символов).\r\n\r\n" +
                        $"Пример: /home/user/Documents\r\n" +
-                        $"Сейчас: {conf.TorrentsSavePath}", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentsSavePath", 0));
+                        $"Сейчас: {conf.TorrentsSavePath}", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentsSavePath", 0), confName);
                     break;
 
                 case "sslcert":
@@ -696,7 +823,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL сертификату.\r\n" +
                                 "Пожалуйста, введите путь (max 4096 символов).\r\n" +
                                   $"Пример: /etc/letsencrypt/live/domain_name/fullchain.pem\r\n" +
-                                $"Сейчас: {conf.SslCert} ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslCert", 0));
+                                $"Сейчас: {conf.SslCert} ", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslCert", 0), confName);
                             break;
 
                 case "sslkey":
@@ -708,11 +835,11 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL ключу.\r\n" +
                                 "Пожалуйста, введите путь (max 4096 символов).\r\n" +
                                 "Пример: /etc/letsencrypt/live/доменное_имя/privkey.pem\r\n" +
-                                $"Сейчас: {conf.SslKey}", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslKey",0));
+                                $"Сейчас: {conf.SslKey}", KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettSslKey",0), confName);
                             break;
 
                  default:
-                            await SendOrEditMessage(idMessage, "Неизвестная настройка", KeyboardManager.buttonHideButtots);
+                            await SendOrEditMessage(idMessage, "Неизвестная настройка", KeyboardManager.buttonHideButtots, confName);
                             break;
                     }
 
@@ -721,7 +848,7 @@ namespace AdTorrBot.BotTelegram.Handler
          
         }
 
-        public static async Task SendOrEditMessage(int idMessage, string message, InlineKeyboardMarkup keyCallback)
+        public static async Task SendOrEditMessage(int idMessage, string message, InlineKeyboardMarkup keyCallback,string confName)
         {
             try
             {
@@ -729,7 +856,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 await botClient.EditMessageTextAsync(
                     AdminChat,
                     idMessage,
-                    "\u2699 Настройки Torrserver\r\n" + message,
+                    $"\u2699 {confName}\r\n" + message,
                     replyMarkup: keyCallback
                 );
             }

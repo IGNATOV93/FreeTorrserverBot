@@ -110,7 +110,7 @@ namespace AdTorrBot.BotTelegram.Db
                     }
 
                     // Логируем чтение нового профиля
-                    ServerArgsConfig newProfile = ServerArgsConfiguration.ReadConfigArgs(); 
+                    ServerArgsConfig newProfile =await ServerArgsConfiguration.ReadConfigArgs(); 
                     if (newProfile != null)
                     {
                         Console.WriteLine("Конфигурация прочитана успешно.");

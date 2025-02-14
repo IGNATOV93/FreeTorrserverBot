@@ -154,6 +154,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 {
                     Console.WriteLine("Сработала кнопка настройка конфига");
                     Console.WriteLine(callbackData);
+                    await HandlerCallbackQueryTorrSett.CheckSettingServerArgsAndExecute(callbackQuery, callbackData);
                     return;
                 }
                 if (callbackData.Contains("torrSetOne"))
@@ -514,6 +515,10 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
             }
             if (command.Contains("torrSettings"))
+            {
+                return true;
+            }
+            if (command.Contains("torrConfigSetOne"))
             {
                 return true;
             }

@@ -249,6 +249,19 @@ namespace FreeTorrBot.BotTelegram
         }
         #endregion BitTorrConfig
         #region ServerArgsConfig
+      
+            public static InlineKeyboardMarkup CreateExitServerArgsConfigInputButton(string callbackData, long value)
+            {
+                return new InlineKeyboardMarkup(new[]
+                {
+                    new []
+                    {
+                        InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages"),
+                    }
+                });
+            }
+        
+
         public static InlineKeyboardMarkup GetShoWServerArgsConfig()
         {
             var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
