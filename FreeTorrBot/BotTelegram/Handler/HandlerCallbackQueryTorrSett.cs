@@ -462,9 +462,34 @@ namespace AdTorrBot.BotTelegram.Handler
             }
         }
 
+        public static async Task CheckSettingServerArgsAndExecute(CallbackQuery callbackQuery, string inputSetting)
+        {
+            Console.WriteLine($"Пришло в CheckSettingServerArgsAndExecute:{inputSetting}");
+            var callbackData = callbackQuery.Data;
+            var idMessage = callbackQuery.Message.MessageId;  // ID сообщения для редактирования
+
+            // Прочитаем конфиг
+            var conf = ServerArgsConfiguration.ReadConfigArgs();
+
+            // Преобразуем строку в нижний регистр для удобства сравнения
+            string setting = inputSetting.Split("torrConfigSetOne")[1].ToLower();
+
+            int value = int.Parse(inputSetting.Split("torrConfigSetOne")[0]);
+            // Определяем смайлы в переменных для удобства изменения
+            string enabledSymbol = "\u2705";  // ✅
+            string disabledSymbol = "\u274C"; // ❌
+            switch (setting)
+            {
+                // Поля типа bool - переключение на противоположное состояние
 
 
-        public static async Task CheckSettingAndExecute(CallbackQuery callbackQuery, string inputSetting)
+
+                // Поля, требующие ввода данных (int, long, string)
+                //НЕ ЗАБЫВАТЬ ПРОПИСЫВАТЬ СОХРАНЕНИЕ ДАННЫХ пример =>>>>>>>>  conf.PeersListenPort=value;
+                default: return;
+            }
+        }
+            public static async Task CheckSettingAndExecute(CallbackQuery callbackQuery, string inputSetting)
         {
             Console.WriteLine($"Пришло в CheckSettingsAndExecute:{inputSetting}");
             var callbackData = callbackQuery.Data;

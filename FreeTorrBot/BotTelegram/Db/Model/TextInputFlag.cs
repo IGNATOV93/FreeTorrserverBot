@@ -23,7 +23,7 @@ namespace AdTorrBot.BotTelegram.Db.Model
         [Description($"Ввод: пароль Torrserver")]
         public bool FlagPassword { get; set; }=false;
 
-
+        //настройки torrserver
         [Description($"Ввод: Размер кеша мб.")]
         public bool FlagTorrSettCacheSize { get; set; } = false;
 
@@ -65,6 +65,9 @@ namespace AdTorrBot.BotTelegram.Db.Model
 
         [Description("Ввод: Путь сохр. торрентов")]
         public bool FlagTorrSettTorrentsSavePath { get; set; } = false;
+
+        //настройки конфига
+
 
         public bool CheckAllBooleanFlags()
         {

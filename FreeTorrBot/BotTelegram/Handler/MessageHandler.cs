@@ -148,9 +148,14 @@ namespace AdTorrBot.BotTelegram.Handler
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
                     return;
                 }
-               
 
-                
+
+                if (callbackData.Contains("torrConfigSetOne"))
+                {
+                    Console.WriteLine("Сработала кнопка настройка конфига");
+                    Console.WriteLine(callbackData);
+                    return;
+                }
                 if (callbackData.Contains("torrSetOne"))
                 {
                     
@@ -520,6 +525,10 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 return true;
             }
+            if (command.Contains("torrConfigSetOne"))
+            {
+                return true;
+            }
             {
                 string valuePart = command.Split(command)[0].Trim();
                 if (int.TryParse(valuePart, out _))
@@ -527,6 +536,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     return true;
                 }
             }
+
             // Если команда не найдена
             return false;
         }
