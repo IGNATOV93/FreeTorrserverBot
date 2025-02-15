@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +9,34 @@ namespace AdTorrBot.BotTelegram
 {
   public  class InputTextValidator
     {
+        public static bool IsValidIPv6(string ipString)
+        {
+            if (string.IsNullOrWhiteSpace(ipString))
+                return false;
+
+            // Попытка преобразовать строку в IPAddress
+            if (IPAddress.TryParse(ipString, out IPAddress address))
+            {
+                // Проверяем, является ли адрес IPv6
+                return address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6;
+            }
+
+            return false;
+        }
+        public static bool IsValidIPv4(string ipString)
+        {
+            if (string.IsNullOrWhiteSpace(ipString))
+                return false;
+
+            // Попытка преобразовать строку в IPAddress
+            if (IPAddress.TryParse(ipString, out IPAddress address))
+            {
+                // Проверяем, является ли адрес IPv4
+                return address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork;
+            }
+
+            return false;
+        }
         public static bool IsValidPath(string path)
         {
             // Максимальная длина пути

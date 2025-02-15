@@ -85,7 +85,7 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
                     return defaultConfig;
                 }
                  var conf = ParseConfigArgs(configLine);
-                  await SqlMethods.SetArgsConfigTorrProfile(conf);
+                  await SqlMethods.SetSettingsServerArgsProfile(conf);
                 // Парсим строку в объект конфигурации
                 return conf;
             }
@@ -114,7 +114,7 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
                 // Записываем строку в файл
                 File.WriteAllText(filePathTorrserverConfig, configLine);
                 Console.WriteLine("Конфигурация(torrserver.config) успешно записана.");
-                await SqlMethods.SetArgsConfigTorrProfile(config);
+                await SqlMethods.SetSettingsServerArgsProfile(config);
             }
             catch (Exception ex)
             {

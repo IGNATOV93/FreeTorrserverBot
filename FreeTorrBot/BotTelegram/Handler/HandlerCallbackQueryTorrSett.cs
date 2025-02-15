@@ -35,10 +35,12 @@ namespace AdTorrBot.BotTelegram.Handler
 
             // Удаляем сообщение, чтобы пользователь не видел текстового ввода
             await DeleteMessage(idMessage);
-            var setTorr = await SqlMethods.GetSettingsTorrProfile(AdminChat);
+            var setTorr = await SqlMethods.GetSettingsTorrProfile(AdminChat); //настройки torrserver
+            var conf = await SqlMethods.GetArgsConfigTorrProfile(AdminChat); //конфиг torresrver
             // Обработка в зависимости от последнего активного флага
             switch (lastTextFlagTrue)
             {
+ #region User
                 case "FlagLogin":
                     Console.WriteLine("Обработка TextInputFlagLogin");
                     if (InputTextValidator.ValidateLoginAndPassword(text))
@@ -82,6 +84,283 @@ namespace AdTorrBot.BotTelegram.Handler
                             replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("Password", 0));
                     }
                     break;
+                #endregion User
+                #region ServerArgsConfig
+                case "FlagServerArgsSettPort":
+                    Console.WriteLine("Обработка FlagServerArgsSettPort");
+                    if (int.TryParse(text, out int port) && (port == 0 || (port > 1023 && port < 65536)))
+                    {
+                        conf.Port = port;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPort", false);
+                        Console.WriteLine($"Веб-порт сервера успешно обновлен: {port}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Веб-порт сервера успешно обновлен ➡️ {port} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе порта!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите порт (целое число от 1024 до 65535).\r\n\r\n" +
+                            $"Сейчас: {conf.Port}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPort", (long)conf.Port));
+                    }
+                    break;
+
+                case "FlagServerArgsSettLogPath":
+                    Console.WriteLine("Обработка FlagServerArgsSettLogPath");
+                    if (InputTextValidator.IsValidPath(text))
+                    {
+                        conf.LogPath = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettLogPath", false);
+                        Console.WriteLine($"Путь для логов сервера успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Путь для логов сервера успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе пути для логов!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите путь для логов сервера (max 4096 символов).\r\n\r\n" +
+                            $"Пример: /var/log/server/\r\n" +
+                            $"Сейчас: {conf.LogPath}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettLogPath", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettPath":
+                    Console.WriteLine("Обработка FlagServerArgsSettPath");
+                    if (InputTextValidator.IsValidPath(text))
+                    {
+                        conf.Path = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPath", false);
+                        Console.WriteLine($"Путь к базе данных и конфигурации успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Путь к базе данных и конфигурации успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе пути к базе данных!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите путь к базе данных и конфигурации (max 4096 символов).\r\n\r\n" +
+                            $"Пример: /var/lib/database/\r\n" +
+                            $"Сейчас: {conf.Path}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPath", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettSslPort":
+                    Console.WriteLine("Обработка FlagServerArgsSettSslPort");
+                    if (int.TryParse(text, out int sslPort) && (sslPort == 0 || (sslPort > 1023 && sslPort < 65536)))
+                    {
+                        conf.SslPort = sslPort;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettSslPort", false);
+                        Console.WriteLine($"SSL порт успешно обновлен: {sslPort}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"SSL порт успешно обновлен ➡️ {sslPort} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе SSL порта!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите SSL порт (целое число от 1024 до 65535).\r\n\r\n" +
+                            $"Сейчас: {conf.SslPort}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslPort", (long)conf.SslPort));
+                    }
+                    break;
+
+                case "FlagServerArgsSettSslCert":
+                    Console.WriteLine("Обработка FlagServerArgsSettSslCert");
+                    if (InputTextValidator.IsValidPath(text) && text.EndsWith(".pem", StringComparison.OrdinalIgnoreCase))
+                    {
+                        conf.SslCert = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettSslCert", false);
+                        Console.WriteLine($"Путь к SSL сертификату успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Путь к SSL сертификату успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе пути к SSL сертификату!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите путь к SSL сертификату (max 4096 символов).\r\n\r\n" +
+                            $"Пример: /etc/letsencrypt/live/domain_name/fullchain.pem\r\n" +
+                            $"Сейчас: {conf.SslCert}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslCert", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettSslKey":
+                    Console.WriteLine("Обработка FlagServerArgsSettSslKey");
+                    if (InputTextValidator.IsValidPath(text) && text.EndsWith(".pem", StringComparison.OrdinalIgnoreCase))
+                    {
+                        conf.SslKey = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettSslKey", false);
+                        Console.WriteLine($"Путь к SSL ключу успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Путь к SSL ключу успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе пути к SSL ключу!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите путь к SSL ключу (max 4096 символов).\r\n\r\n" +
+                            $"Пример: /etc/letsencrypt/live/domain_name/privkey.pem\r\n" +
+                            $"Сейчас: {conf.SslKey}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslKey", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettWebLogPath":
+                    Console.WriteLine("Обработка FlagServerArgsSettWebLogPath");
+                    if (InputTextValidator.IsValidPath(text))
+                    {
+                        conf.WebLogPath = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettWebLogPath", false);
+                        Console.WriteLine($"Путь для логов веб-доступа успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Путь для логов веб-доступа успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе пути для логов веб-доступа!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите путь для логов веб-доступа (max 4096 символов).\r\n\r\n" +
+                            $"Пример: /var/log/web/\r\n" +
+                            $"Сейчас: {conf.WebLogPath}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettWebLogPath", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettTorrentsDir":
+                    Console.WriteLine("Обработка FlagServerArgsSettTorrentsDir");
+                    if (InputTextValidator.IsValidPath(text))
+                    {
+                        conf.TorrentsDir = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettTorrentsDir", false);
+                        Console.WriteLine($"Директория автозагрузки торрентов успешно обновлена: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Директория автозагрузки торрентов успешно обновлена ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе директории автозагрузки торрентов!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите директорию автозагрузки торрентов (max 4096 символов).\r\n\r\n" +
+                            $"Пример: /home/user/torrents/\r\n" +
+                            $"Сейчас: {conf.TorrentsDir}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettTorrentsDir", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettTorrentAddr":
+                    Console.WriteLine("Обработка FlagServerArgsSettTorrentAddr");
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        conf.TorrentAddr = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettTorrentAddr", false);
+                        Console.WriteLine($"Адрес торрент-клиента успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Адрес торрент-клиента успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе адреса торрент-клиента!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите адрес торрент-клиента.\r\n\r\n" +
+                            $"Пример: http://localhost:8080\r\n" +
+                            $"Сейчас: {conf.TorrentAddr}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettTorrentAddr", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettPubIPv4":
+                    Console.WriteLine("Обработка FlagServerArgsSettPubIPv4");
+                    if (InputTextValidator.IsValidIPv4(text))
+                    {
+                        conf.PubIPv4 = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPubIPv4", false);
+                        Console.WriteLine($"Публичный IPv4 успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Публичный IPv4 успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе публичного IPv4!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите публичный IPv4 адрес.\r\n\r\n" +
+                            $"Пример: 192.168.1.1\r\n" +
+                            $"Сейчас: {conf.PubIPv4}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPubIPv4", 0));
+                    }
+                    break;
+
+                case "FlagServerArgsSettPubIPv6":
+                    Console.WriteLine("Обработка FlagServerArgsSettPubIPv6");
+                    if (InputTextValidator.IsValidIPv6(text))
+                    {
+                        conf.PubIPv6 = text;
+                        await ServerArgsConfiguration.WriteConfigArgs(conf);
+                        await SqlMethods.SetSettingsServerArgsProfile(conf);
+                        await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPubIPv6", false);
+                        Console.WriteLine($"Публичный IPv6 успешно обновлен: {text}");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Публичный IPv6 успешно обновлен ➡️\r\n{text} ✅",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка при вводе публичного IPv6!");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Неверный ввод.\n" +
+                            "Введите публичный IPv6 адрес.\r\n\r\n" +
+                            $"Пример: 2001:0db8:85a3:0000:0000:8a2e:0370:7334\r\n" +
+                            $"Сейчас: {conf.PubIPv6}",
+                            replyMarkup: KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPubIPv6", 0));
+                    }
+                    break;
+                #endregion ServerArgsConfig
+                #region BittorrConfig
                 case "FlagTorrSettCacheSize":
                     Console.WriteLine("Обработка FlagTorrSettCacheSize");
                     if (int.TryParse(text, out int cacheSize) && (cacheSize >31&&cacheSize<257))
@@ -338,19 +617,19 @@ namespace AdTorrBot.BotTelegram.Handler
                     break;
                 case "FlagTorrSettSslPort":
                     Console.WriteLine("FlagTorrSettSslPort");
-                    if (int.TryParse(text, out int sslPort) &&
-                        (sslPort == 0 || (sslPort > 1023 && sslPort < 65536)))
+                    if (int.TryParse(text, out int newSslPort) &&
+                        (newSslPort == 0 || (newSslPort > 1023 && newSslPort < 65536)))
                     {
-                        //Нужна проверка что порт свободен !!
-                        if (ServerManagement.ServerInfo.IsPortAvailable(sslPort))
+                        // Проверка доступности порта
+                        if (ServerManagement.ServerInfo.IsPortAvailable(newSslPort))
                         {
-                            setTorr.SslPort = sslPort;
+                            setTorr.SslPort = newSslPort;
                             await BitTorrConfigation.WriteConfig(setTorr);
                             await SqlMethods.SetSettingsTorrProfile(setTorr);
                             await SqlMethods.SwitchTorSettingsInputFlag("FlagTorrSettSslPort", false);
-                            Console.WriteLine($"Порт успешно обновлен: {sslPort} ");
+                            Console.WriteLine($"Порт успешно обновлен: {newSslPort} ");
                             await botClient.SendTextMessageAsync(AdminChat,
-                                $"Порт ssl успешно обновлен ➡️ {sslPort} ✅",
+                                $"Порт ssl успешно обновлен ➡️ {newSslPort} ✅",
                                 replyMarkup: KeyboardManager.GetDeleteThisMessage());
                         }
                         else
@@ -453,6 +732,7 @@ namespace AdTorrBot.BotTelegram.Handler
                             replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("TorrSettTorrentsSavePath", 0));
                     }
                     break;
+                # endregion BittorrConfig
                 default:
                     Console.WriteLine($"Обработка для {lastTextFlagTrue} пока не реализована.");
                     await SqlMethods.SwitchOffInputFlag();

@@ -29,7 +29,8 @@ namespace AdTorrBot.BotTelegram.Db
         public static readonly string adminChat = TelegramBot.AdminChat;
 
 
-        public static async Task SetArgsConfigTorrProfile(ServerArgsConfig config)
+        public static async Task SetSettingsServerArgsProfile(ServerArgsConfig config)
+        //SetArgsConfigTorrProfile(ServerArgsConfig config)
         {
             Console.WriteLine($"Запуск SetArgsConfigTorrProfile.");
             try
