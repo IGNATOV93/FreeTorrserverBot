@@ -40,11 +40,11 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         [ConfigOption("logpath")]
         [Description("Путь для логов сервера")]
-        public string? LogPath { get; set; } // --logpath, -l
+        public string? LogPath { get; set; } = "/opt/torrserver/torrserver.log"; // --logpath, -l
 
         [ConfigOption("path")]
         [Description("Путь к базе данных и конфигурации")]
-        public string? Path { get; set; } // --path, -d
+        public string? Path { get; set; } = "/opt/torrserver"; // --path, -d
 
         [ConfigOption("httpauth")]
         [Description("Включение HTTP-аутентификации")]
@@ -60,7 +60,7 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         [ConfigOption("sslport")]
         [Description("HTTPS порт")]
-        public int? SslPort { get; set; }  // --sslport
+        public int? SslPort { get; set; } = null; // --sslport
 
         [ConfigOption("sslcert")]
         [Description("Путь к SSL-сертификату")]

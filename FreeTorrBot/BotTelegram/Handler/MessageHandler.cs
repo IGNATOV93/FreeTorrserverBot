@@ -18,6 +18,7 @@ using AdTorrBot.ServerManagement;
 using FreeTorrBot.BotTelegram;
 using FreeTorrserverBot.Torrserver.BitTor;
 using FreeTorrserverBot.Torrserver.ServerArgs;
+using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 
 
 namespace AdTorrBot.BotTelegram.Handler
@@ -159,7 +160,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
                 if (callbackData.Contains("torrSetOne"))
                 {
-                    
+
                     await HandlerCallbackQueryTorrSett.CheckSettingAndExecute(callbackQuery, callbackData);
 
                     return;
@@ -192,8 +193,22 @@ namespace AdTorrBot.BotTelegram.Handler
                     var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
                     Console.WriteLine("Настройки Torrserver");
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, "⚙️ Настройки Torrserver ."
-                        , replyMarkup:await KeyboardManager.GetBitTorrConfigMain(AdminChat, config, startIndexKeySettings)
+                        , replyMarkup: await KeyboardManager.GetBitTorrConfigMain(AdminChat, config, startIndexKeySettings)
                         );
+                    return;
+                }
+                if(callbackData== "setTorrArgsSetConfig")
+                {
+                    await Torrserver.RebootingTorrserver();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Конфиг Torrserver обновлен! \u2705\r\n" +
+                        "Torrserver перезагружен .", replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
+                    return;
+                }
+                if (callbackData == "resetTorrArgsSetConfig")
+                {
+                    
+                    await ServerArgsConfiguration.ResetConfig();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Конфиг Torrserver сброшен по умолчанию ! \u2705", replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
                     return;
                 }
                 if(callbackData== "showTorrArgssetInfo")
@@ -484,6 +499,8 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"resetTorrSetConfig"
             ,"setTorrSetConfig"
             ,"showTorrArgssetInfo"
+            ,"resetTorrArgsSetConfig"
+            ,"setTorrArgsSetConfig"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

@@ -17,6 +17,12 @@ namespace FreeTorrserverBot.Torrserver.ServerArgs
         static string filePathTorrMain = TelegramBot.settingsJson.FilePathTorrserver;
         static string filePathTorrserverConfig = @$"{filePathTorrMain}torrserver.config"; // Формируется полный путь к файлу конфигурации torrserver.config
 
+
+        public static async Task ResetConfig()
+        {
+            await WriteConfigArgs(new ServerArgsConfig() { IdChat = TelegramBot.AdminChat,HttpAuth=true});
+            return;
+        }
         // Метод для сериализации объекта конфигурации в строку командных аргументов
         public static string SerializeConfigArgs(ServerArgsConfig config)
         {
