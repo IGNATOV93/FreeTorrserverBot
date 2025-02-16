@@ -17,7 +17,7 @@ using AdTorrBot.ServerManagement;
 
 namespace AdTorrBot.BotTelegram.Handler
 {
-    public class HandlerCallbackQueryTorrSett:MessageHandler
+    public class HandlerCallbackQuery:MessageHandler
     {
         public static async Task HandlerTextInputMessage(Message message, TextInputFlag textInputFlag)
         {
@@ -40,7 +40,7 @@ namespace AdTorrBot.BotTelegram.Handler
             // Обработка в зависимости от последнего активного флага
             switch (lastTextFlagTrue)
             {
- #region User
+                #region User
                 case "FlagLogin":
                     Console.WriteLine("Обработка TextInputFlagLogin");
                     if (InputTextValidator.ValidateLoginAndPassword(text))
@@ -763,6 +763,7 @@ namespace AdTorrBot.BotTelegram.Handler
             string confName = "Конфиг Torrserver";
             switch (setting)
             {
+                #region Обработка кнопок Конфига Torrserver (bool кнопки)
                 // Поля типа bool - переключение на противоположное состояние
                 case "httpauth":
                     conf.HttpAuth = !conf.HttpAuth;
@@ -803,8 +804,9 @@ namespace AdTorrBot.BotTelegram.Handler
                     conf.Version = !conf.Version;
                     await SendOrEditMessage(idMessage, $"Версия программы теперь {(conf.Version ? enabledSymbol : disabledSymbol)}", KeyboardManager.GetShoWServerArgsConfig(), confName);
                     break;
+                #endregion Обработка кнопок Конфига Torrserver (bool кнопки)
 
-
+                #region  Обработка кнопок Конфига Torrserver (кнопки с вводом)
                 // Поля, требующие ввода данных (int, long, string)
                 //НЕ ЗАБЫВАТЬ ПРОПИСЫВАТЬ СОХРАНЕНИЕ ДАННЫХ пример =>>>>>>>>  conf.PeersListenPort=value;
 
@@ -890,7 +892,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода публичного IPv6. Пожалуйста, введите новый IPv6 адрес.\r\n" +
                         $"Сейчас: {conf.PubIPv6}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPubIPv6", 0), confName);
                     break;
-
+                #endregion Обработка кнопок Конфига Torrserver (кнопки с вводом)
                 default:
                     await SendOrEditMessage(idMessage, "Неизвестная настройка", KeyboardManager.buttonHideButtots, confName);
                     break;

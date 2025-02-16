@@ -36,7 +36,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 var textInputFlags = await SqlMethods.GetTextInputFlag();
                 if (textInputFlags.CheckAllBooleanFlags())
                 {
-                    await HandlerCallbackQueryTorrSett.HandlerTextInputMessage(update.Message, textInputFlags);
+                    await HandlerCallbackQuery.HandlerTextInputMessage(update.Message, textInputFlags);
                     return;
                 }
 
@@ -48,7 +48,7 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 Console.WriteLine($"Пришло Callback сообщение: {update.CallbackQuery.Data}");
                 // Обработка callback-сообщения
-                await HandlerCallbackQuery(update.CallbackQuery);
+                await HandlerCallbackQueryCommands(update.CallbackQuery);
                 return;
             }
             return;
@@ -73,6 +73,7 @@ namespace AdTorrBot.BotTelegram.Handler
             var idMessage = message.MessageId;
             // Обрабатываем обычное текстовое сообщение
 
+            #region Обработка команд
             if (text == "/start")
             {
                 await DeleteMessage(idMessage);
@@ -81,6 +82,8 @@ namespace AdTorrBot.BotTelegram.Handler
                                                           , replyMarkup: KeyboardManager.GetMainKeyboard());
                 return;
             }
+            #endregion Обработка команд
+            #region Обработка текстовых кнопок
             if (text == "💾 Бекапы")
             {
                 await DeleteMessage(idMessage);
@@ -112,10 +115,11 @@ namespace AdTorrBot.BotTelegram.Handler
                 await botClient.SendTextMessageAsync(AdminChat, "🔄 Перезагрузки", replyMarkup: KeyboardManager.GetRestartingMain());
                 return;
             }
+            #endregion Обработка текстовых кнопок
             return;
         }
 
-        private static async Task HandlerCallbackQuery(CallbackQuery callbackQuery)
+        private static async Task HandlerCallbackQueryCommands(CallbackQuery callbackQuery)
         {
             var callbackData = callbackQuery.Data;
             //  Console.WriteLine(callbackData);
@@ -123,12 +127,33 @@ namespace AdTorrBot.BotTelegram.Handler
 
             try
             {
-                // Обрабатываем callback-сообщение
+                #region Универсальные команды бота
                 if (callbackData == "deletemessages")
                 {
                     await DeleteMessage(idMessage);
                     return;
                 }
+                if (callbackData == "back_settings_main")
+                {
+
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
+                    return;
+                }
+                if (callbackData.Contains("exit"))
+                {
+                    var property = callbackData.Split("exit")[1];
+                    await DeleteMessage(idMessage);
+                    Console.WriteLine($"Выход из ввода {property}");
+                    await SqlMethods.SwitchTorSettingsInputFlag(property, false);
+                    var result = ParsingMethods.GetExitMessage(property);
+                    await botClient.SendTextMessageAsync(AdminChat
+                                                         , result
+                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    return;
+                }
+                #endregion Универсальные команды бота
+
+                #region Перезагрузки
                 if (callbackData == "restart_torrserver")
                 {
                     await Torrserver.RebootingTorrserver();
@@ -143,25 +168,66 @@ namespace AdTorrBot.BotTelegram.Handler
                     //////Сделать вызов метода по перезагрузке сервера.
                     return;
                 }
-                if (callbackData == "back_settings_main")
-                {
-
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "\u2699 Настройки", replyMarkup: KeyboardManager.GetSettingsMain());
-                    return;
-                }
+                #endregion Перезагрузки
 
 
+                #region Работа с конфигом Torrserver (ARGS)
                 if (callbackData.Contains("torrConfigSetOne"))
                 {
-                    Console.WriteLine("Сработала кнопка настройка конфига");
-                    Console.WriteLine(callbackData);
-                    await HandlerCallbackQueryTorrSett.CheckSettingServerArgsAndExecute(callbackQuery, callbackData);
+                    await HandlerCallbackQuery.CheckSettingServerArgsAndExecute(callbackQuery, callbackData);
+                    return;
+                }
+                if (callbackData == "setTorrArgsSetConfig")
+                {
+                    await Torrserver.RebootingTorrserver();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Конфиг Torrserver обновлен! \u2705\r\n" +
+                        "Torrserver перезагружен .", replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
+                    return;
+                }
+                if (callbackData == "resetTorrArgsSetConfig")
+                {
+
+                    await ServerArgsConfiguration.ResetConfig();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Конфиг Torrserver сброшен по умолчанию ! \u2705", replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
+                    return;
+                }
+                if (callbackData == "showTorrArgssetInfo")
+                {
+                    var conf = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
+                    var resultStringConfig = ServerArgsConfiguration.SerializeConfigArgs(conf);
+                    var resultInfoArgsConfig = resultStringConfig + "\r\n\r\n" + conf.ToString();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, resultInfoArgsConfig, replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
+                    return;
+                }
+                if (callbackData.Contains("torrArgsSettings"))
+                {
+                    // torr_config
+                    var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrArgsSettings")[0]);
+                    await SqlMethods.SwitchOffInputFlag();
+                    var config = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
+                    Console.WriteLine("Настройки Torrserver(args) ");
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "🛠️ Конфиг Torrserver ."
+                        , replyMarkup: KeyboardManager.GetServerArgsConfigMain(AdminChat, config, startIndexKeySettings)
+                        );
+                    return;
+                }
+                #endregion Работа с конфигом Torrserver (ARGS)
+                #region Работа с настройками Torrserver
+                if (callbackData.Contains("torrSettings"))
+                {
+                    var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrSettings")[0]);
+                    await SqlMethods.SwitchOffInputFlag();
+                    var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
+                    Console.WriteLine("Настройки Torrserver");
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "⚙️ Настройки Torrserver ."
+                        , replyMarkup: await KeyboardManager.GetBitTorrConfigMain(AdminChat, config, startIndexKeySettings)
+                        );
                     return;
                 }
                 if (callbackData.Contains("torrSetOne"))
                 {
 
-                    await HandlerCallbackQueryTorrSett.CheckSettingAndExecute(callbackQuery, callbackData);
+                    await HandlerCallbackQuery.CheckSettingAndExecute(callbackQuery, callbackData);
 
                     return;
                 }
@@ -186,51 +252,11 @@ namespace AdTorrBot.BotTelegram.Handler
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, resultInfoTorrSettings, replyMarkup: KeyboardManager.GetShoWBitTorrConfig());
                     return;
                 }
-                if (callbackData.Contains("torrSettings"))
-                {
-                    var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrSettings")[0]);
-                    await SqlMethods.SwitchOffInputFlag();
-                    var config = await SqlMethods.GetSettingsTorrProfile(AdminChat);
-                    Console.WriteLine("Настройки Torrserver");
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "⚙️ Настройки Torrserver ."
-                        , replyMarkup: await KeyboardManager.GetBitTorrConfigMain(AdminChat, config, startIndexKeySettings)
-                        );
-                    return;
-                }
-                if(callbackData== "setTorrArgsSetConfig")
-                {
-                    await Torrserver.RebootingTorrserver();
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Конфиг Torrserver обновлен! \u2705\r\n" +
-                        "Torrserver перезагружен .", replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
-                    return;
-                }
-                if (callbackData == "resetTorrArgsSetConfig")
-                {
-                    
-                    await ServerArgsConfiguration.ResetConfig();
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Конфиг Torrserver сброшен по умолчанию ! \u2705", replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
-                    return;
-                }
-                if(callbackData== "showTorrArgssetInfo")
-                {
-                    var conf = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
-                    var resultStringConfig = ServerArgsConfiguration.SerializeConfigArgs(conf);
-                    var resultInfoArgsConfig = resultStringConfig+"\r\n\r\n"+conf.ToString();
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, resultInfoArgsConfig, replyMarkup: KeyboardManager.GetShoWServerArgsConfig());
-                    return;
-                }
-                if (callbackData.Contains("torrArgsSettings"))
-                {
-                    // torr_config
-                    var startIndexKeySettings = Convert.ToInt32(callbackData.Split("torrArgsSettings")[0]);
-                    await SqlMethods.SwitchOffInputFlag();
-                    var config = await SqlMethods.GetArgsConfigTorrProfile(AdminChat);
-                    Console.WriteLine("Настройки Torrserver(args) ");
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "🛠️ Конфиг Torrserver ."
-                        , replyMarkup: KeyboardManager.GetServerArgsConfigMain(AdminChat, config, startIndexKeySettings)
-                        );
-                    return;
-                }
+                #endregion Работа с настройками Torrserver
+
+ 
+                
+                #region Настройки сервера
                 if (callbackData.Contains("set_server_bbr"))
                 {
                     bool? enable = callbackData.StartsWith("1") ? true
@@ -257,6 +283,8 @@ namespace AdTorrBot.BotTelegram.Handler
                         , replyMarkup: KeyboardManager.GetSetServerMain());
                     return;
                 }
+                #endregion Настройки сервера
+                #region Настройки бота
                 if (callbackData == "set_bot")
                 {
                     Console.WriteLine("Настройки бота");
@@ -288,19 +316,9 @@ namespace AdTorrBot.BotTelegram.Handler
                     return;
 
                 }
+                #endregion Настройки бота
 
-                if (callbackData.Contains("exit"))
-                {
-                    var property = callbackData.Split("exit")[1];
-                    await DeleteMessage(idMessage);
-                    Console.WriteLine($"Выход из ввода {property}");
-                    await SqlMethods.SwitchTorSettingsInputFlag(property, false);
-                    var result = ParsingMethods.GetExitMessage(property);
-                    await botClient.SendTextMessageAsync(AdminChat
-                                                         , result
-                                                         , replyMarkup: KeyboardManager.GetDeleteThisMessage());
-                    return;
-                }
+                #region Управление пользователями(torrserver)
                 if (callbackData == "manage_login_password")
                 {
                     Console.WriteLine("Управление логином и паролем Torrserver");
@@ -433,6 +451,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     return;
 
                 }
+                #endregion  Управление пользователями(torrserver)
             }
             catch (Exception e)
             {
