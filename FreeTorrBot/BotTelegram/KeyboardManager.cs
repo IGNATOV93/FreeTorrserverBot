@@ -249,18 +249,82 @@ namespace FreeTorrBot.BotTelegram
         }
         #endregion BitTorrConfig
         #region ServerArgsConfig
-      
-            public static InlineKeyboardMarkup CreateExitServerArgsConfigInputButton(string callbackData, long value)
+        public static InlineKeyboardMarkup CreateExitServerArgsConfigInputButton(string callbackData, long value)
+        {
+            // Кнопка выхода
+            var buttonExit = InlineKeyboardButton.WithCallbackData("❌ Выход из режима ввода", "exitFlag" + callbackData);
+            var buttonBack = InlineKeyboardButton.WithCallbackData("↩", "0torrArgsSettings");
+            string tset = "torrConfigSetOne"; // Префикс для callback-данных
+
+            // Формируем общий массив кнопок
+            var buttons = new List<InlineKeyboardButton[]>();
+
+            // Логика добавления дополнительных кнопок
+            var additionalButtons = new List<InlineKeyboardButton>();
+
+            if (callbackData.Contains("ServerArgsSettSslKey"))
             {
-                return new InlineKeyboardMarkup(new[]
-                {
-                    new []
-                    {
-                        InlineKeyboardButton.WithCallbackData("\uD83D\uDEAA Выход из режима ввода", "exitFlag" + callbackData),
-                        InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages"),
-                    }
-                });
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}SslKey"));
             }
+            else if (callbackData.Contains("ServerArgsSettSslCert"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}SslCert"));
+            }
+            else if (callbackData.Contains("ServerArgsSettWebLogPath"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}WebLogPath"));
+            }
+            else if (callbackData.Contains("ServerArgsSettTorrentsDir"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}TorrentsDir"));
+            }
+            else if (callbackData.Contains("ServerArgsSettSslPort"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("(8443)", $"{8443}{tset}SslPort"));
+            }
+            else if (callbackData.Contains("ServerArgsSettPort"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("(8090)", $"{8090}{tset}Port"));
+            }
+            else if (callbackData.Contains("ServerArgsSettTorrentAddr"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}TorrentAddr"));
+            }
+            else if (callbackData.Contains("ServerArgsSettPubIPv4"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}PubIPv4"));
+            }
+            else if (callbackData.Contains("ServerArgsSettPubIPv6"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}PubIPv6"));
+            }
+            else if (callbackData.Contains("ServerArgsSettPath"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}Path"));
+            }
+            else if (callbackData.Contains("ServerArgsSettLogPath"))
+            {
+                additionalButtons.Add(InlineKeyboardButton.WithCallbackData("По умолчанию", $"{1}{tset}LogPath"));
+            }
+
+            // Если callbackData не содержит специфической логики, оставляем пустой if
+            else
+            {
+                // Пустой блок для других случаев
+            }
+
+            // Добавляем дополнительные кнопки, если они есть
+            if (additionalButtons.Count > 0)
+            {
+                buttons.Add(additionalButtons.ToArray()); // Кнопки в строку
+            }
+
+            // Добавляем кнопку выхода в отдельную строку
+            buttons.Add(new[] { buttonExit, buttonBack });
+
+            return new InlineKeyboardMarkup(buttons);
+        }
+
         
 
         public static InlineKeyboardMarkup GetShoWServerArgsConfig()

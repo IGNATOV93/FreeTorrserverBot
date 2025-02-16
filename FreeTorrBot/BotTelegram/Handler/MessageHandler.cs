@@ -152,7 +152,6 @@ namespace AdTorrBot.BotTelegram.Handler
                     return;
                 }
                 #endregion Универсальные команды бота
-
                 #region Перезагрузки
                 if (callbackData == "restart_torrserver")
                 {
@@ -169,8 +168,6 @@ namespace AdTorrBot.BotTelegram.Handler
                     return;
                 }
                 #endregion Перезагрузки
-
-
                 #region Работа с конфигом Torrserver (ARGS)
                 if (callbackData.Contains("torrConfigSetOne"))
                 {
@@ -253,9 +250,6 @@ namespace AdTorrBot.BotTelegram.Handler
                     return;
                 }
                 #endregion Работа с настройками Torrserver
-
- 
-                
                 #region Настройки сервера
                 if (callbackData.Contains("set_server_bbr"))
                 {
@@ -317,7 +311,6 @@ namespace AdTorrBot.BotTelegram.Handler
 
                 }
                 #endregion Настройки бота
-
                 #region Управление пользователями(torrserver)
                 if (callbackData == "manage_login_password")
                 {
@@ -566,10 +559,7 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 return true;
             }
-            if (command.Contains("torrConfigSetOne"))
-            {
-                return true;
-            }
+        
             {
                 string valuePart = command.Split(command)[0].Trim();
                 if (int.TryParse(valuePart, out _))
