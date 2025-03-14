@@ -813,7 +813,11 @@ namespace AdTorrBot.BotTelegram.Handler
 
                 case "port":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettPort", true);
-                    conf.Port = value;
+                    if (value != 0) 
+                    {
+                        conf.Port = value;
+                    }
+                    
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода веб-порта сервера. Пожалуйста, введите новый порт.\r\n" +
                         $"Сейчас: {conf.Port}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPort", (long)conf.Port), confName);
                     break;
@@ -824,10 +828,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.LogPath = "/opt/torrserver/torrserver.log";
                     }
-                    else
-                    {
-                        conf.LogPath = value.ToString();
-                    }
+                    
                   
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для логов сервера. Пожалуйста, введите новый путь.\r\n" +
                         $"Сейчас: {conf.LogPath}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettLogPath", 0), confName);
@@ -839,10 +840,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.Path = "/opt/torrserver";
                     }
-                    else
-                    {
-                        conf.Path = value.ToString();
-                    }
+                    
                    
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к базе данных и конфигурации. Пожалуйста, введите новый путь.\r\n" +
                         $"Сейчас: {conf.Path}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPath", 0), confName);
@@ -850,7 +848,11 @@ namespace AdTorrBot.BotTelegram.Handler
 
                 case "sslport":
                     await SqlMethods.SwitchTorSettingsInputFlag("FlagServerArgsSettSslPort", true);
-                    conf.SslPort = value;
+                    if (value != 0)
+                    {
+                        conf.SslPort = value;
+                    }
+                    
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода HTTPS порта. Пожалуйста, введите новый порт.\r\n" +
                         $"Сейчас: {conf.SslPort}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslPort", (long)conf.SslPort), confName);
                     break;
@@ -861,10 +863,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.SslCert = null;
                     }
-                    else
-                    {
-                        conf.SslCert = value.ToString();
-                    }
+                   
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL-сертификату. Пожалуйста, введите новый путь.\r\n" +
                         $"Сейчас: {conf.SslCert}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslCert", 0), confName);
                     break;
@@ -875,10 +874,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.SslKey = null;
                     }
-                    else
-                    {
-                        conf.SslKey = value.ToString();
-                    }
+                    
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути к SSL-ключу. Пожалуйста, введите новый путь.\r\n" +
                         $"Сейчас: {conf.SslKey}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettSslKey", 0), confName);
                     break;
@@ -889,10 +885,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.WebLogPath = null;
                     }
-                    else
-                    {
-                        conf.WebLogPath = value.ToString();
-                    }
+                  
                    
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода пути для логов веб-доступа. Пожалуйста, введите новый путь.\r\n" +
                         $"Сейчас: {conf.WebLogPath}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettWebLogPath", 0), confName);
@@ -904,10 +897,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.TorrentsDir = null;
                     }
-                    else
-                    {
-                        conf.TorrentsDir = value.ToString();
-                    }
+                    
                     
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода директории автозагрузки торрентов. Пожалуйста, введите новую директорию.\r\n" +
                         $"Сейчас: {conf.TorrentsDir}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettTorrentsDir", 0), confName);
@@ -919,10 +909,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.TorrentAddr = null;
                     }
-                    else
-                    {
-                        conf.TorrentAddr = value.ToString();
-                    }
+                   
                     
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода адреса торрент-клиента. Пожалуйста, введите новый адрес.\r\n" +
                         $"Сейчас: {conf.TorrentAddr}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettTorrentAddr", 0), confName);
@@ -934,10 +921,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.PubIPv4 = null;
                     }
-                    else
-                    {
-                        conf.PubIPv4 = value.ToString();
-                    }
+                   
                     
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода публичного IPv4. Пожалуйста, введите новый IPv4 адрес.\r\n" +
                         $"Сейчас: {conf.PubIPv4}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPubIPv4", 0), confName);
@@ -949,7 +933,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         conf.PubIPv6 = null;
                     }
-                    else { conf.PubIPv6 = value.ToString();}
+                  
                     
                     await SendOrEditMessage(idMessage, "Вы в режиме ввода публичного IPv6. Пожалуйста, введите новый IPv6 адрес.\r\n" +
                         $"Сейчас: {conf.PubIPv6}", KeyboardManager.CreateExitServerArgsConfigInputButton("ServerArgsSettPubIPv6", 0), confName);
