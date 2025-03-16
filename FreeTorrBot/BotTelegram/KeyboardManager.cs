@@ -18,12 +18,12 @@ namespace FreeTorrBot.BotTelegram
     public abstract class KeyboardManager
 
     {
-        public static InlineKeyboardButton buttonHideButtots = InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages");
+        public static InlineKeyboardButton buttonHideButtots = InlineKeyboardButton.WithCallbackData("❌", "deletemessages");
       //  public static InlineKeyboardButton backGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\u21A9 \uD83D\uDD10", "сontrolTorrserver");
         public static InlineKeyboardMarkup GetDeleteThisMessage()
         {
             var inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
-               {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
+               {new[]{InlineKeyboardButton.WithCallbackData("❌", "deletemessages")}});
             return inlineKeyboarDeleteMessageOnluOnebutton;
 
         }
@@ -571,6 +571,40 @@ namespace FreeTorrBot.BotTelegram
                 });
 
         }
+
+        public static InlineKeyboardMarkup GetProfilesUsersTorrserver()
+        {
+            var buttonMainProfile = InlineKeyboardButton.WithCallbackData("Главный профиль 🏠", "MainProfile");
+            var buttonOtherProfiles = InlineKeyboardButton.WithCallbackData("Другие профили 👥", "OtherProfiles");
+
+            return new InlineKeyboardMarkup(new[]
+            {
+                        new[] {buttonMainProfile},
+                        new[] { buttonOtherProfiles },
+                        new[] { buttonHideButtots }
+            });
+        }
+        public static InlineKeyboardMarkup CreateNewProfileTorrserverUser()
+        {
+          
+            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "OtherProfiles");
+
+            return new InlineKeyboardMarkup(new[]
+            {
+                        new[] {buttonBack,buttonHideButtots},
+            });
+        }
+        public static InlineKeyboardMarkup GetControlOtherProfilesTorrserver()
+        {
+            var buttonCreateProfile = InlineKeyboardButton.WithCallbackData("👤 Создать профиль", "createNewProfile");
+            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "BackProfilesUersTorrserver");
+            return new InlineKeyboardMarkup(new[]
+           {
+                new[] { buttonCreateProfile},
+
+                new[] { buttonBack, buttonHideButtots }
+           });
+        }
         public static InlineKeyboardMarkup GetControlTorrserver()
         {
             // var buttonChangeLogin = InlineKeyboardButton.WithCallbackData("👤 \u2699 (new)Логин ", "change_login");
@@ -583,6 +617,7 @@ namespace FreeTorrBot.BotTelegram
             var buttonEnableAutoChange = InlineKeyboardButton.WithCallbackData("✅ Вкл. Автосмену 🔑", "enable_auto_change");
             var buttonDisableAutoChange = InlineKeyboardButton.WithCallbackData("❌ Откл. Автосмену 🔑", "disable_auto_change");
             var buttonUpdateGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\uD83D\uDD04", "сontrolTorrserver");
+            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "BackProfilesUersTorrserver");
             // var buttonShowStatus = InlineKeyboardButton.WithCallbackData("📊 Текущее состояние", "show_status");
 
             return new InlineKeyboardMarkup(new[]
@@ -590,7 +625,7 @@ namespace FreeTorrBot.BotTelegram
                         new[] {buttonManageLoginPassword},
                         new[] { buttonChangeTimeAuto, buttonPrintTimeAuto },
                         new[] { buttonEnableAutoChange, buttonDisableAutoChange },
-                        new[] { buttonUpdateGetControlTorrserver, buttonHideButtots}
+                        new[] { buttonBack,buttonUpdateGetControlTorrserver, buttonHideButtots}
             });
         }
 

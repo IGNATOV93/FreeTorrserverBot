@@ -19,9 +19,9 @@ namespace AdTorrBot.BotTelegram.Db.Model
 
         public string? LastTextFlagTrue { get; set; }
         [Description($"Ввод: Логин Torrserver")]
-        public bool FlagLogin { get; set; }=false;
+        public bool FlagLogin { get; set; } = false;
         [Description($"Ввод: пароль Torrserver")]
-        public bool FlagPassword { get; set; }=false;
+        public bool FlagPassword { get; set; } = false;
 
         //настройки torrserver
         [Description($"Ввод: Размер кеша мб.")]
@@ -102,7 +102,7 @@ namespace AdTorrBot.BotTelegram.Db.Model
 
         public bool CheckAllBooleanFlags()
         {
-            var boolProperties = this.GetType()
+            var boolProperties = GetType()
                                      .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                      .Where(p => p.PropertyType == typeof(bool));
 

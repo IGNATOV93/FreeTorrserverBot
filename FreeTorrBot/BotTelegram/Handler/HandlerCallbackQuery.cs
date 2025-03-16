@@ -1,6 +1,5 @@
 ﻿using AdTorrBot.BotTelegram;
 using AdTorrBot.BotTelegram.Db;
-using AdTorrBot.BotTelegram.Db.Model;
 using FreeTorrBot.BotTelegram;
 using FreeTorrserverBot.Torrserver.ServerArgs;
 using FreeTorrserverBot.Torrserver.BitTor;
@@ -14,6 +13,7 @@ using Telegram.Bot.Types;
 using static System.Net.Mime.MediaTypeNames;
 using Telegram.Bot.Types.ReplyMarkups;
 using AdTorrBot.ServerManagement;
+using AdTorrBot.BotTelegram.Db.Model;
 
 namespace AdTorrBot.BotTelegram.Handler
 {
@@ -45,7 +45,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     Console.WriteLine("Обработка TextInputFlagLogin");
                     if (InputTextValidator.ValidateLoginAndPassword(text))
                     {
-                        await FreeTorrserverBot.Torrserver.Torrserver.ChangeAccountTorrserver(text, "", true, false);
+                        await FreeTorrserverBot.Torrserver.Torrserver.ChangeMainAccountTorrserver(text, "", true, false);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagLogin", false);
                         Console.WriteLine("Смена логина выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,
@@ -67,7 +67,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     Console.WriteLine("Обработка TextInputFlagPassword");
                     if (InputTextValidator.ValidateLoginAndPassword(text))
                     {
-                        await FreeTorrserverBot.Torrserver.Torrserver.ChangeAccountTorrserver("", text, false, true);
+                        await FreeTorrserverBot.Torrserver.Torrserver.ChangeMainAccountTorrserver("", text, false, true);
                         await SqlMethods.SwitchTorSettingsInputFlag("FlagPassword", false);
                         Console.WriteLine("Смена пароля выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,

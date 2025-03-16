@@ -23,7 +23,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AdTorrBot.BotTelegram.Db
 {
-   public abstract class SqlMethods
+    public abstract class SqlMethods
     {
 
         public static readonly string adminChat = TelegramBot.AdminChat;

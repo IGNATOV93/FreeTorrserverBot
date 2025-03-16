@@ -102,6 +102,15 @@ namespace AdTorrBot.BotTelegram.Handler
             if (text == "🔐 Доступ")
             {
                 await DeleteMessage(idMessage);
+                await botClient.SendTextMessageAsync(AdminChat,
+                    "Управление профилями доступа к Torrserver."
+                    , replyMarkup: KeyboardManager.GetProfilesUsersTorrserver());
+                return;
+
+            }
+                if (text == "🔐 Доступ2")
+            {
+                await DeleteMessage(idMessage);
                 var setTorr = await SqlMethods.GetSettingsTorrserverBot();
                 await SqlMethods.ListTablesAsync();
                 await botClient.SendTextMessageAsync(AdminChat,
@@ -312,6 +321,38 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
                 #endregion Настройки бота
                 #region Управление пользователями(torrserver)
+                if (callbackData == "BackProfilesUersTorrserver")
+                {
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                    "Управление профилями доступа к Torrserver."
+                    , replyMarkup: KeyboardManager.GetProfilesUsersTorrserver());
+                    return;
+                }
+                if(callbackData == "createNewProfile")
+                {
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                      "Функция создания профиля еще в разработке .."
+                      , replyMarkup: KeyboardManager.CreateNewProfileTorrserverUser());
+                    return;
+                }
+                if(callbackData == "OtherProfiles")
+                {
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                       "Список профилей:"
+                       , replyMarkup: KeyboardManager.GetControlOtherProfilesTorrserver());
+                    return;
+                }
+                if (callbackData== "MainProfile")
+                {
+                    var setTorr = await SqlMethods.GetSettingsTorrserverBot();
+                    await SqlMethods.ListTablesAsync();
+                    await botClient.EditMessageTextAsync(AdminChat,idMessage,
+                        "Управление главным профилем  Torrserver.\r\n" + setTorr.ToString()
+                        , replyMarkup: KeyboardManager.GetControlTorrserver());
+                    return;
+                }
+
+
                 if (callbackData == "manage_login_password")
                 {
                     Console.WriteLine("Управление логином и паролем Torrserver");
@@ -321,6 +362,7 @@ namespace AdTorrBot.BotTelegram.Handler
                      , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
                     return;
                 }
+
                 if (callbackData == "сontrolTorrserver")
                 {
                     Console.WriteLine("Управление доступом к Torrserver .");
@@ -330,7 +372,6 @@ namespace AdTorrBot.BotTelegram.Handler
                         , replyMarkup: KeyboardManager.GetControlTorrserver());
                     return;
                 }
-
                 if (callbackData == "set_login_manually")
                 {
                     Console.WriteLine("В режите ввода логина.");
@@ -358,7 +399,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
                 if (callbackData == "generate_new_login")
                 {
-                    await Torrserver.ChangeAccountTorrserver("", "", true, false);
+                    await Torrserver.ChangeMainAccountTorrserver("", "", true, false);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                          , "Логин успешно изменен !"
                                                          , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
@@ -368,7 +409,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData == "generate_new_password")
                 {
 
-                    await Torrserver.ChangeAccountTorrserver("", "", false, true);
+                    await Torrserver.ChangeMainAccountTorrserver("", "", false, true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                          , "Пароль успешно изменен !"
                                                          , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
@@ -378,7 +419,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData == "show_login_password")
                 {
 
-                    var passw = Torrserver.TakeAccountTorrserver();
+                    var passw = Torrserver.TakeMainAccountTorrserver();
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                              , $"{passw}"
                                                              , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
@@ -513,6 +554,10 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"showTorrArgssetInfo"
             ,"resetTorrArgsSetConfig"
             ,"setTorrArgsSetConfig"
+            ,"OtherProfiles"
+            ,"MainProfile"
+            ,"BackProfilesUersTorrserver"
+            ,"createNewProfile"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))
@@ -531,6 +576,7 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 return true;
             }
+
             // Если команда содержит "setAutoPassMinutes", проверим формат
             if (command.Contains("setAutoPassMinutes"))
             {
