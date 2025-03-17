@@ -575,7 +575,7 @@ namespace FreeTorrBot.BotTelegram
         public static InlineKeyboardMarkup GetProfilesUsersTorrserver()
         {
             var buttonMainProfile = InlineKeyboardButton.WithCallbackData("Главный профиль 🏠", "MainProfile");
-            var buttonOtherProfiles = InlineKeyboardButton.WithCallbackData("Другие профили 👥", "OtherProfiles");
+            var buttonOtherProfiles = InlineKeyboardButton.WithCallbackData("Другие профили 👥", "0OtherProfilessort_active");
 
             return new InlineKeyboardMarkup(new[]
             {
@@ -587,24 +587,79 @@ namespace FreeTorrBot.BotTelegram
         public static InlineKeyboardMarkup CreateNewProfileTorrserverUser()
         {
           
-            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "OtherProfiles");
+            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "0OtherProfilessort_active");
 
             return new InlineKeyboardMarkup(new[]
             {
                         new[] {buttonBack,buttonHideButtots},
             });
         }
-        public static InlineKeyboardMarkup GetControlOtherProfilesTorrserver()
+        public static InlineKeyboardMarkup GetControlOtherProfilesTorrserver(int nextCount, int allCount, string sort)
         {
             var buttonCreateProfile = InlineKeyboardButton.WithCallbackData("👤 Создать профиль", "createNewProfile");
-            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "BackProfilesUersTorrserver");
-            return new InlineKeyboardMarkup(new[]
-           {
-                new[] { buttonCreateProfile},
+            var buttonBackMenu = InlineKeyboardButton.WithCallbackData("↩️", "BackProfilesUersTorrserver");
 
-                new[] { buttonBack, buttonHideButtots }
-           });
+            // Логика для кнопок "Назад" и "Далее"
+            InlineKeyboardButton? buttonBack = null;
+            InlineKeyboardButton? buttonNext = null;
+            if (nextCount >5)
+            {
+                // Если есть куда листать назад (сдвиг хотя бы на одну страницу)
+                buttonBack = InlineKeyboardButton.WithCallbackData("⬅️", $"{nextCount - 10}OtherProfiles{sort}");
+            }
+
+            if (nextCount <= allCount)
+            {
+                buttonNext = InlineKeyboardButton.WithCallbackData("➡️", $"{nextCount}OtherProfiles{sort}");
+            }
+
+
+
+            // Логика для кнопок сортировки
+            InlineKeyboardButton? buttonSortActive = null;
+            InlineKeyboardButton? buttonSortInActive = null;
+            InlineKeyboardButton? buttonSortDateEnd = null;
+
+            // Список для кнопок сортировки на одной строке
+            var sortButtons = new List<InlineKeyboardButton>();
+
+            if (sort != "sort_active")
+            {
+                sortButtons.Add(InlineKeyboardButton.WithCallbackData("🟢🔽", $"0OtherProfilessort_active"));
+            }
+
+            if (sort != "sort_inactive")
+            {
+                sortButtons.Add(InlineKeyboardButton.WithCallbackData("🔴🔽", $"0OtherProfilessort_inactive"));
+            }
+
+            if (sort != "sort_date")
+            {
+                sortButtons.Add(InlineKeyboardButton.WithCallbackData("📅🔚", $"0OtherProfilessort_date"));
+            }
+            // Формирование клавиатуры
+            var buttons = new List<InlineKeyboardButton[]>
+                {
+                    new[] { buttonCreateProfile } // Первая строка
+                };
+            // Добавляем кнопки сортировки в одну строку, если есть хотя бы одна
+            if (sortButtons.Count > 0)
+            {
+                buttons.Add(sortButtons.ToArray());
+            }
+            // Добавляем строку с кнопками "Назад" и "Далее", если они доступны
+            var navigationButtons = new List<InlineKeyboardButton>();
+               navigationButtons?.Add(buttonBackMenu);
+            if (buttonBack != null) navigationButtons?.Add(buttonBack);
+            if (buttonNext != null) navigationButtons?.Add(buttonNext);
+            navigationButtons?.Add(buttonHideButtots);
+            if (navigationButtons?.Count > 0) buttons.Add(navigationButtons.ToArray());
+
+         
+
+            return new InlineKeyboardMarkup(buttons);
         }
+
         public static InlineKeyboardMarkup GetControlTorrserver()
         {
             // var buttonChangeLogin = InlineKeyboardButton.WithCallbackData("👤 \u2699 (new)Логин ", "change_login");

@@ -17,6 +17,7 @@ namespace AdTorrBot.BotTelegram.Db
         public virtual DbSet<TextInputFlag> TextInputFlag { get; set; }
         public virtual DbSet<BitTorrConfig> BitTorrConfig { get; set; }
         public virtual DbSet<ServerArgsConfig> ServerArgsConfig { get; set; }
+        public virtual DbSet<Profiles> Profiles { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Подключение к SQLite базе данных
@@ -31,6 +32,10 @@ namespace AdTorrBot.BotTelegram.Db
             // Устанавливаем уникальность для пары полей IdChat и NameProfileBot
             modelBuilder.Entity<BitTorrConfig>()
                 .HasIndex(b => new { b.IdChat, b.NameProfileBot })
+                .IsUnique();
+            // Устанавливаем уникальность для пары поля Login
+            modelBuilder.Entity<Profiles>()
+                .HasIndex(p=>p.Login)
                 .IsUnique();
         }
 

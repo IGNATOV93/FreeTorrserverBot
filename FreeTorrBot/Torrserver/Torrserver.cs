@@ -24,6 +24,8 @@ namespace FreeTorrserverBot.Torrserver
         static string filePathTorr = @$"{filePathTorrMain}{nameProcesTorrserver}";
         static string filePathSettingsJson = @$"{filePathTorrMain}settings.json";
 
+
+        #region MainPforile
         public static async Task AutoChangeAccountTorrserver()
         {
             var settings = await SqlMethods.GetSettingsTorrserverBot();
@@ -136,7 +138,7 @@ namespace FreeTorrserverBot.Torrserver
             // Запускаем процесс заново
             var startProcess = new ProcessStartInfo
             {
-                FileName =$"{filePathTorrMain}{nameProcesTorrserver}", // Укажите полный путь к файлу, если он не в PATH
+                FileName = $"{filePathTorrMain}{nameProcesTorrserver}", // Укажите полный путь к файлу, если он не в PATH
                 UseShellExecute = true,
             };
 
@@ -189,10 +191,69 @@ namespace FreeTorrserverBot.Torrserver
             }
             return "Ошибка чтения."; // Возвращаем сообщение об ошибке
         }
+        #endregion MainProfile
+        #region OtherProfiles
 
+        //Обловляем что у нас есть в конфиге пользователи с бд данными .
+        public static async Task<bool> UpdateAllProfilesFromConfig()
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(filePathTorrserverDb))
+                {
+                    // Считываем весь файл как одну строку
+                    string content = reader.ReadToEnd().Trim();
 
+                    if (content.StartsWith("{") && content.EndsWith("}"))
+                    {
+                        // Убираем внешние фигурные скобки
+                        content = content.Substring(1, content.Length - 2);
 
+                        // Разбиваем строки по запятой
+                        var accounts = content.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        var profiles = new List<Profiles>();
+                        var uniqueLogins = new HashSet<string>(); // Для отслеживания уникальных логинов
+                        foreach (var account in accounts)
+                        {
+                            int keyStartIndex = account.IndexOf("\"") + 1;
+                            int keyEndIndex = account.IndexOf("\":");
+                            int valueStartIndex = account.IndexOf(":\"") + 2;
+                            int valueEndIndex = account.LastIndexOf("\"");
 
+                            if (keyStartIndex >= 0 && keyEndIndex > keyStartIndex &&
+                                valueStartIndex > keyEndIndex && valueEndIndex > valueStartIndex)
+                            {
+                                string login = account.Substring(keyStartIndex, keyEndIndex - keyStartIndex);
+                                string password = account.Substring(valueStartIndex, valueEndIndex - valueStartIndex);
+
+                                // Проверяем, есть ли уже такой логин
+                                if (!uniqueLogins.Contains(login))
+                                {
+                                    uniqueLogins.Add(login); // Добавляем логин в уникальные
+                                    profiles.Add(new Profiles
+                                    {
+                                        Login = login,
+                                        Password = password,
+                                        IsEnabled = true,
+                                        UpdatedAt = DateTime.UtcNow
+                                    });
+                                }
+                            }
+                        }
+                        
+                        return await SqlMethods.UpdateOrAddProfilesAsync(profiles);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при обработке профилей: {ex.Message}");
+            }
+
+            return false;
+        }
+
+        #endregion OtherProfiles
     }
 
 }

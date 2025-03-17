@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Xml;
 using Telegram.Bot.Types;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -566,5 +567,187 @@ namespace AdTorrBot.BotTelegram.Db
             await using var db = new AppDbContext();
             return await func(db);
         }
+
+
+        #region OtherPfofiles
+        public static async Task<int> GetActiveProfilesCount()
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                // Обрабатываем записи, где IsEnabled явно true
+                var activeCount = await db.Profiles.CountAsync(p => p.IsEnabled == true);
+                Console.WriteLine($"Активных пользователей: "+activeCount);
+                return (activeCount);
+            });
+        }
+
+
+        public static async Task<int> GetCountAllProfiles()
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                return await db.Profiles.CountAsync()-1;
+            });
+        }
+
+        //Берем пользователей
+        public static async Task<List<Profiles>> GetAllProfilesUser(int skipCount, string sort)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                IQueryable<Profiles> query = db.Profiles;
+
+                // Обработка вида сортировки
+                if (sort == "sort_active")
+                {
+                    // Сначала пользователи с IsEnabled == true
+                    query = query.OrderByDescending(p => p.IsEnabled);
+                }
+                else if (sort == "sort_inactive")
+                {
+                    // Сначала пользователи с IsEnabled == false
+                    query = query.OrderBy(p => p.IsEnabled);
+                }
+                else if (sort == "sort_date")
+                {
+                    // Сортировка по дате окончания времени профиля (AccessEndDate, сначала старые записи)
+                    query = query.OrderBy(p => p.AccessEndDate);
+                }
+                else
+                {
+                    throw new ArgumentException($"Неизвестный параметр сортировки: {sort}");
+                }
+
+                // Пропускаем записи (пагинация) и возвращаем результат
+                return await query.Skip(skipCount).Take(5).ToListAsync();
+            });
+        }
+
+        //Берем пользователя
+        public static async Task<Profiles> GetProfileUser(string? login=null,string? uniqueId = null)
+        {
+            if (login == null && uniqueId == null)
+            {
+                throw new ArgumentException("Необходимо указать хотя бы один параметр: login или uniqueId.");
+            }
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                if (!string.IsNullOrEmpty(uniqueId))
+                {
+                    // Если передан uniqueId, ищем по нему как приоритетному параметру
+                    return await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId.ToString() == uniqueId);
+                }
+
+                if (!string.IsNullOrEmpty(login))
+                {
+                    // Если uniqueId отсутствует, ищем по логину
+                    return await db.Profiles.FirstOrDefaultAsync(p => p.Login == login);
+                }
+
+                return null;
+            });
+
+        }
+        //Редактирование профиля пользователя
+        public static async Task<bool> EddingProfileUser(Profiles profile)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var profileUser = await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId == profile.UniqueId);
+                if (profileUser != null)
+                {
+                    // Обновляем только нужные свойства
+                    profileUser.Login = profile.Login;
+                    profileUser.Password = profile.Password;
+                    profileUser.UpdatedAt = DateTime.UtcNow; // Обновляем дату изменения
+                    profileUser.AccessEndDate = profile.AccessEndDate;
+                    profileUser.IsEnabled = profile.IsEnabled;
+                    profileUser.AdminComment = profile.AdminComment;
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            });
+        }
+        //Проверка на существование логина в бд
+        public static async Task<bool> IsHaveLoginProfileUser(string login)
+        {
+            await SqlMethods.WithDbContextAsync(async db =>
+            {
+                bool loginExists = await db.Profiles.AnyAsync(p => p.Login == login);
+                return loginExists;
+
+            });
+            return false;
+        }
+        //Просто создаем новые данные профиля в бд,а после уже работаем с ним 
+        public static async Task CreateNewProfileUser(string login,string password)
+        {
+            await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var profiles = db.Profiles.Add(new Profiles()
+                {
+                    Login = login,
+                    Password = password,
+
+                });
+                await db.SaveChangesAsync();
+                return Task.CompletedTask;
+            });
+        }
+        //Обновляем профили в бд,например когда нам надо сверить данные с конфига
+        public static async Task<bool> UpdateOrAddProfilesAsync(List<Profiles> profiles)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                // Логины из актуального списка
+                var incomingLogins = profiles.Select(p => p.Login).ToList();
+
+                // Обрабатываем переданные профили
+                foreach (var profile in profiles)
+                {
+                    var existingProfile = await db.Profiles.FirstOrDefaultAsync(p => p.Login == profile.Login);
+
+                    if (existingProfile != null)
+                    {
+                        // Обновляем существующего пользователя
+                        existingProfile.Password = profile.Password;
+                        existingProfile.AccessEndDate = profile.AccessEndDate;
+                        existingProfile.IsEnabled = profile.IsEnabled;
+                        existingProfile.AdminComment = profile.AdminComment;
+                        existingProfile.UpdatedAt = DateTime.UtcNow; // Обновляем дату изменения
+                    }
+                    else
+                    {
+                        // Добавляем нового пользователя
+                        profile.CreatedAt = DateTime.UtcNow; // Устанавливаем дату создания
+                        await db.Profiles.AddAsync(profile);
+                    }
+                }
+
+                var profilesToDisable = await db.Profiles
+                     .Where(p => !incomingLogins.Contains(p.Login)) // Проверяем всех, вне зависимости от статуса
+                     .ToListAsync();
+
+
+                // Помечаем их как отключённых
+                foreach (var profile in profilesToDisable)
+                {
+                    profile.IsEnabled = false; // Помечаем как отключён
+                    profile.AccessEndDate = DateTime.UtcNow; // Устанавливаем текущую дату как дату окончания
+                    profile.UpdatedAt = DateTime.UtcNow; // Обновляем дату изменения
+                }
+
+
+                // Сохраняем изменения
+                await db.SaveChangesAsync();
+                return true;
+            });
+        }
+
+
+
+        #endregion OtherProfile
+
     }
 }

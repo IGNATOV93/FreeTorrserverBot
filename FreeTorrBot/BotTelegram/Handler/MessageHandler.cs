@@ -335,13 +335,60 @@ namespace AdTorrBot.BotTelegram.Handler
                       , replyMarkup: KeyboardManager.CreateNewProfileTorrserverUser());
                     return;
                 }
-                if(callbackData == "OtherProfiles")
+
+
+                if (callbackData.Contains("OtherProfiles"))
                 {
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
-                       "Список профилей:"
-                       , replyMarkup: KeyboardManager.GetControlOtherProfilesTorrserver());
+                    try
+                    {
+                        // Парсим сообщение
+                        var (skipCount, sort) = ParsingMethods.ParseOtherProfilesCallback(callbackData);
+
+                        // Логика обновления профилей
+                        var result = "Список профилей: ошибка обновления профилей";
+                        var updateProfiles = await Torrserver.UpdateAllProfilesFromConfig();
+                        var countAllProfiles = 0;
+                        var countActive= 0;
+                        var nextCount = 0;
+                        if (updateProfiles)
+                        {
+                            countAllProfiles = await SqlMethods.GetCountAllProfiles();
+                            countActive = await SqlMethods.GetActiveProfilesCount();
+                            var profiles = await SqlMethods.GetAllProfilesUser(skipCount, sort);
+
+                            if (profiles != null && profiles.Count > 0)
+                            {
+                                nextCount = skipCount + profiles.Count;
+                                result = ParsingMethods.FormatProfilesList(profiles,countActive, countAllProfiles,skipCount ,sort);
+                            }
+                            else
+                            {
+                                result = "Список профилей пуст или ошибка получения данных.";
+                            }
+                        }
+
+                        // Формируем клавиатуру
+                        var keyboard = KeyboardManager.GetControlOtherProfilesTorrserver(nextCount, countAllProfiles, sort);
+
+                        // Обновляем сообщение
+                        await botClient.EditMessageTextAsync(
+                            AdminChat,
+                            idMessage,
+                            result,
+                            replyMarkup: keyboard
+                            ,parseMode: ParseMode.MarkdownV2
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        return;
+                    }
+
                     return;
                 }
+
+
                 if (callbackData== "MainProfile")
                 {
                     var setTorr = await SqlMethods.GetSettingsTorrserverBot();
@@ -605,7 +652,10 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 return true;
             }
-        
+            if (command.Contains("OtherProfiles"))
+            {
+                return true;
+            }
             {
                 string valuePart = command.Split(command)[0].Trim();
                 if (int.TryParse(valuePart, out _))

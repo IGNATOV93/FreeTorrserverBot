@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,63 @@ namespace AdTorrBot.BotTelegram
     
      public abstract class ParsingMethods
       {
+        public static string EscapeForMarkdownV2(string text)
+        {
+            // Список символов, которые необходимо экранировать в MarkdownV2
+            var charactersToEscape = new[] { "_", "*", "[", "]", "(", ")", "~", "`", ">", "#", "+", "-", "=", "|", "{", "}", ".", "!" };
+
+            // Проходимся по каждому символу и заменяем его на экранированный
+            foreach (var character in charactersToEscape)
+            {
+                text = text.Replace(character, $"\\{character}");
+            }
+
+            return text;
+        }
+
+        public static  string FormatProfilesList(List<Profiles> profiles, int countActive,int countAll,int countSkip, string sort)
+        {
+            int countInActive = Math.Max(0, countAll - countActive);
+
+            var result = $"📊 Профили: {countAll} (🟢{countActive-1}/🔴{countInActive})\r\n\r\n";
+            var countActual = countSkip;
+            for (int i = 0; i < profiles.Count; i++)
+            {
+                countActual++;
+                var profile = profiles[i];
+                var uni = profile.UniqueId.ToString().Replace("-", "_");
+                result += $"\n{countActual}) `{profile.Login}:{profile.Password}` 📋\r\n";
+                result += $"   {(profile.IsEnabled ? "🟢" : "🔴")} (до {profile.AccessEndDate?.ToString("yyyy-MM-dd") ?? "(не ограничено)"})\r\n";
+                result += $"/edit_profile_{uni}\r\n"; //
+            }
+
+            result += $"\nСортировка:\n{(sort == "sort_active" ? "🟢" : sort == "sort_inactive" ? "🔴" : "📅")} {sort}\n";
+            return EscapeForMarkdownV2(result);
+        }
+
+        public static (int count, string sort) ParseOtherProfilesCallback(string callbackData)
+        {
+            // Проверяем, содержит ли строка "OtherProfiles"
+            if (!callbackData.Contains("OtherProfiles"))
+            {
+                throw new ArgumentException("Данные не соответствуют ожидаемому формату.");
+            }
+
+            // Разбиваем строку по "OtherProfiles"
+            var parts = callbackData.Split("OtherProfiles");
+
+            // Извлекаем левую часть (count) и правую часть (sort)
+            if (parts.Length == 2)
+            {
+                if (int.TryParse(parts[0], out int count))
+                {
+                    string sort = parts[1]; // Правая часть как метод сортировки
+                    return (count, sort);
+                }
+            }
+
+            throw new ArgumentException("Невозможно распарсить данные.");
+        }
 
         public static string GetExitMessage(string field)
         {
