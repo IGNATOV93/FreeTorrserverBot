@@ -410,20 +410,9 @@ namespace FreeTorrBot.BotTelegram
 
             return new InlineKeyboardMarkup(keyboardButtons);
         }
-        public static InlineKeyboardMarkup GetRestartingMain()
-        {
-            var restartTorrServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Torr", "restart_torrserver");
-            var restartServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Сервера", "restart_server");
-            var inlineRestartingMain = new InlineKeyboardMarkup(new[]
-            {
-                new[]{restartServer, restartTorrServer }
-                ,new[]{buttonHideButtots}
-
-            });
-            return inlineRestartingMain;
-
-        }
         #endregion ServerArgsConfig
+
+      
         #region MainMenu
         public static ReplyKeyboardMarkup GetMainKeyboard()
         {
@@ -511,6 +500,19 @@ namespace FreeTorrBot.BotTelegram
             });
             return inlineSetServerMain;
         }
+        public static InlineKeyboardMarkup GetRestartingMain()
+        {
+            var restartTorrServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Torr", "restart_torrserver");
+            var restartServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Сервера", "restart_server");
+            var inlineRestartingMain = new InlineKeyboardMarkup(new[]
+            {
+                new[]{restartServer, restartTorrServer }
+                ,new[]{buttonHideButtots}
+
+            });
+            return inlineRestartingMain;
+
+        }
         #endregion Settings
         #region Backups
         public static InlineKeyboardMarkup GetMainBackups()
@@ -527,6 +529,8 @@ namespace FreeTorrBot.BotTelegram
         }
         #endregion Backups
         #region Доступ
+
+        #region MainProfile
         public static InlineKeyboardMarkup GetSetTimeAutoChangePassword()
         {
             var butHourBack = InlineKeyboardButton.WithCallbackData("- 1 час", "-60setAutoPassMinutes");
@@ -571,6 +575,44 @@ namespace FreeTorrBot.BotTelegram
                 });
 
         }
+        public static InlineKeyboardMarkup GetControlTorrserver()
+        {
+            // var buttonChangeLogin = InlineKeyboardButton.WithCallbackData("👤 \u2699 (new)Логин ", "change_login");
+            // var buttonPrintLogin = InlineKeyboardButton.WithCallbackData(" 👀 Логин ", "print_login");
+            // var buttonChangePassword = InlineKeyboardButton.WithCallbackData("🔑 \u2699 (new)Пароль", "change_password");
+            // var buttonPrintPassword = InlineKeyboardButton.WithCallbackData("👀  Пароль", "print_password");
+            var buttonManageLoginPassword = InlineKeyboardButton.WithCallbackData("👤🔑 Управление логином и паролем", "manage_login_password");
+            var buttonChangeTimeAuto = InlineKeyboardButton.WithCallbackData("⏰ Автосмена 🔑", "change_time_auto");
+            var buttonPrintTimeAuto = InlineKeyboardButton.WithCallbackData("👀 Автосмена 🔑", "print_time_auto");
+            var buttonEnableAutoChange = InlineKeyboardButton.WithCallbackData("✅ Вкл. Автосмену 🔑", "enable_auto_change");
+            var buttonDisableAutoChange = InlineKeyboardButton.WithCallbackData("❌ Откл. Автосмену 🔑", "disable_auto_change");
+            var buttonUpdateGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\uD83D\uDD04", "сontrolTorrserver");
+            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "BackProfilesUersTorrserver");
+            // var buttonShowStatus = InlineKeyboardButton.WithCallbackData("📊 Текущее состояние", "show_status");
+
+            return new InlineKeyboardMarkup(new[]
+            {
+                        new[] {buttonManageLoginPassword},
+                        new[] { buttonChangeTimeAuto, buttonPrintTimeAuto },
+                        new[] { buttonEnableAutoChange, buttonDisableAutoChange },
+                        new[] { buttonBack,buttonUpdateGetControlTorrserver, buttonHideButtots}
+            });
+        }
+        #endregion MainProfile
+        #region OtherProfiles
+       
+        public static InlineKeyboardMarkup GetProfileEditOther(string uid)
+        {
+            return new[]
+                {
+          new[]{InlineKeyboardButton.WithCallbackData("🔑 Логин/Пароль", $"mainLogPassOth{uid}")}
+         ,new[]{InlineKeyboardButton.WithCallbackData("🔒 Доступ", $"mainAccessOth{uid}")}
+         ,new[]{InlineKeyboardButton.WithCallbackData("📝 Заметка", $"mainNoteOth{uid}")}
+         ,new[] {InlineKeyboardButton.WithCallbackData("⚠️ Удалить профиль", $"mainDeleOth{uid}")}
+         ,new[]{buttonHideButtots}
+        };
+        }
+
 
         public static InlineKeyboardMarkup GetShowLogPassOther()
         {
@@ -667,30 +709,8 @@ namespace FreeTorrBot.BotTelegram
 
             return new InlineKeyboardMarkup(buttons);
         }
+        #endregion OtherProfiles
 
-        public static InlineKeyboardMarkup GetControlTorrserver()
-        {
-            // var buttonChangeLogin = InlineKeyboardButton.WithCallbackData("👤 \u2699 (new)Логин ", "change_login");
-            // var buttonPrintLogin = InlineKeyboardButton.WithCallbackData(" 👀 Логин ", "print_login");
-            // var buttonChangePassword = InlineKeyboardButton.WithCallbackData("🔑 \u2699 (new)Пароль", "change_password");
-            // var buttonPrintPassword = InlineKeyboardButton.WithCallbackData("👀  Пароль", "print_password");
-            var buttonManageLoginPassword = InlineKeyboardButton.WithCallbackData("👤🔑 Управление логином и паролем", "manage_login_password");
-            var buttonChangeTimeAuto = InlineKeyboardButton.WithCallbackData("⏰ Автосмена 🔑", "change_time_auto");
-            var buttonPrintTimeAuto = InlineKeyboardButton.WithCallbackData("👀 Автосмена 🔑", "print_time_auto");
-            var buttonEnableAutoChange = InlineKeyboardButton.WithCallbackData("✅ Вкл. Автосмену 🔑", "enable_auto_change");
-            var buttonDisableAutoChange = InlineKeyboardButton.WithCallbackData("❌ Откл. Автосмену 🔑", "disable_auto_change");
-            var buttonUpdateGetControlTorrserver = InlineKeyboardButton.WithCallbackData("\uD83D\uDD04", "сontrolTorrserver");
-            var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "BackProfilesUersTorrserver");
-            // var buttonShowStatus = InlineKeyboardButton.WithCallbackData("📊 Текущее состояние", "show_status");
-
-            return new InlineKeyboardMarkup(new[]
-            {
-                        new[] {buttonManageLoginPassword},
-                        new[] { buttonChangeTimeAuto, buttonPrintTimeAuto },
-                        new[] { buttonEnableAutoChange, buttonDisableAutoChange },
-                        new[] { buttonBack,buttonUpdateGetControlTorrserver, buttonHideButtots}
-            });
-        }
 
         #endregion Доступ
         #endregion MainMenu

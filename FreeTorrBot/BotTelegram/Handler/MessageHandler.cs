@@ -84,7 +84,7 @@ namespace AdTorrBot.BotTelegram.Handler
             }
             #endregion Обработка команд
             #region Обработка текстовых кнопок
-
+            #region OtherProfile
             if (text.Contains("/showlogpass_"))
             {
                 var lp= text.Split("/showlogpass_")[1]?.Replace("_",":");
@@ -95,14 +95,14 @@ namespace AdTorrBot.BotTelegram.Handler
             }
             if (text.Contains("/edit_profile_"))
             {
-                var ui = text.Split("/edit_profile_")[1]?.Replace("_","-");
-                Console.WriteLine($"Пришел профиль на редактирование: [{ui}]");
+                var uid = text.Split("/edit_profile_")[1]?.Replace("_","-");
+                Console.WriteLine($"Пришел профиль на редактирование: [{uid}]");
                 await DeleteMessage(idMessage);
-                var profile = await SqlMethods.GetProfileUser(null, ui);
+                var profile = await SqlMethods.GetProfileUser(null, uid);
                 if (profile is null)
                 {
                     await botClient.SendTextMessageAsync(AdminChat, "Данный профиль не найден."
-                        , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                        , replyMarkup: KeyboardManager.GetProfileEditOther(uid));
                      return;
                 }
                 else
@@ -111,6 +111,7 @@ namespace AdTorrBot.BotTelegram.Handler
                      return ;
                 }
             }
+            #endregion OtherProfile
             if (text == "💾 Бекапы")
             {
                 await DeleteMessage(idMessage);
@@ -348,6 +349,43 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
                 #endregion Настройки бота
                 #region Управление пользователями(torrserver)
+                //mainDeleOth
+                if (callbackData.Contains("mainDeleOth"))
+                {
+                    var uid = callbackData.Split("mainDeleOth")[1];
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                     "Удаление профиля:\r\n" +
+                     $"/{uid}"
+                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
+                if (callbackData.Contains("mainNoteOth"))
+                {
+                    var uid = callbackData.Split("mainNoteOth")[1];
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                     "Заметка для профиля:\r\n" +
+                     $"/{uid}"
+                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
+                if (callbackData.Contains("mainAccessOth"))
+                {
+                    var uid = callbackData.Split("mainAccessOth")[1];
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                     "Управление доступом для профиля:\r\n" +
+                     $"/{uid}"
+                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
+                if (callbackData.Contains("mainLogPassOth"))
+                {
+                    var uid = callbackData.Split("mainLogPassOth")[1];
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                     "Смена логина/пароля профиля:\r\n" +
+                     $"/{uid}"
+                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
                 if (callbackData == "BackProfilesUersTorrserver")
                 {
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
@@ -688,6 +726,22 @@ namespace AdTorrBot.BotTelegram.Handler
                 return true;
             }
             if (command.Contains("/showlogpass_"))
+            {
+                return true;
+            }
+            if (command.Contains("mainLogPassOth"))
+            {
+                return true;
+            }
+            if (command.Contains("mainAccessOth"))
+            {
+                return true;
+            }
+            if (command.Contains("mainNoteOth"))
+            {
+                return true;
+            }
+            if (command.Contains("mainDeleOth"))
             {
                 return true;
             }
