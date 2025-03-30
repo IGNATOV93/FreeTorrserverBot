@@ -102,12 +102,12 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (profile is null)
                 {
                     await botClient.SendTextMessageAsync(AdminChat, "Данный профиль не найден."
-                        , replyMarkup: KeyboardManager.GetProfileEditOther(uid));
+                        , replyMarkup: KeyboardManager.GetDeleteThisMessage());
                      return;
                 }
                 else
                 {
-                    await botClient.SendTextMessageAsync(AdminChat,profile.ToString(),replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    await botClient.SendTextMessageAsync(AdminChat,profile.ToString(),replyMarkup: KeyboardManager.GetProfileEditOther(uid));
                      return ;
                 }
             }
