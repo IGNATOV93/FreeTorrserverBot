@@ -570,6 +570,20 @@ namespace AdTorrBot.BotTelegram.Db
         #endregion mainProfile
 
         #region OtherPfofiles
+        public static async Task<bool> DeleteProfileOther(string uid)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var p = await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId == Guid.Parse(uid));
+                if (p != null) {
+                    await Torrserver.DeleteProfileByLogin(p.Login);
+                    db.Remove(p);
+                }
+              await  db.SaveChangesAsync();
+               
+                return true;
+            });
+        }
         public static async Task<int> GetActiveProfilesCount()
         {
             return await SqlMethods.WithDbContextAsync(async db =>

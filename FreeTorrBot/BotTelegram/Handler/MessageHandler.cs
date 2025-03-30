@@ -349,7 +349,16 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
                 #endregion Настройки бота
                 #region Управление пользователями(torrserver)
-                //mainDeleOth
+                if (callbackData.Contains("delOther"))
+                {
+                    var uid = callbackData.Split("delOther")[1];
+                    await SqlMethods.DeleteProfileOther(uid);
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                     "Профиль удален \u2705\r\n" +
+                     "Изменения вступят в силу после перезагрузки Torrserver."
+                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
                 if (callbackData.Contains("mainDeleOth"))
                 {
                     var uid = callbackData.Split("mainDeleOth")[1];
@@ -359,7 +368,7 @@ namespace AdTorrBot.BotTelegram.Handler
                       $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
                      $"/edit_profile_{uid.Replace("-","_")}\r\n" +
                      $"Подтвердите удаление \u2757"
-                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                     , replyMarkup: KeyboardManager.DeletePfofileOther(uid));
                     return;
                 }
                 if (callbackData.Contains("mainNoteOth"))
@@ -762,6 +771,10 @@ namespace AdTorrBot.BotTelegram.Handler
                 return true;
             }
             if (command.Contains("mainDeleOth"))
+            {
+                return true;
+            }
+            if (command.Contains("delOther"))
             {
                 return true;
             }

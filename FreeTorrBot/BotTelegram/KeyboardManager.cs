@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
@@ -601,6 +602,14 @@ namespace FreeTorrBot.BotTelegram
         #endregion MainProfile
         #region OtherProfiles
        
+        public static InlineKeyboardMarkup DeletePfofileOther(string uid)
+        {
+            return new[]
+            {
+          new[]{InlineKeyboardButton.WithCallbackData("Да удалить !", $"delOther{uid}")
+               ,InlineKeyboardButton.WithCallbackData("Нет отмена","deletemessages")}
+          };
+        }
         public static InlineKeyboardMarkup GetProfileEditOther(string uid)
         {
             return new[]

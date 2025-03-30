@@ -193,6 +193,58 @@ namespace FreeTorrserverBot.Torrserver
         }
         #endregion MainProfile
         #region OtherProfiles
+        public static async Task<bool> DeleteProfileByLogin(string loginToDelete)
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(filePathTorrserverDb))
+                {
+                    // Считываем весь файл как одну строку
+                    string content = reader.ReadToEnd().Trim();
+
+                    if (content.StartsWith("{") && content.EndsWith("}"))
+                    {
+                        // Убираем внешние фигурные скобки
+                        content = content.Substring(1, content.Length - 2);
+
+                        // Разбиваем строки по запятой
+                        var accounts = content.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        var filteredAccounts = new List<string>();
+
+                        foreach (var account in accounts)
+                        {
+                            int keyStartIndex = account.IndexOf("\"") + 1;
+                            int keyEndIndex = account.IndexOf("\":");
+
+                            if (keyStartIndex >= 0 && keyEndIndex > keyStartIndex)
+                            {
+                                string login = account.Substring(keyStartIndex, keyEndIndex - keyStartIndex);
+
+                                // Исключаем аккаунт, если логин совпадает с loginToDelete
+                                if (!login.Equals(loginToDelete, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    filteredAccounts.Add(account); // Добавляем только те записи, которые не совпадают
+                                }
+                            }
+                        }
+
+                        // Формируем новую строку и записываем обратно в файл
+                        string updatedContent = "{" + string.Join(",", filteredAccounts) + "}";
+                        await File.WriteAllTextAsync(filePathTorrserverDb, updatedContent);
+
+                        return true; // Удаление успешно
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при удалении профиля: {ex.Message}");
+            }
+
+            return false; // В случае ошибки
+        }
+
+
 
         //Обловляем что у нас есть в конфиге пользователи с бд данными .
         public static async Task<bool> UpdateAllProfilesFromConfig()
