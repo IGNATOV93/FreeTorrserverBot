@@ -36,10 +36,8 @@ namespace AdTorrBot.BotTelegram
                 var profile = profiles[i];
                 var uni = profile.UniqueId.ToString().Replace("-", "_");
                 result += $"\n{countActual}) \uD83D\uDC64 Логин: {profiles[i].Login}\r\n" +
-                    $"\u2139 Показать логин/пароль \u2199\r\n" +
                     $"/showlogpass_{profile.Login}_{profile.Password}\r\n";
-                result += $"   {(profile.IsEnabled ? "🟢" : "🔴")} (до {profile.AccessEndDate?.ToString("yyyy-MM-dd") ?? "(не ограничено)"})\r\n" +
-                    $"\uD83D\uDD27 Редактировать профиль \u2199\r\n";
+                result += $"   {(profile.IsEnabled ? "🟢" : "🔴")} (до {profile.AccessEndDate?.ToString("yyyy-MM-dd") ?? "(не ограничено)"})\r\n";
                 result += $"/edit_profile_{uni}\r\n"; //
             }
 

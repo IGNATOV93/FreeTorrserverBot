@@ -366,7 +366,7 @@ namespace AdTorrBot.BotTelegram.Handler
                 {
                     var uid = callbackData.Split("mainNoteOth")[1];
                     var p = await SqlMethods.GetProfileUser(uid);
-                    var note = p.AdminComment ?? "заметка отсутствует";
+                    var note = p?.AdminComment ?? "заметка отсутствует";
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
                      "Заметка профиля ↙\r\n" +
                     $"/edit_profile_{uid.Replace("-", "_")}\r\n"+
