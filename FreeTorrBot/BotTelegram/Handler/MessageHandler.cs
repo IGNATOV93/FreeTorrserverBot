@@ -353,11 +353,11 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData.Contains("mainDeleOth"))
                 {
                     var uid = callbackData.Split("mainDeleOth")[1];
-                    var p = await SqlMethods.GetProfileUser(uid);
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                    var p = await SqlMethods.GetProfileUser(null, uid);
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,         
                      "Удаление профиля \u2199\r\n" +
+                      $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
                      $"/edit_profile_{uid.Replace("-","_")}\r\n" +
-                     $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
                      $"Подтвердите удаление \u2757"
                      , replyMarkup: KeyboardManager.buttonHideButtots);
                     return;
@@ -365,12 +365,12 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData.Contains("mainNoteOth"))
                 {
                     var uid = callbackData.Split("mainNoteOth")[1];
-                    var p = await SqlMethods.GetProfileUser(uid);
+                    var p = await SqlMethods.GetProfileUser(null,uid);
                     var note = p?.AdminComment ?? "заметка отсутствует";
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
                      "Заметка профиля ↙\r\n" +
+                      $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
                     $"/edit_profile_{uid.Replace("-", "_")}\r\n"+
-                    $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
                     $"\uD83D\uDCDD Заметка: {note}\r\n" +
                     $"\u270D Вы в режиме ввода заметки \u2757\r\n" +
                     $"Ограничение:300 символов."
@@ -380,20 +380,21 @@ namespace AdTorrBot.BotTelegram.Handler
                 if (callbackData.Contains("mainAccessOth"))
                 {
                     var uid = callbackData.Split("mainAccessOth")[1];
-                    var p = await SqlMethods.GetProfileUser(uid);
+                    var p = await SqlMethods.GetProfileUser(null,uid);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
                      "Управление доступом профиля ↙\r\n" +
-                     $"/edit_profile_{uid.Replace("-", "_")} \r\n"+
-                     $"\uD83D\uDC64 Логин:{p.Login}\r\n"
+                      $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
+                     $"/edit_profile_{uid.Replace("-", "_")} \r\n"
                      , replyMarkup: KeyboardManager.buttonHideButtots);
                     return;
                 }
                 if (callbackData.Contains("mainLogPassOth"))
                 {
                     var uid = callbackData.Split("mainLogPassOth")[1];
-                    var p = await SqlMethods.GetProfileUser(uid);
+                    var p = await SqlMethods.GetProfileUser(null, uid);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
                      "Смена логина/пароля профиля ↙\r\n" +
+                     $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
                      $"/edit_profile_{uid.Replace("-", "_")} \r\n" + 
                      $"✍ Вы в режиме ввода логина и пароля \u2757\r\n" + 
                      $"Ограничения \u2199\r\n" + 
