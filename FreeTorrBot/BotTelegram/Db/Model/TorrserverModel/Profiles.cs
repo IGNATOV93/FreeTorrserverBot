@@ -28,5 +28,30 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         public bool IsEnabled { get; set; } = true;
 
+        public override string ToString()
+        {
+            var remainingTime = AccessEndDate.HasValue
+                ? AccessEndDate.Value - DateTime.UtcNow
+                : (TimeSpan?)null;
+            var builder = new StringBuilder();
+  
+            builder.AppendLine($"{(IsEnabled ? "🟢" : "🔴")} Профиль: {UniqueId}");
+            builder.AppendLine($"/showlogpass_{Login}_{Password}");
+            builder.AppendLine($"📅 Создан: {(CreatedAt.HasValue ? CreatedAt.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
+            builder.AppendLine($"✏️ Редактирован: {(UpdatedAt.HasValue ? UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
+            builder.AppendLine($"⏳ Окончание доступа: {(AccessEndDate.HasValue ? AccessEndDate.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
+            if (remainingTime.HasValue && remainingTime.Value.TotalMilliseconds > 0)
+            {
+                builder.AppendLine($"🕒 Осталось: {remainingTime.Value.Days} суток {remainingTime.Value.Hours} часов");
+            }
+            else
+            {
+                builder.AppendLine($"🕒 Осталось: Не задано или доступ истёк");
+            }
+            builder.AppendLine($"💬 Заметка: {(AdminComment ?? "Нет данных")}");
+
+            return builder.ToString();
+        }
+
     }
 }

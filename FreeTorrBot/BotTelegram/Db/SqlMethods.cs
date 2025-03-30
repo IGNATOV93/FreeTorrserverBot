@@ -29,7 +29,7 @@ namespace AdTorrBot.BotTelegram.Db
 
         public static readonly string adminChat = TelegramBot.AdminChat;
 
-
+        #region mainProfile
         public static async Task SetSettingsServerArgsProfile(ServerArgsConfig config)
         //SetArgsConfigTorrProfile(ServerArgsConfig config)
         {
@@ -567,7 +567,7 @@ namespace AdTorrBot.BotTelegram.Db
             await using var db = new AppDbContext();
             return await func(db);
         }
-
+        #endregion mainProfile
 
         #region OtherPfofiles
         public static async Task<int> GetActiveProfilesCount()
@@ -635,7 +635,7 @@ namespace AdTorrBot.BotTelegram.Db
                 if (!string.IsNullOrEmpty(uniqueId))
                 {
                     // Если передан uniqueId, ищем по нему как приоритетному параметру
-                    return await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId.ToString() == uniqueId);
+                    return await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId.ToString() == uniqueId.ToUpper());
                 }
 
                 if (!string.IsNullOrEmpty(login))

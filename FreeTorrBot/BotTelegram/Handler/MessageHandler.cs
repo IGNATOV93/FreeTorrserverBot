@@ -72,7 +72,7 @@ namespace AdTorrBot.BotTelegram.Handler
             var text = message.Text;
             var idMessage = message.MessageId;
             // Обрабатываем обычное текстовое сообщение
-
+            if(text == null) { return; }
             #region Обработка команд
             if (text == "/start")
             {
@@ -84,6 +84,33 @@ namespace AdTorrBot.BotTelegram.Handler
             }
             #endregion Обработка команд
             #region Обработка текстовых кнопок
+
+            if (text.Contains("/showlogpass_"))
+            {
+                var lp= text.Split("/showlogpass_")[1]?.Replace("_",":");
+                lp= ParsingMethods.EscapeForMarkdownV2(lp);
+                await DeleteMessage(idMessage);
+                await botClient.SendTextMessageAsync(AdminChat , lp,replyMarkup:KeyboardManager.GetShowLogPassOther(),parseMode:ParseMode.MarkdownV2);
+                return;
+            }
+            if (text.Contains("/edit_profile_"))
+            {
+                var ui = text.Split("/edit_profile_")[1]?.Replace("_","-");
+                Console.WriteLine($"Пришел профиль на редактирование: [{ui}]");
+                await DeleteMessage(idMessage);
+                var profile = await SqlMethods.GetProfileUser(null, ui);
+                if (profile is null)
+                {
+                    await botClient.SendTextMessageAsync(AdminChat, "Данный профиль не найден."
+                        , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                     return;
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(AdminChat,profile.ToString(),replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                     return ;
+                }
+            }
             if (text == "💾 Бекапы")
             {
                 await DeleteMessage(idMessage);
@@ -653,6 +680,14 @@ namespace AdTorrBot.BotTelegram.Handler
                 return true;
             }
             if (command.Contains("OtherProfiles"))
+            {
+                return true;
+            }
+            if (command.Contains("/edit_profile_"))
+            {
+                return true;
+            }
+            if (command.Contains("/showlogpass_"))
             {
                 return true;
             }
