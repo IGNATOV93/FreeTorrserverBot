@@ -34,10 +34,12 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
                 ? AccessEndDate.Value - DateTime.UtcNow
                 : (TimeSpan?)null;
             var builder = new StringBuilder();
-  
-            builder.AppendLine($"{(IsEnabled ? "🟢" : "🔴")} Профиль: {UniqueId}");
-            builder.AppendLine($"/showlogpass_{Login}_{Password}");
-            builder.AppendLine($"📅 Создан: {(CreatedAt.HasValue ? CreatedAt.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
+
+            builder.AppendLine($"{(IsEnabled ? "🟢" : "🔴")} Профиль \u2199\r\n{UniqueId}\r\n");
+            builder.AppendLine($"👤 Логин: {Login}\r\n");
+              
+            builder.AppendLine($"/showlogpass_{Login}_{Password}\r\n");
+            builder.AppendLine($"\r\n📅 Создан: {(CreatedAt.HasValue ? CreatedAt.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
             builder.AppendLine($"✏️ Редактирован: {(UpdatedAt.HasValue ? UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
             builder.AppendLine($"⏳ Окончание доступа: {(AccessEndDate.HasValue ? AccessEndDate.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
             if (remainingTime.HasValue && remainingTime.Value.TotalMilliseconds > 0)
