@@ -606,7 +606,7 @@ namespace FreeTorrBot.BotTelegram
         {
             return new[]
             {
-          new[]{InlineKeyboardButton.WithCallbackData("Выйти из режима ввода.", $"exitLoginPasswordOtherProfile") }
+          new[]{InlineKeyboardButton.WithCallbackData("Выйти из режима ввода.", $"exitFlagLoginPasswordOtherProfile") }
          
           };
         }

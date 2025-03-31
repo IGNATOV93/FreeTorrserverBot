@@ -709,7 +709,7 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"MainProfile"
             ,"BackProfilesUersTorrserver"
             ,"createNewProfile"
-            ,"exitLoginPasswordOtherProfile"
+            
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

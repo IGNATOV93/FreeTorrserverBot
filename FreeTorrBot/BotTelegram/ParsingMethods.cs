@@ -154,6 +154,8 @@ namespace AdTorrBot.BotTelegram
                 case "FlagServerArgsSettPubIPv6":
                     return "Вы вышли из режима ввода публичного IPv6. ✅";
 
+                case "LoginPasswordOtherProfile":
+                    return "Вы вышли из режима ввода логина/пароля Torrserver. ✅";
                 default:
                     return "Неизвестное поле. ✅";
             }
