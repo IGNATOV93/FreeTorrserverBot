@@ -7,6 +7,7 @@ using FreeTorrserverBot.Torrserver.ServerArgs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Newtonsoft.Json.Linq;
 using SQLitePCL;
 using System;
@@ -570,6 +571,39 @@ namespace AdTorrBot.BotTelegram.Db
         #endregion mainProfile
 
         #region OtherPfofiles
+        public static async Task<string> GetLastChangeUid()
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var s = await db.SettingsBot.FirstOrDefaultAsync(x => x.IdChat == adminChat);
+                if (s is null)
+                {
+                    return "";
+                }
+                else
+                {
+                    return s.LastChangeUid ?? "";
+                }
+               
+            });
+        }
+        public static async Task<bool> SetLastChangeUid(string uid)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var s = await db.SettingsBot.FirstOrDefaultAsync(x => x.IdChat == adminChat);
+                if(s is null)
+                {
+                    return false;
+                }
+                else
+                {
+                    s.LastChangeUid = uid;
+                    await db.SaveChangesAsync();
+                }
+                return true;
+            });
+        }
         public static async Task<bool> DeleteProfileOther(string uid)
         {
             return await SqlMethods.WithDbContextAsync(async db =>

@@ -14,6 +14,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Telegram.Bot.Types.ReplyMarkups;
 using AdTorrBot.ServerManagement;
 using AdTorrBot.BotTelegram.Db.Model;
+using FreeTorrserverBot.Torrserver;
 
 namespace AdTorrBot.BotTelegram.Handler
 {
@@ -40,6 +41,50 @@ namespace AdTorrBot.BotTelegram.Handler
             // Обработка в зависимости от последнего активного флага
             switch (lastTextFlagTrue)
             {
+                #region OtherProfile
+                case "FlagLoginPasswordOtherProfile":
+                    Console.WriteLine("Обработка TextFlagLoginPasswordOtherProfile");
+                    if (!string.IsNullOrWhiteSpace(text) && text.Contains(":") &&
+                         text.Split(":").Length == 2 &&
+                         InputTextValidator.ValidateLoginAndPassword(text.Split(":")[0]) &&
+                         InputTextValidator.ValidateLoginAndPassword(text.Split(":")[1]))
+                    {
+                        var login = text.Split(":")[0];
+                        var password = text.Split(":")[1];
+                        Console.WriteLine($"Логин: {login}, Пароль: {password}");
+                        var uid = await SqlMethods.GetLastChangeUid();
+                        var p = await SqlMethods.GetProfileUser(null, uid);
+                            p.Login = login;
+                            p.Password = password;
+                        await SqlMethods.EddingProfileUser(p);
+                        await Torrserver.DeleteProfileByLogin(p.Login);
+                        await SqlMethods.SwitchOffInputFlag();
+                        //СДЕЛАТЬ СМЕНУ ЛОГИНА ПАРОЛЯ ЕЩЕ В САМОМ ФАЙЛЕ 
+                        Console.WriteLine("Смена логина/пароля выполнена.");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Вы покинули режим ввода логина/пароля." +
+                            $"Новый логин ➡️ {login} установлен ✅\r\n" +
+                            $"Новый пароль ➡️ {password} установлен ✅\r\n" +
+                            $"Для профиля :\r\n" +
+                            $"/edit_profile_{uid.Replace("-","_")}\r\n" +
+                            $"Изменения вступят после перезапуска Torrserver !",
+                            replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Смена логина/пароля не удалась.");
+                       
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Вы в режиме ввода логина/пароля.\n" +
+                            "Напишите желаемый логин/пароль.\n" +
+                            "⚠️ Логин/пароль может содержать только английские буквы и цифры.\r\n" +
+                            " Ограничение: 20 символов на логин.\r\n" +
+                            " Ограничение: 20 символов на пароль.\r\n" +
+                            "между логином и паролем должен быть знак двоеточия :",
+                            replyMarkup: KeyboardManager.ExitEditLoginPasswordOtherProfile());
+                    }
+                    break;
+                #endregion OtherProfile
                 #region User
                 case "FlagLogin":
                     Console.WriteLine("Обработка TextInputFlagLogin");

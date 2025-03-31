@@ -349,6 +349,14 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
                 #endregion Настройки бота
                 #region Управление пользователями(torrserver)
+                if(callbackData== "exitLoginPasswordOtherProfile")
+                {
+                    await SqlMethods.SwitchOffInputFlag();
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                "Вы вышли из режима ввода логина/пароля "
+                , replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
                 if (callbackData.Contains("delOther"))
                 {
                     var uid = callbackData.Split("delOther")[1];
@@ -401,6 +409,8 @@ namespace AdTorrBot.BotTelegram.Handler
                 {
                     var uid = callbackData.Split("mainLogPassOth")[1];
                     var p = await SqlMethods.GetProfileUser(null, uid);
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagLoginPasswordOtherProfile",true);
+                    await SqlMethods.SetLastChangeUid(uid);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
                      "Смена логина/пароля профиля ↙\r\n" +
                      $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
@@ -412,7 +422,7 @@ namespace AdTorrBot.BotTelegram.Handler
                      $" Пример \u2199\r\n" +
                      $"ivanpetrov:j4jjkj4o4i433\r\n" +
                      $"\u2139 слева логин(max 20 симв.) : справа пароль(max 20 симв.)" 
-                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                     , replyMarkup: KeyboardManager.ExitEditLoginPasswordOtherProfile());
                     return;
                 }
                 if (callbackData == "BackProfilesUersTorrserver")
@@ -699,6 +709,7 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"MainProfile"
             ,"BackProfilesUersTorrserver"
             ,"createNewProfile"
+            ,"exitLoginPasswordOtherProfile"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

@@ -99,9 +99,9 @@ namespace AdTorrBot.BotTelegram
         public static bool ValidateLoginAndPassword(string login)
         {
             // Проверка длины строки
-            if (login.Length > 10)
+            if (login.Length > 20)
             {
-                Console.WriteLine("Login/password не может быть длиннее 10 символов.");
+                Console.WriteLine("Login/password не может быть длиннее 20 символов.");
                 return false;  
                     ;
             }

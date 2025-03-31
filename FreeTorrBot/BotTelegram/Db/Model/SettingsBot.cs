@@ -17,6 +17,8 @@ namespace AdTorrBot.BotTelegram.Db.Model
 
         public double TimeZoneOffset { get; set; } = 3.0; // UTC+3 для Москвы
 
+        public  string? LastChangeUid { get; set; }
+
         // Метод для изменения часового пояса
         public void ChangeTimeZone(string direction)
         {

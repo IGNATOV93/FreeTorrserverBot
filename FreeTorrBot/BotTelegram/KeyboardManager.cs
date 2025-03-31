@@ -601,7 +601,15 @@ namespace FreeTorrBot.BotTelegram
         }
         #endregion MainProfile
         #region OtherProfiles
-       
+
+        public static InlineKeyboardMarkup ExitEditLoginPasswordOtherProfile()
+        {
+            return new[]
+            {
+          new[]{InlineKeyboardButton.WithCallbackData("Выйти из режима ввода.", $"exitLoginPasswordOtherProfile") }
+         
+          };
+        }
         public static InlineKeyboardMarkup DeletePfofileOther(string uid)
         {
             return new[]
