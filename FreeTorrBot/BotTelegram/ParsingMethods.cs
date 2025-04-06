@@ -26,9 +26,10 @@ namespace AdTorrBot.BotTelegram
 
         public static  string FormatProfilesList(List<Profiles> profiles, int countActive,int countAll,int countSkip, string sort)
         {
-            int countInActive = Math.Max(0, countAll - countActive);
+            int countInActive = Math.Max(0, countAll - (countActive));
 
-            var result = $"📊 Профили: {countAll} (🟢{countActive-1}/🔴{countInActive})\r\n\r\n";
+            var result = $"📊 Профили: {countAll} (🟢{countActive}/🔴{countInActive})" +
+                $"\r\n\r\n";
             var countActual = countSkip;
             for (int i = 0; i < profiles.Count; i++)
             {

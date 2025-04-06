@@ -623,7 +623,7 @@ namespace AdTorrBot.BotTelegram.Db
             return await SqlMethods.WithDbContextAsync(async db =>
             {
                 // Обрабатываем записи, где IsEnabled явно true
-                var activeCount = await db.Profiles.CountAsync(p => p.IsEnabled == true);
+                var activeCount = await db.Profiles.CountAsync(p => p.IsEnabled == true)-1;
                 Console.WriteLine($"Активных пользователей: "+activeCount);
                 return (activeCount);
             });
@@ -641,11 +641,20 @@ namespace AdTorrBot.BotTelegram.Db
         //Берем пользователей
         public static async Task<List<Profiles>> GetAllProfilesUser(int skipCount, string sort)
         {
+            var MainLogin = Torrserver.TakeMainAccountTorrserver();
+            if (MainLogin != null)
+            {
+                MainLogin = Torrserver.ParseMainLoginFromTorrserverProfile(MainLogin);
+            }
             return await SqlMethods.WithDbContextAsync(async db =>
             {
-                IQueryable<Profiles> query = db.Profiles;
+                IQueryable<Profiles> query = db.Profiles ;
 
                 // Обработка вида сортировки
+                if(MainLogin != null)
+                {
+                  query= query.Where(x=>x.Login != MainLogin) ;
+                }
                 if (sort == "sort_active")
                 {
                     // Сначала пользователи с IsEnabled == true
@@ -672,33 +681,45 @@ namespace AdTorrBot.BotTelegram.Db
         }
 
         //Берем пользователя
-        public static async Task<Profiles> GetProfileUser(string? login=null,string? uniqueId = null)
+        public static async Task<Profiles?> GetProfileUser(string? login = null, string? uniqueId = null)
         {
-            if (login == null && uniqueId == null)
+            if (string.IsNullOrWhiteSpace(login) && string.IsNullOrWhiteSpace(uniqueId))
             {
                 throw new ArgumentException("Необходимо указать хотя бы один параметр: login или uniqueId.");
             }
+
             return await SqlMethods.WithDbContextAsync(async db =>
             {
+                Profiles? profile = null;
+
                 if (!string.IsNullOrEmpty(uniqueId))
                 {
-                    // Если передан uniqueId, ищем по нему как приоритетному параметру
-                    return await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId.ToString() == uniqueId.ToUpper());
+                    // Поиск по uniqueId
+                    profile = await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId.ToString().ToUpper() == uniqueId.ToUpper());
                 }
-
-                if (!string.IsNullOrEmpty(login))
+                else if (!string.IsNullOrEmpty(login))
                 {
-                    // Если uniqueId отсутствует, ищем по логину
-                    return await db.Profiles.FirstOrDefaultAsync(p => p.Login == login);
+                    // Поиск по логину
+                    profile = await db.Profiles.FirstOrDefaultAsync(p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase));
                 }
 
-                return null;
-            });
+                if (profile == null)
+                {
+                    Console.WriteLine("Профиль не найден");
+                }
+                else
+                {
+                    Console.WriteLine($"Профиль найден: {profile}");
+                }
 
+                return profile;
+            });
         }
+
         //Редактирование профиля пользователя
         public static async Task<bool> EddingProfileUser(Profiles profile)
         {
+            Console.WriteLine($"Пришел другой профиль на редактирование: \r\n{profile.ToString()}");
             return await SqlMethods.WithDbContextAsync(async db =>
             {
                 var profileUser = await db.Profiles.FirstOrDefaultAsync(p => p.UniqueId == profile.UniqueId);
@@ -746,6 +767,7 @@ namespace AdTorrBot.BotTelegram.Db
         //Обновляем профили в бд,например когда нам надо сверить данные с конфига
         public static async Task<bool> UpdateOrAddProfilesAsync(List<Profiles> profiles)
         {
+            
             return await SqlMethods.WithDbContextAsync(async db =>
             {
                 // Логины из актуального списка
@@ -758,13 +780,41 @@ namespace AdTorrBot.BotTelegram.Db
 
                     if (existingProfile != null)
                     {
-                        // Обновляем существующего пользователя
-                        existingProfile.Password = profile.Password;
-                        existingProfile.AccessEndDate = profile.AccessEndDate;
-                        existingProfile.IsEnabled = profile.IsEnabled;
-                        existingProfile.AdminComment = profile.AdminComment;
-                        existingProfile.UpdatedAt = DateTime.UtcNow; // Обновляем дату изменения
+                        
+                        bool isUpdated = false;
+
+                        // Проверяем и обновляем только изменившиеся поля
+                        if (existingProfile.Password != profile.Password)
+                        {
+                            existingProfile.Password = profile.Password;
+                            isUpdated = true;
+                        }
+
+                        if (existingProfile.AccessEndDate != profile.AccessEndDate)
+                        {
+                            existingProfile.AccessEndDate = profile.AccessEndDate;
+                            isUpdated = true;
+                        }
+
+                        if (existingProfile.IsEnabled != profile.IsEnabled)
+                        {
+                            existingProfile.IsEnabled = profile.IsEnabled;
+                            isUpdated = true;
+                        }
+
+                        if (existingProfile.AdminComment != profile.AdminComment)
+                        {
+                            existingProfile.AdminComment = profile.AdminComment;
+                            isUpdated = true;
+                        }
+
+                        // Обновляем только дату изменения, если были изменения в других полях
+                        if (isUpdated)
+                        {
+                            existingProfile.UpdatedAt = DateTime.UtcNow;
+                        }
                     }
+
                     else
                     {
                         // Добавляем нового пользователя
@@ -781,8 +831,7 @@ namespace AdTorrBot.BotTelegram.Db
                 // Помечаем их как отключённых
                 foreach (var profile in profilesToDisable)
                 {
-                    profile.IsEnabled = false; // Помечаем как отключён
-                    profile.AccessEndDate = DateTime.UtcNow; // Устанавливаем текущую дату как дату окончания
+                    profile.IsEnabled = false; // Помечаем как отключёнprofile.AccessEndDate = DateTime.UtcNow;
                     profile.UpdatedAt = DateTime.UtcNow; // Обновляем дату изменения
                 }
 

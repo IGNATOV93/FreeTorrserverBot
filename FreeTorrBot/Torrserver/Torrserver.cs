@@ -144,6 +144,24 @@ namespace FreeTorrserverBot.Torrserver
 
             Process.Start(startProcess);
         }
+        public static string? ParseMainLoginFromTorrserverProfile(string? profileString)
+        {
+            // Проверяем строку на пустоту и наличие разделителя
+            if (!string.IsNullOrWhiteSpace(profileString) && profileString.Contains(":"))
+            {
+                // Разделяем строку по символу ':'
+                string[] parts = profileString.Split(':');
+
+                // Убедимся, что обе части строки содержат значения
+                if (parts.Length == 2 && !string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1]))
+                {
+                    return parts[0]; // Возвращаем левую часть строки как логин
+                }
+            }
+
+            // Если строка не соответствует формату или пустая
+            return null;
+        }
 
         public static string TakeMainAccountTorrserver()
         {

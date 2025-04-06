@@ -62,7 +62,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         //СДЕЛАТЬ СМЕНУ ЛОГИНА ПАРОЛЯ ЕЩЕ В САМОМ ФАЙЛЕ 
                         Console.WriteLine("Смена логина/пароля выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,
-                            $"Вы покинули режим ввода логина/пароля." +
+                            $"Вы покинули режим ввода логина/пароля.\r\n" +
                             $"Новый логин ➡️ {login} установлен ✅\r\n" +
                             $"Новый пароль ➡️ {password} установлен ✅\r\n" +
                             $"Для профиля :\r\n" +

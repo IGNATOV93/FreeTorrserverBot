@@ -669,13 +669,15 @@ namespace FreeTorrBot.BotTelegram
             // Логика для кнопок "Назад" и "Далее"
             InlineKeyboardButton? buttonBack = null;
             InlineKeyboardButton? buttonNext = null;
+            int adjustedCount = nextCount;
             if (nextCount >5)
             {
                 // Если есть куда листать назад (сдвиг хотя бы на одну страницу)
-                buttonBack = InlineKeyboardButton.WithCallbackData("⬅️", $"{nextCount - 10}OtherProfiles{sort}");
+                adjustedCount -= (adjustedCount % 5 == 0) ? 10 : (5 + adjustedCount % 5); 
+                buttonBack = InlineKeyboardButton.WithCallbackData("⬅️", $"{adjustedCount}OtherProfiles{sort}");
             }
 
-            if (nextCount <= allCount)
+            if (nextCount<allCount)
             {
                 buttonNext = InlineKeyboardButton.WithCallbackData("➡️", $"{nextCount}OtherProfiles{sort}");
             }
