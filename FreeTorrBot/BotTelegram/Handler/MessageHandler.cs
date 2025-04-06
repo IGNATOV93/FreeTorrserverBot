@@ -436,8 +436,9 @@ namespace AdTorrBot.BotTelegram.Handler
                                           ? p.AccessEndDate.Value - DateTime.UtcNow
                                           : (TimeSpan?)null;
                         builder.AppendLine($"Управление доступом профиля ↙");
-                        builder.AppendLine($"👤 Логин:{p.Login}");
-                        builder.AppendLine($"⏳ Окончание доступа: {(p.AccessEndDate.HasValue ? p.AccessEndDate.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
+                    builder.AppendLine($"👤 {(p.AccessEndDate == null || p.AccessEndDate > DateTime.Now ? "🟢" : "🔴")} Логин: {p.Login}");
+
+                    builder.AppendLine($"⏳ Окончание доступа: {(p.AccessEndDate.HasValue ? p.AccessEndDate.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
                         if (remainingTime.HasValue && remainingTime.Value.TotalMilliseconds > 0)
                         {
                             builder.AppendLine($"🕒 Осталось: {remainingTime.Value.Days} суток {remainingTime.Value.Hours} часов");
