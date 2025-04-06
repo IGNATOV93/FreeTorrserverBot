@@ -85,6 +85,7 @@ namespace AdTorrBot.BotTelegram.Handler
             #endregion Обработка команд
             #region Обработка текстовых кнопок
             #region OtherProfile
+            
             if (text.Contains("/showlogpass_"))
             {
                 var lp= text.Split("/showlogpass_")[1]?.Replace("_",":");
@@ -349,6 +350,8 @@ namespace AdTorrBot.BotTelegram.Handler
                 }
                 #endregion Настройки бота
                 #region Управление пользователями(torrserver)
+
+                
                 if(callbackData== "exitLoginPasswordOtherProfile")
                 {
                     await SqlMethods.SwitchOffInputFlag();
@@ -384,6 +387,8 @@ namespace AdTorrBot.BotTelegram.Handler
                     var uid = callbackData.Split("mainNoteOth")[1];
                     var p = await SqlMethods.GetProfileUser(null,uid);
                     var note = p?.AdminComment ?? "заметка отсутствует";
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagNoteOtherProfile", true);
+                    await SqlMethods.SetLastChangeUid(uid);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
                      "Заметка профиля ↙\r\n" +
                       $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
@@ -391,18 +396,62 @@ namespace AdTorrBot.BotTelegram.Handler
                     $"\uD83D\uDCDD Заметка: {note}\r\n" +
                     $"\u270D Вы в режиме ввода заметки \u2757\r\n" +
                     $"Ограничение:300 символов."
-                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                     , replyMarkup: KeyboardManager.ExitEditNoteOtherPfofile());
                     return;
                 }
-                if (callbackData.Contains("mainAccessOth"))
+                if (callbackData.Contains("setAccOther"))
                 {
-                    var uid = callbackData.Split("mainAccessOth")[1];
-                    var p = await SqlMethods.GetProfileUser(null,uid);
-                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
-                     "Управление доступом профиля ↙\r\n" +
-                      $"\uD83D\uDC64 Логин:{p.Login} \r\n" +
-                     $"/edit_profile_{uid.Replace("-", "_")} \r\n"
-                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                      // Разделяем callbackData на части
+                        var parts = callbackData.Split("setAccOther");
+                        var uid = parts[1];
+                        var p = await SqlMethods.GetProfileUser(null, uid);
+                    // Проверяем, что слева и справа от "setAccOther" есть данные
+                    if (!string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                    {
+                        var dayAccess = Convert.ToInt32(parts[0]); // Значение слева
+                        if (dayAccess == 0)
+                        {
+                            // Если указано 0 дней, устанавливаем сегодняшнюю дату и время
+                            p.AccessEndDate = DateTime.UtcNow;
+                        }
+                        else
+                        {
+                            if (p.AccessEndDate.HasValue)
+                            {
+                                // Прибавляем дни, если AccessEndDate не null
+                                p.AccessEndDate = p.AccessEndDate.Value.AddDays(dayAccess);
+                            }
+                            else
+                            {
+                                // Если AccessEndDate равно null, устанавливаем новую дату
+                                p.AccessEndDate = DateTime.UtcNow.AddDays(dayAccess);
+                            }
+                        }
+                        await SqlMethods.EddingProfileUser(p);
+                    }
+
+                    //Если слева Null это первый запуск просто .
+                    var builder = new StringBuilder();
+                        var remainingTime = p.AccessEndDate.HasValue
+                                          ? p.AccessEndDate.Value - DateTime.UtcNow
+                                          : (TimeSpan?)null;
+                        builder.AppendLine($"Управление доступом профиля ↙");
+                        builder.AppendLine($"👤 Логин:{p.Login}");
+                        builder.AppendLine($"⏳ Окончание доступа: {(p.AccessEndDate.HasValue ? p.AccessEndDate.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано")}");
+                        if (remainingTime.HasValue && remainingTime.Value.TotalMilliseconds > 0)
+                        {
+                            builder.AppendLine($"🕒 Осталось: {remainingTime.Value.Days} суток {remainingTime.Value.Hours} часов");
+                        }
+                        else
+                        {
+                            builder.AppendLine($"🕒 Осталось: Не задано или доступ истёк");
+                        }
+                        builder.AppendLine($"/edit_profile_{uid.Replace("-", "_")}");
+                    builder.AppendLine($"После изменений,требуется перезагрузка Torrserver.");
+                        await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                          builder.ToString()
+                       , replyMarkup: KeyboardManager.GetAccessControlOther(uid));
+                    
                     return;
                 }
                 if (callbackData.Contains("mainLogPassOth"))
@@ -786,6 +835,10 @@ namespace AdTorrBot.BotTelegram.Handler
                 return true;
             }
             if (command.Contains("delOther"))
+            {
+                return true;
+            }
+            if (command.Contains(""))
             {
                 return true;
             }

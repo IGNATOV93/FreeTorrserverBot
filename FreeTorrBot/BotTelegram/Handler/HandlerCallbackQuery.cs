@@ -15,6 +15,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using AdTorrBot.ServerManagement;
 using AdTorrBot.BotTelegram.Db.Model;
 using FreeTorrserverBot.Torrserver;
+using System.Security.Cryptography;
 
 namespace AdTorrBot.BotTelegram.Handler
 {
@@ -42,6 +43,41 @@ namespace AdTorrBot.BotTelegram.Handler
             switch (lastTextFlagTrue)
             {
                 #region OtherProfile
+                case "FlagNoteOtherProfile":
+                    Console.WriteLine("Обработка FlagNoteOtherProfile");
+                    if (text?.Length > 300)
+                    {
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            $"Ограничение 300 символов ! \r\n" +
+                            $"У вас: {text.Length} .",
+                            replyMarkup: KeyboardManager.ExitEditNoteOtherPfofile());
+                    }
+                    else
+                    {
+                        var lastUid = await SqlMethods.GetLastChangeUid();
+                        if(!string.IsNullOrEmpty(lastUid))
+                        {
+                            var profile = await SqlMethods.GetProfileUser(null,lastUid);
+                            if(profile is not null)
+                            {
+                                profile.AdminComment = text;
+                                await SqlMethods.EddingProfileUser(profile);
+                                await SqlMethods.SwitchOffInputFlag();
+                                await botClient.SendTextMessageAsync(AdminChat,
+                                $"Заметка сохранена.\u2705" +
+                                $"Для профиля:\u2199" +
+                                $"/edit_profile_{lastUid.Replace("-","_")}",
+                                replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                            }
+                        }
+                        else
+                        {
+                            await botClient.SendTextMessageAsync(AdminChat,
+                                $"Не удалось сохранить данные (.",
+                                replyMarkup: KeyboardManager.ExitEditNoteOtherPfofile());
+                        }
+                    }
+                    break;
                 case "FlagLoginPasswordOtherProfile":
                     Console.WriteLine("Обработка TextFlagLoginPasswordOtherProfile");
                     if (!string.IsNullOrWhiteSpace(text) && text.Contains(":") &&
@@ -59,7 +95,7 @@ namespace AdTorrBot.BotTelegram.Handler
                         await SqlMethods.EddingProfileUser(p);
                         await Torrserver.DeleteProfileByLogin(p.Login);
                         await SqlMethods.SwitchOffInputFlag();
-                        //СДЕЛАТЬ СМЕНУ ЛОГИНА ПАРОЛЯ ЕЩЕ В САМОМ ФАЙЛЕ 
+                        
                         Console.WriteLine("Смена логина/пароля выполнена.");
                         await botClient.SendTextMessageAsync(AdminChat,
                             $"Вы покинули режим ввода логина/пароля.\r\n" +

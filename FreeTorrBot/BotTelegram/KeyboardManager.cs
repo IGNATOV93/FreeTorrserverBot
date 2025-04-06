@@ -601,7 +601,47 @@ namespace FreeTorrBot.BotTelegram
         }
         #endregion MainProfile
         #region OtherProfiles
+        public static InlineKeyboardMarkup GetAccessControlOther(string uid)
+        {
+            return new InlineKeyboardMarkup(new[]
+            {
+        // 1 ряд: Навсегда/Отключить
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("Навсегда", $"9999setAccOther{uid}"),
+            InlineKeyboardButton.WithCallbackData("Отключить", $"0setAccOther{uid}")
+        },
+        // 2 ряд: +1 / -1 день
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("+1 день", $"1setAccOther{uid}"),
+            InlineKeyboardButton.WithCallbackData("-1 день", $"-1setAccOther{uid}")
+        },
+        // 3 ряд: +7 / -7 дней
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("+7 дней", $"7setAccOther{uid}"),
+            InlineKeyboardButton.WithCallbackData("-7 дней", $"-7setAccOther{uid}")
+        },
+        // 4 ряд: +30 / -30 дней
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("+30 дней", $"30setAccOther{uid}"),
+            InlineKeyboardButton.WithCallbackData("-30 дней", $"-30setAccOther{uid}")
+        }
+         });
+        }
 
+        public static InlineKeyboardMarkup ExitEditNoteOtherPfofile()
+        {
+            return new[]
+    {
+          new[]{InlineKeyboardButton.WithCallbackData("Выйти из режима ввода.", $"exitFlagNoteOtherProfile")
+                ,buttonHideButtots
+                }
+
+          };
+        }
         public static InlineKeyboardMarkup ExitEditLoginPasswordOtherProfile()
         {
             return new[]
@@ -623,7 +663,7 @@ namespace FreeTorrBot.BotTelegram
             return new[]
                 {
           new[]{InlineKeyboardButton.WithCallbackData("🔑 Логин/Пароль", $"mainLogPassOth{uid}")}
-         ,new[]{InlineKeyboardButton.WithCallbackData("🔒 Доступ", $"mainAccessOth{uid}")}
+         ,new[]{InlineKeyboardButton.WithCallbackData("🔒 Доступ", $"setAccOther{uid}")}
          ,new[]{InlineKeyboardButton.WithCallbackData("📝 Заметка", $"mainNoteOth{uid}")}
          ,new[] {InlineKeyboardButton.WithCallbackData("⚠️ Удалить профиль", $"mainDeleOth{uid}")}
          ,new[]{buttonHideButtots}

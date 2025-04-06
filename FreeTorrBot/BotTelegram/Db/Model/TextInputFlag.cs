@@ -99,9 +99,12 @@ namespace AdTorrBot.BotTelegram.Db.Model
 
         [Description("Ввод: Публичный IPv6")]
         public bool FlagServerArgsSettPubIPv6 { get; set; } = false;
+
         [Description("Ввод: Логин/Пароль профиля.")]
         public bool FlagLoginPasswordOtherProfile { get; set; } = false;
 
+        [Description("Ввод: Заметка пользователя.")]
+        public bool FlagNoteOtherProfile { get; set; } = false;
         public bool CheckAllBooleanFlags()
         {
             var boolProperties = GetType()

@@ -75,6 +75,8 @@ namespace AdTorrBot.BotTelegram
             // Используем switch или if для определения сообщения в зависимости от поля
             switch (field)
             {
+                case "FlagNoteOtherProfile":
+                    return "Вы вышли из режима ввода заметки .";
                 case "FlagLogin":
                     return "Вы вышли из режима ввода логина Torrserver. ✅";
 
