@@ -517,10 +517,10 @@ namespace AdTorrBot.BotTelegram.Handler
                             }
                             else
                             {
-                                result = "Список профилей пуст или ошибка получения данных.";
+                                result = "Список профилей пуст";
                             }
                         }
-
+                        Console.WriteLine($"Обновляемое сообщение: {result}");
                         // Формируем клавиатуру
                         var keyboard = KeyboardManager.GetControlOtherProfilesTorrserver(nextCount, countAllProfiles, sort);
 
@@ -624,7 +624,7 @@ namespace AdTorrBot.BotTelegram.Handler
                     await botClient.EditMessageTextAsync(AdminChat, idMessage
                                                              , $"{passw}"
                                                              , replyMarkup: KeyboardManager.GetNewLoginPasswordMain());
-                    Console.WriteLine($"Запрос на просмотр логина:пароля удачен.");
+                    Console.WriteLine($"Запрос на просмотр логина:({passw}).");
                     return;
                 }
 

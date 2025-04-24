@@ -623,9 +623,9 @@ namespace AdTorrBot.BotTelegram.Db
             return await SqlMethods.WithDbContextAsync(async db =>
             {
                 // Обрабатываем записи, где IsEnabled явно true
-                var activeCount = await db.Profiles.CountAsync(p => p.IsEnabled == true)-1;
+                var activeCount = await db.Profiles.CountAsync(p => p.IsEnabled == true);
                 Console.WriteLine($"Активных пользователей: "+activeCount);
-                return (activeCount);
+                return (activeCount<0? 0:activeCount);
             });
         }
 
@@ -634,7 +634,8 @@ namespace AdTorrBot.BotTelegram.Db
         {
             return await SqlMethods.WithDbContextAsync(async db =>
             {
-                return await db.Profiles.CountAsync()-1;
+                int count = await db.Profiles.CountAsync();
+                return Math.Max(count, 0); 
             });
         }
 

@@ -167,25 +167,26 @@ namespace FreeTorrserverBot.Torrserver
         {
             try
             {
+                // Попытка открытия файла
                 using (StreamReader reader = new StreamReader(filePathTorrserverDb))
                 {
-                    // Считываем весь файл как одну строку
-                    string content = reader.ReadToEnd().Trim();
+                    // Чтение и предварительная очистка содержимого файла
+                    string content = reader.ReadToEnd().Trim().Replace("\r", "").Replace("\n", "").Replace(" ", "");
 
                     if (content.StartsWith("{") && content.EndsWith("}"))
                     {
-                        // Убираем внешние фигурные скобки
+                        // Удаляем внешние фигурные скобки
                         content = content.Substring(1, content.Length - 2);
 
-                        // Разбиваем строки по запятой
+                        // Разбиваем содержимое по запятой
                         var accounts = content.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                         if (accounts.Length > 0)
                         {
-                            // Берем первый аккаунт
+                            // Берем первую строку
                             string firstAccount = accounts[0].Trim();
 
-                            // Находим логин и пароль
+                            // Извлекаем логин и пароль
                             int keyStartIndex = firstAccount.IndexOf("\"") + 1;
                             int keyEndIndex = firstAccount.IndexOf("\":");
                             int valueStartIndex = firstAccount.IndexOf(":\"") + 2;
@@ -199,16 +200,22 @@ namespace FreeTorrserverBot.Torrserver
 
                                 return $"{login}:{password}";
                             }
+
+                            return "Ошибка извлечения логина или пароля."; // Краткое сообщение об ошибке
                         }
+
+                        return "Нет данных для обработки."; // Краткое сообщение об ошибке
                     }
+
+                    return "Некорректный формат файла."; // Краткое сообщение об ошибке
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка при чтении файла: {ex.Message}");
+                return $"Ошибка чтения файла: {ex.Message}"; // Краткое сообщение об ошибке
             }
-            return "Ошибка чтения."; // Возвращаем сообщение об ошибке
         }
+
         #endregion MainProfile
         #region OtherProfiles
         public static async Task<bool> DeleteProfileByLogin(string loginToDelete)
