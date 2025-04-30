@@ -778,19 +778,31 @@ namespace AdTorrBot.BotTelegram.Db
             {
                 if (isOther)
                 {
+                    // Получаем уникальный идентификатор текущего пользователя
                     var settings = await db.SettingsBot.FirstOrDefaultAsync();
                     var actFlagUidUser = settings?.LastChangeUid;
 
-                    // Возвращаем результат проверки
-                    return await db.Profiles.AnyAsync(p => p.Login == login && p.UniqueId.ToString() == actFlagUidUser);
+                    // Проверяем, существует ли другой пользователь с таким логином
+                    bool loginExistsForOthers = await db.Profiles
+                        .AnyAsync(p => p.Login == login && p.UniqueId.ToString() != actFlagUidUser);
+
+                    // Если логин уже используется другим, возвращаем false
+                    if (loginExistsForOthers)
+                    {
+                        return false;
+                    }
+
+                    // Логин может быть изменён текущим пользователем
+                    return true;
                 }
                 else
                 {
-                    // Возвращаем результат проверки
+                    // Если проверяем без связи с текущим пользователем, просто проверяем наличие логина
                     return await db.Profiles.AnyAsync(p => p.Login == login);
                 }
             });
         }
+
 
         //Просто создаем новые данные профиля в бд,а после уже работаем с ним 
         public static async Task CreateNewProfileUser(string login,string password)
