@@ -640,6 +640,14 @@ namespace AdTorrBot.BotTelegram.Db
         }
 
         //Берем пользователей
+
+        public static async Task<List<Profiles>> GetAllProfilesNoSkip()
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                return await db.Profiles.ToListAsync();
+            });
+        }
         public static async Task<List<Profiles>> GetAllProfilesUser(int skipCount, string sort)
         {
             var MainLogin = Torrserver.TakeMainAccountTorrserver();

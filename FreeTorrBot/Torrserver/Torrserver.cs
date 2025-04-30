@@ -11,6 +11,7 @@ using System.Text.Json;
 using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 
 namespace FreeTorrserverBot.Torrserver
@@ -67,6 +68,7 @@ namespace FreeTorrserverBot.Torrserver
 
             await SqlMethods.SetLoginPasswordSettingsTorrserverBot(newLogin, newPassword);
             string newAccount = $"\"{newLogin}\":\"{newPassword}\"";
+            Console.WriteLine(newAccount);
 
             try
             {
@@ -143,6 +145,7 @@ namespace FreeTorrserverBot.Torrserver
             };
 
             Process.Start(startProcess);
+          await  UpdateAllProfilesFromConfig();
         }
         public static string? ParseMainLoginFromTorrserverProfile(string? profileString)
         {
@@ -276,58 +279,133 @@ namespace FreeTorrserverBot.Torrserver
         {
             try
             {
-                using (StreamReader reader = new StreamReader(filePathTorrserverDb))
+                // Шаг 1: Получить все профили из базы данных
+                var allProfiles = await SqlMethods.GetAllProfilesNoSkip();
+                var activeProfiles = allProfiles.Where(profile => profile.IsEnabled).ToList();
+                var inactiveProfiles = allProfiles.Where(profile => !profile.IsEnabled).ToList();
+
+                // Шаг 2: Считать данные из конфигурационного файла
+                var profilesFromConfig = ReadProfilesFromConfig();
+
+                // Шаг 3: Удалить неактивные профили из конфигурационного файла
+                profilesFromConfig = profilesFromConfig
+                    .Where(configProfile => !inactiveProfiles.Any(inactive => inactive.Login == configProfile.Login))
+                    .ToList();
+
+                // Шаг 4: Добавить только активные профили в конфигурацию (если их там нет)
+                var uniqueLoginsConfig = new HashSet<string>(profilesFromConfig.Select(profile => profile.Login));
+                var profilesToAddToConfig = activeProfiles
+                    .Where(activeProfile => !uniqueLoginsConfig.Contains(activeProfile.Login))
+                    .ToList();
+
+                if (profilesToAddToConfig.Any())
                 {
-                    // Считываем весь файл как одну строку
-                    string content = reader.ReadToEnd().Trim();
-
-                    if (content.StartsWith("{") && content.EndsWith("}"))
-                    {
-                        // Убираем внешние фигурные скобки
-                        content = content.Substring(1, content.Length - 2);
-
-                        // Разбиваем строки по запятой
-                        var accounts = content.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        var profiles = new List<Profiles>();
-                        var uniqueLogins = new HashSet<string>(); // Для отслеживания уникальных логинов
-                        foreach (var account in accounts)
-                        {
-                            int keyStartIndex = account.IndexOf("\"") + 1;
-                            int keyEndIndex = account.IndexOf("\":");
-                            int valueStartIndex = account.IndexOf(":\"") + 2;
-                            int valueEndIndex = account.LastIndexOf("\"");
-
-                            if (keyStartIndex >= 0 && keyEndIndex > keyStartIndex &&
-                                valueStartIndex > keyEndIndex && valueEndIndex > valueStartIndex)
-                            {
-                                string login = account.Substring(keyStartIndex, keyEndIndex - keyStartIndex);
-                                string password = account.Substring(valueStartIndex, valueEndIndex - valueStartIndex);
-
-                                // Проверяем, есть ли уже такой логин
-                                if (!uniqueLogins.Contains(login))
-                                {
-                                    uniqueLogins.Add(login); // Добавляем логин в уникальные
-                                    profiles.Add(new Profiles
-                                    {
-                                        Login = login,
-                                        Password = password,
-                                        IsEnabled = true,
-                                        UpdatedAt = DateTime.UtcNow
-                                    });
-                                }
-                            }
-                        }
-                        
-                        return await SqlMethods.UpdateOrAddProfilesAsync(profiles);
-                    }
+                    profilesFromConfig.AddRange(profilesToAddToConfig);
                 }
+
+                // Шаг 5: Записать обновлённые данные в конфигурационный файл
+                await WriteAllProfilesToConfig(profilesFromConfig);
+
+                // Шаг 6: Обновить базу данными из конфигурации (при необходимости)
+                var uniqueLoginsDb = new HashSet<string>(allProfiles.Select(profile => profile.Login));
+                var profilesToAddToDb = profilesFromConfig
+                    .Where(configProfile => !uniqueLoginsDb.Contains(configProfile.Login))
+                    .ToList();
+
+                if (profilesToAddToDb.Any())
+                {
+                    await SqlMethods.UpdateOrAddProfilesAsync(profilesToAddToDb);
+                }
+
+                return true; // Синхронизация успешно завершена
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка при обработке профилей: {ex.Message}");
+                return false;
+            }
+        }
+
+
+
+        public static  List<Profiles> ReadProfilesFromConfig()
+        {
+            var profiles = new List<Profiles>();
+            using (StreamReader reader = new StreamReader(filePathTorrserverDb))
+            {
+                // Считываем весь файл как одну строку
+                string content = reader.ReadToEnd().Trim();
+
+                if (content.StartsWith("{") && content.EndsWith("}"))
+                {
+                    // Убираем внешние фигурные скобки
+                    content = content.Substring(1, content.Length - 2);
+
+                    // Разбиваем строки по запятой
+                    var accounts = content.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                   
+                    var uniqueLogins = new HashSet<string>(); // Для отслеживания уникальных логинов
+                    foreach (var account in accounts)
+                    {
+                        int keyStartIndex = account.IndexOf("\"") + 1;
+                        int keyEndIndex = account.IndexOf("\":");
+                        int valueStartIndex = account.IndexOf(":\"") + 2;
+                        int valueEndIndex = account.LastIndexOf("\"");
+
+                        if (keyStartIndex >= 0 && keyEndIndex > keyStartIndex &&
+                            valueStartIndex > keyEndIndex && valueEndIndex > valueStartIndex)
+                        {
+                            string login = account.Substring(keyStartIndex, keyEndIndex - keyStartIndex);
+                            string password = account.Substring(valueStartIndex, valueEndIndex - valueStartIndex);
+
+                            // Проверяем, есть ли уже такой логин
+                            if (!uniqueLogins.Contains(login))
+                            {
+                                uniqueLogins.Add(login); // Добавляем логин в уникальные
+                                profiles.Add(new Profiles
+                                {
+                                    Login = login,
+                                    Password = password,
+                                    IsEnabled = true,
+                                    UpdatedAt = DateTime.UtcNow
+                                });
+                            }
+                        }
+                    }
+                    return profiles;
+                  
+                }
+            }
+            return profiles;
+        }
+        public static async Task<bool> WriteAllProfilesToConfig(List<Profiles> profiles)
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePathTorrserverDb))
+                {
+                    // Формируем список строк в формате "логин:пароль"
+                    var formattedProfiles = new List<string>();
+                    foreach (var profile in profiles)
+                    {
+                        formattedProfiles.Add($"\"{profile.Login}\":\"{profile.Password}\"");
+                    }
+
+                    // Оборачиваем в фигурные скобки для сохранения структуры
+                    string content = $"{{{string.Join(",", formattedProfiles)}}}";
+
+                    // Записываем все данные в файл
+                    await writer.WriteAsync(content);
+                }
+
+                return true; // Запись успешно выполнена
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при записи профилей в конфигурационный файл: {ex.Message}");
             }
 
-            return false;
+            return false; // В случае ошибки
         }
 
         #endregion OtherProfiles

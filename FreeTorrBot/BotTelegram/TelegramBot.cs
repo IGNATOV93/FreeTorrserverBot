@@ -76,7 +76,7 @@ namespace FreeTorrserverBot.BotTelegram
             var statrBotTask = Task.Run(() => client.StartReceiving(Update, Error));
             // Ждем небольшую паузу, чтобы бот успел инициализироваться
             await Task.Delay(1000); // Настройте время ожидания по необходимости
-            
+            await Torrserver.Torrserver.UpdateAllProfilesFromConfig();
             // Отправляем сообщение админу
             await SendMessageToAdmin("Бот успешно стартовал!");
 

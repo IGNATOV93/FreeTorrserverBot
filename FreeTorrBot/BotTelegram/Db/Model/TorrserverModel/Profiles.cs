@@ -26,7 +26,20 @@ namespace AdTorrBot.BotTelegram.Db.Model.TorrserverModel
 
         public DateTime? AccessEndDate { get; set; }
 
-        public bool IsEnabled { get; set; } = true;
+        private bool isEnabled;
+        public bool IsEnabled
+        {
+            get => isEnabled;
+            set
+            {
+                isEnabled = value;
+                // Логика обновления на основе AccessEndDate (можно убрать, если ручное управление приоритетно)
+                if (AccessEndDate != null && AccessEndDate <= DateTime.Now)
+                {
+                    isEnabled = false;
+                }
+            }
+        }
 
         public override string ToString()
         {

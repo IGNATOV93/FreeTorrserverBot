@@ -20,7 +20,7 @@ namespace AdTorrBot.BotTelegram.Db.Model
         public string? idChat { get; set; }
 
         public string? Login { get; set; } = "adTorrBot";
-        public string? Password { get; set; }
+        public string? Password { get; set; } 
         public bool IsActiveAutoChange { get; set; } = false;
         public string TimeAutoChangePassword { get; set; } = "20:00";
         // Переопределение метода ToString()

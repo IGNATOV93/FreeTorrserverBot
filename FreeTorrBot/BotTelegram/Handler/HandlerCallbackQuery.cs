@@ -90,10 +90,10 @@ namespace AdTorrBot.BotTelegram.Handler
                         Console.WriteLine($"Логин: {login}, Пароль: {password}");
                         var uid = await SqlMethods.GetLastChangeUid();
                         var p = await SqlMethods.GetProfileUser(null, uid);
-                            p.Login = login;
-                            p.Password = password;
-                        await SqlMethods.EddingProfileUser(p);
                         await Torrserver.DeleteProfileByLogin(p.Login);
+                        p.Login = login;
+                        p.Password = password;
+                        await SqlMethods.EddingProfileUser(p);
                         await SqlMethods.SwitchOffInputFlag();
                         
                         Console.WriteLine("Смена логина/пароля выполнена.");
