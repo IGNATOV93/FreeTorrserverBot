@@ -569,6 +569,14 @@ namespace AdTorrBot.BotTelegram.Db
             return await func(db);
         }
         #endregion mainProfile
+        public async Task<bool> IsHaveLogin(string login)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var profile = await db.Profiles.FirstOrDefaultAsync(predicate => predicate.Login == login);
+                return profile != null; // Возвращаем true, если запись существует
+            });
+        }
 
         #region OtherPfofiles
         public static async Task<string> GetLastChangeUid()
@@ -622,8 +630,9 @@ namespace AdTorrBot.BotTelegram.Db
         {
             return await SqlMethods.WithDbContextAsync(async db =>
             {
+               await SqlMethods.UpdateIsActiveProfiles();
                 // Обрабатываем записи, где IsEnabled явно true
-                var activeCount = await db.Profiles.CountAsync(p => p.IsEnabled == true);
+                var activeCount = await db.Profiles.CountAsync(p => p.IsEnabled == true)-1;
                 Console.WriteLine($"Активных пользователей: "+activeCount);
                 return (activeCount<0? 0:activeCount);
             });
@@ -634,13 +643,28 @@ namespace AdTorrBot.BotTelegram.Db
         {
             return await SqlMethods.WithDbContextAsync(async db =>
             {
-                int count = await db.Profiles.CountAsync();
+                await SqlMethods.UpdateIsActiveProfiles();
+                int count = await db.Profiles.CountAsync()-1;
                 return Math.Max(count, 0); 
             });
         }
 
         //Берем пользователей
+        public static async Task<bool> UpdateIsActiveProfiles()
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var profiles = await db.Profiles.ToListAsync();
 
+                foreach (var profile in profiles)
+                {
+                    profile.IsEnabled = profile.AccessEndDate == null || profile.AccessEndDate > DateTime.Now;
+                }
+
+                await db.SaveChangesAsync();
+                return true;
+            });
+        }
         public static async Task<List<Profiles>> GetAllProfilesNoSkip()
         {
             return await SqlMethods.WithDbContextAsync(async db =>
@@ -748,16 +772,26 @@ namespace AdTorrBot.BotTelegram.Db
             });
         }
         //Проверка на существование логина в бд
-        public static async Task<bool> IsHaveLoginProfileUser(string login)
+        public static async Task<bool> IsHaveLoginProfileUser(string login, bool isOther)
         {
-            await SqlMethods.WithDbContextAsync(async db =>
+            return await SqlMethods.WithDbContextAsync(async db =>
             {
-                bool loginExists = await db.Profiles.AnyAsync(p => p.Login == login);
-                return loginExists;
+                if (isOther)
+                {
+                    var settings = await db.SettingsBot.FirstOrDefaultAsync();
+                    var actFlagUidUser = settings?.LastChangeUid;
 
+                    // Возвращаем результат проверки
+                    return await db.Profiles.AnyAsync(p => p.Login == login && p.UniqueId.ToString() == actFlagUidUser);
+                }
+                else
+                {
+                    // Возвращаем результат проверки
+                    return await db.Profiles.AnyAsync(p => p.Login == login);
+                }
             });
-            return false;
         }
+
         //Просто создаем новые данные профиля в бд,а после уже работаем с ним 
         public static async Task CreateNewProfileUser(string login,string password)
         {

@@ -220,6 +220,7 @@ namespace FreeTorrserverBot.Torrserver
         }
 
         #endregion MainProfile
+
         #region OtherProfiles
         public static async Task<bool> DeleteProfileByLogin(string loginToDelete)
         {
@@ -316,7 +317,7 @@ namespace FreeTorrserverBot.Torrserver
                 {
                     await SqlMethods.UpdateOrAddProfilesAsync(profilesToAddToDb);
                 }
-
+                await SqlMethods.UpdateIsActiveProfiles();
                 return true; // Синхронизация успешно завершена
             }
             catch (Exception ex)

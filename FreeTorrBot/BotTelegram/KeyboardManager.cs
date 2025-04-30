@@ -628,7 +628,12 @@ namespace FreeTorrBot.BotTelegram
         {
             InlineKeyboardButton.WithCallbackData("+30 дней", $"30setAccOther{uid}"),
             InlineKeyboardButton.WithCallbackData("-30 дней", $"-30setAccOther{uid}")
+        },
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("❌", $"deletemessages")
         }
+
          });
         }
 

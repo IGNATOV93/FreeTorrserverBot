@@ -88,6 +88,19 @@ namespace AdTorrBot.BotTelegram.Handler
                         var login = text.Split(":")[0];
                         var password = text.Split(":")[1];
                         Console.WriteLine($"Логин: {login}, Пароль: {password}");
+                        if (!await SqlMethods.IsHaveLoginProfileUser(login,true)){
+                            Console.WriteLine($"Смена логина/пароля не удалась.\r\nЛогин [{login}] уже занят");
+
+                            await botClient.SendTextMessageAsync(AdminChat,
+                                "❗ Вы в режиме ввода логина/пароля.\n" +
+                                "Напишите желаемый логин/пароль.\n" +
+                                "⚠️ Логин/пароль может содержать только английские буквы и цифры.\r\n" +
+                                " Ограничение: 20 символов на логин.\r\n" +
+                                " Ограничение: 20 символов на пароль.\r\n" +
+                                "между логином и паролем должен быть знак двоеточия :",
+                                replyMarkup: KeyboardManager.ExitEditLoginPasswordOtherProfile());
+                            break;
+                        }
                         var uid = await SqlMethods.GetLastChangeUid();
                         var p = await SqlMethods.GetProfileUser(null, uid);
                         await Torrserver.DeleteProfileByLogin(p.Login);
@@ -124,6 +137,16 @@ namespace AdTorrBot.BotTelegram.Handler
                 #region User
                 case "FlagLogin":
                     Console.WriteLine("Обработка TextInputFlagLogin");
+                    if(!await SqlMethods.IsHaveLoginProfileUser(text,false))
+                    {
+                        Console.WriteLine($"Смена логина не удалась.\r\nЛогин [{text}] уже занят");
+                        await botClient.SendTextMessageAsync(AdminChat,
+                            "❗ Вы в режиме ввода логина.\n" +
+                            "Напишите желаемый логин.\n" +
+                            "⚠️ Логин может содержать только английские буквы и цифры. Ограничение: 10 символов.",
+                            replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("Login", 0));
+                        break;
+                    }
                     if (InputTextValidator.ValidateLoginAndPassword(text))
                     {
                         await FreeTorrserverBot.Torrserver.Torrserver.ChangeMainAccountTorrserver(text, "", true, false);
