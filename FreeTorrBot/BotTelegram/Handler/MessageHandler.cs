@@ -487,6 +487,8 @@ namespace AdTorrBot.BotTelegram.Handler
                 {
                     await SqlMethods.SwitchOffInputFlag();
                     var newProfile = await SqlMethods.CreateAuthoNewProfileOther();
+                    if(newProfile != null) 
+                    {
                     var uidNewProfile = newProfile.UniqueId.ToString();
                     var login = newProfile.Login;
                     var password = newProfile.Password;
@@ -497,6 +499,14 @@ namespace AdTorrBot.BotTelegram.Handler
                      $"/showlogpass_{login}_{password}\r\n" + 
                      $"/edit_profile_{uidNewProfile.Replace("-", "_")}"
                     , replyMarkup: KeyboardManager.buttonHideButtots);
+                        return;
+                     }
+                    else
+                    {
+                        await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                          $"Не удалось сгенерировать пользователя."
+                         , replyMarkup: KeyboardManager.buttonHideButtots);
+                    }
                     return;
                 }
                 if(callbackData == "createNewProfile")

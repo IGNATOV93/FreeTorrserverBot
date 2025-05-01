@@ -773,14 +773,19 @@ namespace AdTorrBot.BotTelegram.Db
         }
 
         //Создание нового профиля(пользователя) Torrserver
-        public static async Task<Profiles> CreateAuthoNewProfileOther()
+        public static async Task<Profiles?> CreateAuthoNewProfileOther()
         {
             return await SqlMethods.WithDbContextAsync(async db =>
             {
-                while (true)
+                int attempts = 0;
+                const int maxAttempts = 150; // Ограничение на количество попыток
+                while (attempts < maxAttempts)
                 {
                     var newlogin = InputTextValidator.CreateAutoNewLoginOrPassword();
-                    if (await IsHaveLoginProfileUser(newlogin, true) && (await IsHaveLoginProfileUser(newlogin, false)))
+
+                    // Проверяем, есть ли такой логин в базе
+                    bool loginExists = await db.Profiles.AnyAsync(p => p.Login == newlogin);
+                    if (!loginExists)
                     {
                         var password = InputTextValidator.CreateAutoNewLoginOrPassword();
                         var newProfile = new Profiles()
@@ -788,15 +793,21 @@ namespace AdTorrBot.BotTelegram.Db
                             Login = newlogin,
                             Password = password,
                             AccessEndDate = DateTime.UtcNow.AddDays(1),
-                            IsEnabled=true
+                            IsEnabled = true
                         };
-                       await db.Profiles.AddAsync(newProfile);
-                       await db.SaveChangesAsync();
+                        await db.Profiles.AddAsync(newProfile);
+                        await db.SaveChangesAsync();
                         return newProfile;
                     }
+
+                    attempts++; // Увеличиваем счётчик попыток
                 }
+
+                // Если не удалось создать профиль, просто возвращаем null
+                return null;
             });
         }
+
 
         //Проверка на существование логина в бд
         public static async Task<bool> IsHaveLoginProfileUser(string login, bool isOther)
