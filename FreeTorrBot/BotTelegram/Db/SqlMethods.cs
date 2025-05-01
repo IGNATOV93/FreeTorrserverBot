@@ -782,22 +782,28 @@ namespace AdTorrBot.BotTelegram.Db
                     var settings = await db.SettingsBot.FirstOrDefaultAsync();
                     var actFlagUidUser = settings?.LastChangeUid;
 
-                    // Проверяем, существует ли другой пользователь с таким логином
+                    // Если идентификатор текущего пользователя недоступен, возвращаем false
+                    if (string.IsNullOrEmpty(actFlagUidUser))
+                    {
+                        return false;
+                    }
+
+                    // Проверяем, существует ли логин у других пользователей
                     bool loginExistsForOthers = await db.Profiles
                         .AnyAsync(p => p.Login == login && p.UniqueId.ToString() != actFlagUidUser);
 
-                    // Если логин уже используется другим, возвращаем false
+                    // Если логин занят другим пользователем, возвращаем false
                     if (loginExistsForOthers)
                     {
                         return false;
                     }
 
-                    // Логин может быть изменён текущим пользователем
-                    return true;
+                    // Проверяем, принадлежит ли логин текущему пользователю
+                    return await db.Profiles.AnyAsync(p => p.Login == login && p.UniqueId.ToString() == actFlagUidUser);
                 }
                 else
                 {
-                    // Если проверяем без связи с текущим пользователем, просто проверяем наличие логина
+                    // Проверяем наличие логина без учёта UniqueId
                     return await db.Profiles.AnyAsync(p => p.Login == login);
                 }
             });
