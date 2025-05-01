@@ -700,10 +700,12 @@ namespace FreeTorrBot.BotTelegram
         {
           
             var buttonBack = InlineKeyboardButton.WithCallbackData("↩️", "0OtherProfilessort_active");
-
+            var createNewProfileRandom = InlineKeyboardButton.WithCallbackData("🎲 Придумать за меня!", "createAutoNewProfileOther");
             return new InlineKeyboardMarkup(new[]
             {
-                        new[] {buttonBack,buttonHideButtots},
+                 new[] {createNewProfileRandom},
+                 new[] {buttonBack,buttonHideButtots},
+                       
             });
         }
         public static InlineKeyboardMarkup GetControlOtherProfilesTorrserver(int nextCount, int allCount, string sort)

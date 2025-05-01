@@ -105,6 +105,9 @@ namespace AdTorrBot.BotTelegram.Db.Model
 
         [Description("Ввод: Заметка пользователя.")]
         public bool FlagNoteOtherProfile { get; set; } = false;
+
+        [Description("Ввод: Нового пользователя (логин:пароль)")]
+        public bool FlagNewLoginAndPasswordOtherProfile { get; set; } = false;
         public bool CheckAllBooleanFlags()
         {
             var boolProperties = GetType()

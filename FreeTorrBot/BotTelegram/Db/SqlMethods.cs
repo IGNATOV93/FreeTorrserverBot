@@ -771,6 +771,33 @@ namespace AdTorrBot.BotTelegram.Db
                 return false;
             });
         }
+
+        //Создание нового профиля(пользователя) Torrserver
+        public static async Task<Profiles> CreateAuthoNewProfileOther()
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                while (true)
+                {
+                    var newlogin = InputTextValidator.CreateAutoNewLoginOrPassword();
+                    if (await IsHaveLoginProfileUser(newlogin, true) && (await IsHaveLoginProfileUser(newlogin, false)))
+                    {
+                        var password = InputTextValidator.CreateAutoNewLoginOrPassword();
+                        var newProfile = new Profiles()
+                        {
+                            Login = newlogin,
+                            Password = password,
+                            AccessEndDate = DateTime.UtcNow.AddDays(1),
+                            IsEnabled=true
+                        };
+                       await db.Profiles.AddAsync(newProfile);
+                       await db.SaveChangesAsync();
+                        return newProfile;
+                    }
+                }
+            });
+        }
+
         //Проверка на существование логина в бд
         public static async Task<bool> IsHaveLoginProfileUser(string login, bool isOther)
         {

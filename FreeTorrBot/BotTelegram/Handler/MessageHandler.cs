@@ -19,6 +19,7 @@ using FreeTorrBot.BotTelegram;
 using FreeTorrserverBot.Torrserver.BitTor;
 using FreeTorrserverBot.Torrserver.ServerArgs;
 using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
+using System.Security.Cryptography;
 
 
 namespace AdTorrBot.BotTelegram.Handler
@@ -482,10 +483,35 @@ namespace AdTorrBot.BotTelegram.Handler
                     , replyMarkup: KeyboardManager.GetProfilesUsersTorrserver());
                     return;
                 }
+                if(callbackData == "createAutoNewProfileOther")
+                {
+                    await SqlMethods.SwitchOffInputFlag();
+                    var newProfile = await SqlMethods.CreateAuthoNewProfileOther();
+                    var uidNewProfile = newProfile.UniqueId.ToString();
+                    var login = newProfile.Login;
+                    var password = newProfile.Password;
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage,
+                     $"Новый пользователь сгенерирован ✅\r\n" +
+                     $"🔐 Доступ дан на 24 часа по умолчанию.\r\n" + 
+                     $"Будет активен после перезагрузки Torrserver.\r\n" + 
+                     $"/showlogpass_{login}_{password}\r\n" + 
+                     $"/edit_profile_{uidNewProfile.Replace("-", "_")}"
+                    , replyMarkup: KeyboardManager.buttonHideButtots);
+                    return;
+                }
                 if(callbackData == "createNewProfile")
                 {
+                    await SqlMethods.SwitchTorSettingsInputFlag("FlagNewLoginAndPasswordOtherProfile", true);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage,
-                      "Функция создания профиля еще в разработке .."
+                      $"Само создание еще не готово.Пока можно сгенерировать или выйти из режима ввода.\r\n" +
+                      $"✍ Вы в режиме создания нового пользователя\u2757\r\n" +
+                      $"Введите новый логин и пароль \r\n" +
+                      $"Ограничения \u2199\r\n" +
+                      $"\u2757 Логин и пароль может содержать только английские буквы и цифры.\r\n" +
+                      $"\u2757 Логин и пароль может состоять только из 20 символов.\r\n" +
+                      $" Пример \u2199\r\n" +
+                      $"ivanpetrov:j4jjkj4o4i433\r\n" +
+                      $"\u2139 слева логин(max 20 симв.) : справа пароль(max 20 симв.)"
                       , replyMarkup: KeyboardManager.CreateNewProfileTorrserverUser());
                     return;
                 }
@@ -761,7 +787,7 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"MainProfile"
             ,"BackProfilesUersTorrserver"
             ,"createNewProfile"
-            
+            ,"createAutoNewProfileOther"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

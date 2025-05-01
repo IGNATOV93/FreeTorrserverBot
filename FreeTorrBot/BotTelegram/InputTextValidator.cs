@@ -96,6 +96,24 @@ namespace AdTorrBot.BotTelegram
 
 
 
+        public static string CreateAutoNewLoginOrPassword()
+        {
+            const string letters = "abcdefghijklmnopqrstuvwxyz";
+            int lettersLength = 10;
+            int numbersLength = 3;
+
+            Random random = new Random();
+
+            string namePart = new string(Enumerable.Range(0, lettersLength)
+                .Select(_ => letters[random.Next(letters.Length)])
+                .ToArray());
+
+            // Генерация цифр по длине numbersLength
+            string numberPart = new string(Enumerable.Range(0, numbersLength)
+                .Select(_ => (char)('0' + random.Next(10))) // Преобразуем случайное число в символ
+                .ToArray());
+            return namePart + numberPart;
+        }
 
         public static bool ValidateLoginAndPassword(string login)
         {
