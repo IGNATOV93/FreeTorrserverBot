@@ -520,7 +520,7 @@ namespace AdTorrBot.BotTelegram.Handler
                                 result = "Список профилей пуст";
                             }
                         }
-                        Console.WriteLine($"Обновляемое сообщение: {result}");
+                       // Console.WriteLine($"Обновляемое сообщение: {result}");
                         // Формируем клавиатуру
                         var keyboard = KeyboardManager.GetControlOtherProfilesTorrserver(nextCount, countAllProfiles, sort);
 
@@ -548,7 +548,9 @@ namespace AdTorrBot.BotTelegram.Handler
                     var setTorr = await SqlMethods.GetSettingsTorrserverBot();
                     await SqlMethods.ListTablesAsync();
                     await botClient.EditMessageTextAsync(AdminChat,idMessage,
-                        "Управление главным профилем  Torrserver.\r\n" + setTorr.ToString()
+                        "Управление главным профилем  Torrserver.\r\n" + setTorr.ToString()+"" +
+                        "\r\nПри редактировании данных профиля,\r\n" +
+                        "Torrserver перезагружается"
                         , replyMarkup: KeyboardManager.GetControlTorrserver());
                     return;
                 }

@@ -38,6 +38,7 @@ namespace FreeTorrserverBot.Torrserver.BitTor
                 // Запись JSON в файл
                 File.WriteAllText(filePathSettingsJson, jsonString);
                 await SqlMethods.SetSettingsTorrProfile(config);
+                Console.WriteLine($"Файл будет записан в: {filePathSettingsJson}");
             }
             catch (Exception ex)
             {
