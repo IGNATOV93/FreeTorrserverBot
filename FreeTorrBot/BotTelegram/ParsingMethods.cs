@@ -35,9 +35,9 @@ namespace AdTorrBot.BotTelegram
             {
                 countActual++;
                 var profile = profiles[i];
-                var note = !string.IsNullOrEmpty(profiles[i].AdminComment) ? $"📌 Заметка:  ➡️{profiles[i].AdminComment}\r\n" : "";
+                var note = !string.IsNullOrEmpty(profiles[i].AdminComment) ? $"Заметка:  📌 {profiles[i].AdminComment}\r\n" : "";
                 var uni = profile.UniqueId.ToString().Replace("-", "_");
-                result += $"\n{countActual}) \uD83D\uDC64 Логин: ➡️{profiles[i].Login}⬅️\r\n{note}" +
+                result += $"\n{countActual}) Логин: 👤 {profiles[i].Login}\r\n{note}" +
                     $"   {(profile.IsEnabled ? "🟢" : "🔴")} (до {profile.AccessEndDate?.ToString("yyyy-MM-dd") ?? "(не ограничено)"})\r\n"+
                 $"/showlogpass_{profile.Login}_{profile.Password}\r\n";
                 result += $"/edit_profile_{uni}\r\n" +
