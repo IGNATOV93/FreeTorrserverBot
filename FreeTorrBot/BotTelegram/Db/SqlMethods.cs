@@ -748,7 +748,15 @@ namespace AdTorrBot.BotTelegram.Db
                 return profile;
             });
         }
-
+        public static async Task<bool> AddOtherProfileTorrserve(Profiles newProfile)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                await db.Profiles.AddAsync(newProfile);
+                await db.SaveChangesAsync();
+                return true;
+            });
+        }
         //Редактирование профиля пользователя
         public static async Task<bool> EddingProfileUser(Profiles profile)
         {
@@ -807,7 +815,14 @@ namespace AdTorrBot.BotTelegram.Db
                 return null;
             });
         }
-
+        //Проверка на существование логина в бд (любого)
+        public static async Task<bool> IsLoginExistsAsync(string login)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                return await db.Profiles.AnyAsync(p => p.Login == login);
+            });
+        }
 
         //Проверка на существование логина в бд
         public static async Task<bool> IsHaveLoginProfileUser(string login, bool isOther)

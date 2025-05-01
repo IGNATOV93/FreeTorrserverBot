@@ -16,6 +16,7 @@ using AdTorrBot.ServerManagement;
 using AdTorrBot.BotTelegram.Db.Model;
 using FreeTorrserverBot.Torrserver;
 using System.Security.Cryptography;
+using AdTorrBot.BotTelegram.Db.Model.TorrserverModel;
 
 namespace AdTorrBot.BotTelegram.Handler
 {
@@ -43,6 +44,71 @@ namespace AdTorrBot.BotTelegram.Handler
             switch (lastTextFlagTrue)
             {
                 #region OtherProfile
+                case "FlagNewLoginAndPasswordOtherProfile":
+                    Console.WriteLine("Обработка FlagNoteOtherProfile");
+                    if (!string.IsNullOrWhiteSpace(text) && text.Contains(":") &&
+                         text.Split(":").Length == 2 &&
+                         InputTextValidator.ValidateLoginAndPassword(text.Split(":")[0]) &&
+                         InputTextValidator.ValidateLoginAndPassword(text.Split(":")[1]))
+                    {
+                        var login = text.Split(":")[0];
+                        var password = text.Split(":")[1];
+                        Console.WriteLine($"Новый=> Логин: {login}, Пароль: {password}");
+                        if (await SqlMethods.IsLoginExistsAsync(login))
+                        {
+                            Console.WriteLine($"\r\nЛогин [{login}] уже занят");
+
+                            await botClient.SendTextMessageAsync(AdminChat,
+                                $"❗ Вы в режиме создания нового пользователя." +
+                                $"\r\nЛогин [{login}] уже занят\r\n" +
+                                "Напишите желаемый логин/пароль.\n" +
+                                "⚠️ Логин/пароль может содержать только английские буквы и цифры.\r\n" +
+                                " Ограничение: 20 символов на логин.\r\n" +
+                                " Ограничение: 20 символов на пароль.\r\n" +
+                                "между логином и паролем должен быть знак двоеточия :",
+                                replyMarkup: KeyboardManager.CreateNewProfileTorrserverUser());
+                            break;
+                        }
+                        else
+                        {
+                            var newProfile = new Profiles()
+                            {
+                                Login = login,
+                                Password = password,
+                                AccessEndDate = DateTime.Now.AddDays(1),
+                                IsEnabled = true,
+                            };
+                            await Task.Delay(1000);
+                            await SqlMethods.AddOtherProfileTorrserve(newProfile);
+                            Console.WriteLine(newProfile.Login + " добавлен в бд");
+                            await SqlMethods.SwitchOffInputFlag();
+                            await botClient.SendTextMessageAsync(AdminChat,
+                        $"Новый пользователь создан ✅\r\n" +
+                        $"🔐 Доступ дан на 24 часа по умолчанию.\r\n" +
+                        $"Будет активен после перезагрузки Torrserver.\r\n" +
+                        $"/showlogpass_{login}_{password}\r\n" +
+                        $"/edit_profile_{newProfile.UniqueId.ToString().Replace("-", "_")}"
+                       , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                            break;
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Создание нового пользователя не удалось.");
+
+                        await botClient.SendTextMessageAsync(AdminChat,
+                              $"❗ Вы в режиме создания нового пользователя." +
+                              $"Регистрация нового пользователя не прошла проверку.\r\n" +
+                              "Напишите снова желаемый логин/пароль.\n" +
+                              "⚠️ Логин/пароль может содержать только английские буквы и цифры.\r\n" +
+                              " Ограничение: 20 символов на логин.\r\n" +
+                              " Ограничение: 20 символов на пароль.\r\n" +
+                              "между логином и паролем должен быть знак двоеточия :",
+                              replyMarkup: KeyboardManager.CreateNewProfileTorrserverUser());
+                        break;
+                    }
+                    break;
                 case "FlagNoteOtherProfile":
                     Console.WriteLine("Обработка FlagNoteOtherProfile");
                     if (text?.Length > 300)
