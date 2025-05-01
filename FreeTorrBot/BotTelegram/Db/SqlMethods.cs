@@ -776,12 +776,16 @@ namespace AdTorrBot.BotTelegram.Db
         {
             return await SqlMethods.WithDbContextAsync(async db =>
             {
+                Console.WriteLine($"В IsHaveLoginProfileUser пришло\r\n" +
+                    $"Логин: [{login}]\r\n" +
+                    $"Bool: [{isOther}]");
                 if (isOther)
                 {
                     // Получаем уникальный идентификатор текущего пользователя
-                    var settings = await db.SettingsBot.FirstOrDefaultAsync();
+                    var settings = await db.SettingsBot.FirstOrDefaultAsync(x=>x.IdChat==adminChat);
                     var actFlagUidUser = settings?.LastChangeUid;
-
+                    Console.WriteLine($"Крайний uid:\r\n" +
+                        $"[{actFlagUidUser}]");
                     // Если идентификатор текущего пользователя недоступен, возвращаем false
                     if (string.IsNullOrEmpty(actFlagUidUser))
                     {
@@ -790,21 +794,46 @@ namespace AdTorrBot.BotTelegram.Db
 
                     // Проверяем, существует ли логин у других пользователей
                     bool loginExistsForOthers = await db.Profiles
-                        .AnyAsync(p => p.Login == login && p.UniqueId.ToString() != actFlagUidUser);
+                        .AnyAsync(p => p.Login == login && p.UniqueId != Guid.Parse(actFlagUidUser));
+                    {
+                        // Запрашиваем список профилей с совпадающим логином, но другим UniqueId
+                        var conflictingProfiles = await db.Profiles
+                            .Where(p => p.Login == login && p.UniqueId != Guid.Parse(actFlagUidUser))
+                            .ToListAsync();
 
+                        // Выводим их в консоль
+                        foreach (var profile in conflictingProfiles)
+                        {
+                            Console.WriteLine($"Conflicting Profile: Login = {profile.Login}, UniqueId = {profile.UniqueId}");
+                        }
+
+                        // Если список пуст, это значит, что нет конфликтов
+                        if (!conflictingProfiles.Any())
+                        {
+                            Console.WriteLine("Нет профилей с совпадающим логином у других пользователей.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Найдено {conflictingProfiles.Count} конфликтующих профилей.");
+                        }
+
+                    }
                     // Если логин занят другим пользователем, возвращаем false
                     if (loginExistsForOthers)
                     {
+                        Console.WriteLine($"Логин: [{login}] занят другим пользователем.\r\n{false}");
                         return false;
                     }
 
                     // Проверяем, принадлежит ли логин текущему пользователю
-                    return await db.Profiles.AnyAsync(p => p.Login == login && p.UniqueId.ToString() == actFlagUidUser);
+                    return await db.Profiles.AnyAsync(p => p.Login == login && p.UniqueId == Guid.Parse(actFlagUidUser));
                 }
                 else
                 {
                     // Проверяем наличие логина без учёта UniqueId
-                    return await db.Profiles.AnyAsync(p => p.Login == login);
+                    var result = await db.Profiles.AnyAsync(p => p.Login == login);
+                    Console.WriteLine($"resultHave: {result}");
+                    return !result;
                 }
             });
         }

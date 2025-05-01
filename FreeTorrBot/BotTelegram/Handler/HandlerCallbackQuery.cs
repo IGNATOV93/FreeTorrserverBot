@@ -141,9 +141,9 @@ namespace AdTorrBot.BotTelegram.Handler
                     {
                         Console.WriteLine($"Смена логина не удалась.\r\nЛогин [{text}] уже занят");
                         await botClient.SendTextMessageAsync(AdminChat,
-                            "❗ Вы в режиме ввода логина.\n" +
+                            $"❗ Вы в режиме ввода логина.\r\nЛогин [{text}] уже занят\r\n" +
                             "Напишите желаемый логин.\n" +
-                            "⚠️ Логин может содержать только английские буквы и цифры. Ограничение: 10 символов.",
+                            "⚠️ Логин может содержать только английские буквы и цифры.\r\n Ограничение: 10 символов.",
                             replyMarkup: KeyboardManager.CreateExitBitTorrConfigInputButton("Login", 0));
                         break;
                     }
