@@ -9,8 +9,8 @@
 ```json
 
 {
-YourBotTelegramToken:"ваш токен бота"
-AdminChatId:"ваш id чата в Telegram"
+"YourBotTelegramToken": "ваш токен бота"
+"AdminChatId": "ваш id чата в Telegram"
 "FilePathTorrserver": "путь к настройкам torrserver-пример-"/opt/torrserver/"
 }
 ```
