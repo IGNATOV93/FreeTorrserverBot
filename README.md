@@ -4,15 +4,15 @@
 
 ## Установка
 
-Для корректной работы внутри проекта необходимо отредактировать файл `settings.ini` с следующими полями:
+Для корректной работы внутри проекта необходимо отредактировать файл `settings.json` с следующими полями:
 
-```ini
-[Profile0]
-YourBotTelegramToken=ваш токен бота
-AdminChatId=ваш id чата в Telegram
-TimeAutoChangePassword=время автосмены пароля, например 23:00
-FilePathTorrserverBd=/opt/torrserver/accs.db   ; путь к настройкам torrserver
-FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrserver файлу (запускаемый,название может файла отличаться у вас)
+```json
+
+{
+YourBotTelegramToken:"ваш токен бота"
+AdminChatId:"ваш id чата в Telegram"
+"FilePathTorrserver": "путь к настройкам torrserver-пример-"/opt/torrserver/"
+}
 ```
 1. **Скачайте архив проекта**:
    - Скачайте тут архив с проектом [FreeTorrBot-linux-64.rar](https://github.com/IGNATOV93/FreeTorrserverBot/releases/tag/v1.01).
@@ -39,7 +39,7 @@ FilePathTor=/opt/torrserver/torrserver         ; путь к самому torrse
 4. **Установите права на доступ**:
    - Установите права на чтение для файлов в папке бота:
      ```bash
-     sudo chmod +r /opt/FreeTorrBot/FreeTorrBot /opt/FreeTorrBot/settings.ini /opt/FreeTorrBot/autoStartFreeTorrBot.sh
+     sudo chmod +r /opt/FreeTorrBot/FreeTorrBot /opt/FreeTorrBot/settings.json /opt/FreeTorrBot/autoStartFreeTorrBot.sh
      ```
    - Установите права на чтение и запись для файла `accs.db` в папке Torrserver:
      ```bash
