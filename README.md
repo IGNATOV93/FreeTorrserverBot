@@ -15,12 +15,12 @@
 }
 ```
 1. **Скачайте архив проекта**:
-   - Скачайте тут архив с проектом [FreeTorrBot-linux-64.rar](https://github.com/IGNATOV93/FreeTorrserverBot/releases/tag/v1.01).
+   - Скачайте тут архив с проектом [AdTorrBot-v-1-2-linux-64.rar](https://github.com/IGNATOV93/FreeTorrserverBot/releases/tag/v1.2).
 
 2. **Распакуйте архив**:
    - Используйте команду:
      ```bash
-     sudo unrar x FreeTorrBot-linux-64.rar /opt/
+     sudo unrar x AdTorrBot-v-1-2-linux-64.rar /opt/
      ```
 
 3. **Установите .NET 8**:
