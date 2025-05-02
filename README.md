@@ -1,4 +1,4 @@
-# Telegram Bot For Torrserver
+# Telegram Bot AdTorrBot
 
 Данный проект — бот для Telegram, который включает функции автосмены пароля [Torrserver](https://github.com/YouROK/TorrServer), а также возможность ручной смены пароля через бота.
 
@@ -39,7 +39,7 @@
 4. **Установите права на доступ**:
    - Установите права на чтение для файлов в папке бота:
      ```bash
-     sudo chmod +r /opt/FreeTorrBot/FreeTorrBot /opt/FreeTorrBot/settings.json /opt/FreeTorrBot/autoStartFreeTorrBot.sh
+     sudo chmod +r /opt/AdTorrBot /opt/AdTorrBot/settings.json /opt/AdTorrBot/autoStartFreeTorrBot.sh
      ```
    - Установите права на чтение и запись для файла `accs.db` в папке Torrserver:
      ```bash
@@ -65,7 +65,7 @@
 1. **Запустите проект в фоне через screen**
    - Используйте команду:
      
-    screen -S ftor cd /opt/FreeTorrBot/./FreeTorrBot
+    screen -S adtorrbot cd /opt/AdTorrBot/./AdTorrBot
 
    -Свернуть окно screen (без этого бот остановится сразу при выходе).
    ```bash
@@ -81,7 +81,7 @@ crontab -e
 ```
 Добавьте в `crontab`:
 ```bash
-@reboot /opt/FreeTorrBot/autoStartFreeTorrBot.sh
+@reboot /opt/AdTorrBot/autoStartFreeTorrBot.sh
  ```
 <details>
 <summary>Основные команды для работы с `screen`</summary>
