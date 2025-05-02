@@ -90,10 +90,42 @@ namespace AdTorrBot.BotTelegram.Handler
             if (text.Contains("/showlogpass_"))
             {
                 var lp= text.Split("/showlogpass_")[1]?.Replace("_",":");
-                lp= ParsingMethods.EscapeForMarkdownV2(lp);
-                await DeleteMessage(idMessage);
-                await botClient.SendTextMessageAsync(AdminChat , lp,replyMarkup:KeyboardManager.GetShowLogPassOther(),parseMode:ParseMode.MarkdownV2);
-                return;
+                var log = lp.Split(":")[0];
+                var pass= lp.Split(":")[1];
+                var Profile = await SqlMethods.FindProfileToLoginAndPassword(log, pass);
+                if (Profile == null) 
+                {
+                    await botClient.SendTextMessageAsync(AdminChat, "Данный профиль не найден в базе данных."
+                      , replyMarkup: KeyboardManager.GetDeleteThisMessage());
+                    return;
+                }
+                else
+                {
+                    var endTime = Profile.AccessEndDate.HasValue ? Profile.AccessEndDate.Value.ToString("dd.MM.yyyy HH:mm") : "Не задано";
+                    var remainingTime = Profile.AccessEndDate.HasValue
+                                         ? Profile.AccessEndDate.Value - DateTime.UtcNow
+                                         : (TimeSpan?)null;
+                    var haveTime = "🕒 Осталось: Не задано или доступ истёк\r\n";
+                    if (remainingTime.HasValue && remainingTime.Value.TotalMilliseconds > 0)
+                    {
+                        haveTime= $"🕒 Осталось: {remainingTime.Value.Days} суток {remainingTime.Value.Hours} часов";
+                    }
+                   
+                  
+                    var result = $"👤 Логин: {Profile.Login}\r\n" +
+                                 $"🗝️ Пароль: {Profile.Password}\r\n" +
+                                 $"⏳ Окончание доступа : {endTime}\r\n" +
+                                 $"{haveTime}"+
+                                 $"В формате логин:пароль\r\n\r\n" +
+                                 $"{Profile.Login}:{Profile.Password}"
+                                 ;
+
+                   // lp = ParsingMethods.EscapeForMarkdownV2(lp);
+                    await DeleteMessage(idMessage);
+                    await botClient.SendTextMessageAsync(AdminChat, result, replyMarkup: KeyboardManager.GetShowLogPassOther(result));
+                    return;
+                }
+
             }
             if (text.Contains("/edit_profile_"))
             {

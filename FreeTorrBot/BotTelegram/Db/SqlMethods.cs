@@ -748,6 +748,18 @@ namespace AdTorrBot.BotTelegram.Db
                 return profile;
             });
         }
+        public static async Task<Profiles?> FindProfileToLoginAndPassword(string log,string pass)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var profile = await db.Profiles.FirstOrDefaultAsync(x => x.Login == log && x.Password == pass);
+                if(profile == null) { return null; }
+                else
+                {
+                    return profile;
+                }
+            });
+        }
         public static async Task<bool> AddOtherProfileTorrserve(Profiles newProfile)
         {
             return await SqlMethods.WithDbContextAsync(async db =>

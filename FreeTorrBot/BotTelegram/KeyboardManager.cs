@@ -676,12 +676,12 @@ namespace FreeTorrBot.BotTelegram
         }
 
 
-        public static InlineKeyboardMarkup GetShowLogPassOther()
+        public static InlineKeyboardMarkup GetShowLogPassOther(string text)
         {
             return new[]
                 {
                     buttonHideButtots,
-                    InlineKeyboardButton.WithSwitchInlineQuery("📤 Поделиться")
+                    InlineKeyboardButton.WithSwitchInlineQuery("📤 Поделиться",text)
                 };
         }
         public static InlineKeyboardMarkup GetProfilesUsersTorrserver()
