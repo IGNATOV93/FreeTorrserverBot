@@ -121,32 +121,57 @@ namespace FreeTorrserverBot.Torrserver
 
         public static async Task RebootingTorrserver()
         {
-            // Завершаем процесс
-            var killProcess = new ProcessStartInfo
+            
+            var stopProcess = new ProcessStartInfo
             {
-                FileName = "killall",
-                Arguments = nameProcesTorrserver,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
+                FileName = "systemctl",
+                Arguments = "stop torrserver",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
 
-            using (var process = Process.Start(killProcess))
+            try
             {
-                await process.WaitForExitAsync(); // Ожидаем завершения процесса killall
+                using (var process = Process.Start(stopProcess))
+                {
+                    await process.WaitForExitAsync();
+                    Console.WriteLine("✅ TorrServer успешно остановлен через systemd.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Ошибка остановки TorrServer: {ex.Message}");
+                return;
             }
 
-            // Запускаем процесс заново
+            
+            await Task.Delay(2000);
+
+         
             var startProcess = new ProcessStartInfo
             {
-                FileName = $"{filePathTorrMain}{nameProcesTorrserver}", // Укажите полный путь к файлу, если он не в PATH
-                UseShellExecute = true,
+                FileName = "systemctl",
+                Arguments = "start torrserver",
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
 
-            Process.Start(startProcess);
-          await  UpdateAllProfilesFromConfig();
+            try
+            {
+                Process.Start(startProcess);
+                Console.WriteLine("🚀 TorrServer успешно запущен через systemd!");
+
+     
+                await Task.Delay(1000);
+                await UpdateAllProfilesFromConfig();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Ошибка запуска TorrServer: {ex.Message}");
+            }
         }
+
+
         public static string? ParseMainLoginFromTorrserverProfile(string? profileString)
         {
             // Проверяем строку на пустоту и наличие разделителя
