@@ -14,17 +14,22 @@ namespace FreeTorrBot.BotTelegram.BotSettings.Model
         public string? AdminChatId { get; set; }
         public string? FilePathTorrserver { get; set; }
         // Метод для проверки корректности настроек
-        public void Validate()
+        public bool Validate(out List<string> missingFields)
         {
+            missingFields = new List<string>();
+
             if (string.IsNullOrWhiteSpace(YourBotTelegramToken))
-                throw new InvalidOperationException("Необходимо указать токен бота Telegram.");
+                missingFields.Add("YourBotTelegramToken");
 
             if (string.IsNullOrWhiteSpace(AdminChatId))
-                throw new InvalidOperationException("Необходимо указать ID чата администратора.");
+                missingFields.Add("AdminChatId");
 
             if (string.IsNullOrWhiteSpace(FilePathTorrserver))
-                throw new InvalidOperationException("Необходимо указать путь к папке Torrserver");
+                missingFields.Add("FilePathTorrserver");
+
+            return missingFields.Count == 0;
         }
+
     }
-    
+
 }

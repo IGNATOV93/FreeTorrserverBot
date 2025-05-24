@@ -118,14 +118,52 @@ namespace FreeTorrserverBot.Torrserver
 
             await RebootingTorrserver();
         }
+        public static async Task<bool> IsServiceInstalled(string serviceName)
+        {
+            var checkProcess = new ProcessStartInfo
+            {
+                FileName = "systemctl",
+                Arguments = $"status {serviceName}",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
+            try
+            {
+                using (var process = Process.Start(checkProcess))
+                {
+                    if (process == null) return false;
+
+                    using (var reader = process.StandardOutput)
+                    {
+                        string output = await reader.ReadToEndAsync();
+                        return output.Contains("Loaded: loaded");
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
         public static async Task RebootingTorrserver()
         {
-            
+            string serviceName = "torrserver";
+
+            // Проверяем, установлен ли сервис
+            if (!await IsServiceInstalled(serviceName))
+            {
+                Console.WriteLine($"❌ Сервис {serviceName} не найден на сервере. Проверьте установку.");
+                return;
+            }
+
+            Console.WriteLine($"✅ Сервис {serviceName} найден, выполняем перезагрузку...");
+
             var stopProcess = new ProcessStartInfo
             {
                 FileName = "systemctl",
-                Arguments = "stop torrserver",
+                Arguments = $"stop {serviceName}",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -144,14 +182,12 @@ namespace FreeTorrserverBot.Torrserver
                 return;
             }
 
-            
             await Task.Delay(2000);
 
-         
             var startProcess = new ProcessStartInfo
             {
                 FileName = "systemctl",
-                Arguments = "start torrserver",
+                Arguments = $"start {serviceName}",
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
@@ -161,7 +197,6 @@ namespace FreeTorrserverBot.Torrserver
                 Process.Start(startProcess);
                 Console.WriteLine("🚀 TorrServer успешно запущен через systemd!");
 
-     
                 await Task.Delay(1000);
                 await UpdateAllProfilesFromConfig();
             }
@@ -170,7 +205,6 @@ namespace FreeTorrserverBot.Torrserver
                 Console.WriteLine($"❌ Ошибка запуска TorrServer: {ex.Message}");
             }
         }
-
 
         public static string? ParseMainLoginFromTorrserverProfile(string? profileString)
         {

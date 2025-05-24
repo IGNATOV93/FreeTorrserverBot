@@ -1,6 +1,6 @@
 ﻿{
-    "YourBotTelegramToken": "ваш токен бота telegram",
-    "AdminChatId": "ваш idchat telegram",
+    "YourBotTelegramToken": "",
+    "AdminChatId": "",
     "FilePathTorrserver": "/opt/torrserver/"
  
 }
