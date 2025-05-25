@@ -135,11 +135,13 @@ namespace FreeTorrBot.BotTelegram.BotSettings
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("❌ Настройки бота не заполнены.");
-                Console.WriteLine($"⚠️ Заполните следующие параметры: {string.Join(", ", missingFields)}");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"⚠️ Заполните следующие параметры: {string.Join(", \r\n", missingFields)}");
                 Console.WriteLine("🔄 Вы можете заполнить вручную в settings.json или прямо сейчас в консоли.");
-                Console.WriteLine("1️⃣ Заполнить настройки прямо сейчас");
-                Console.WriteLine("2️⃣ Открыть settings.json и перезапустить бота");
-                Console.WriteLine("3️⃣ Выйти из настройки");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("1️ => Заполнить настройки прямо сейчас");
+                Console.WriteLine("2️ => Открыть settings.json и перезапустить бота");
+                Console.WriteLine("3️ =>  Выйти из настройки");
                 Console.ResetColor();
 
                 Console.Write("Введите номер действия: ");
@@ -152,7 +154,7 @@ namespace FreeTorrBot.BotTelegram.BotSettings
                         return ValidateOrCreateSettings(); // Повторно проверяем настройки после ввода
 
                     case "2":
-                        Console.WriteLine("⚠️ Откройте settings.json, заполните его и попробуйте снова.");
+                        Console.WriteLine("⚠️Отредактируйте самостоятельно settings.json в папке бота и попробуйте снова.");
                         return false;
 
                     case "3":

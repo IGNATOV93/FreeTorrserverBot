@@ -17,7 +17,7 @@ public class MainClass
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("❌ Сервис TorrServer не найден на сервере. Проверьте установку.");
             Console.WriteLine("⚠️ Установите его и нажмите 1 для повторной проверки.");
-            Console.WriteLine("Нажмите 2 для выхода из этого бота.");
+            Console.WriteLine("Нажмите 2 для выхода из установвки этого бота.");
             Console.ResetColor();
 
             var input = Console.ReadLine(); // Ожидаем ввод от пользователя перед выходом
