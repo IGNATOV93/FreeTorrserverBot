@@ -43,7 +43,7 @@ namespace FreeTorrserverBot
             }
 
             // Выводим итоговое время
-            Console.WriteLine($"Итоговое время автосмены пароля на самом сервере : {finalHours:D2}:{finalMinutes:D2}"); // Формат с ведущим нулем
+           // Console.WriteLine($"Итоговое время автосмены пароля на самом сервере : {finalHours:D2}:{finalMinutes:D2}"); // Формат с ведущим нулем
 
             Schedule(async () => await Torrserver.Torrserver.AutoChangeAccountTorrserver())
                 .ToRunEvery(1)

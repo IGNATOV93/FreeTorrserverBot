@@ -183,7 +183,8 @@ namespace AdTorrBot.BotTelegram.Handler
             if (text == "🔄 Перезагрузки")
             {
                 await DeleteMessage(idMessage);
-                await botClient.SendTextMessageAsync(AdminChat, "🔄 Перезагрузки", replyMarkup: KeyboardManager.GetRestartingMain());
+                await botClient.SendTextMessageAsync(AdminChat, "🔄 Перезагрузки\r\n" +
+                    "Выберите что нужно перезагрузить !", replyMarkup: KeyboardManager.GetRestartingMain());
                 return;
             }
             #endregion Обработка текстовых кнопок
@@ -223,7 +224,46 @@ namespace AdTorrBot.BotTelegram.Handler
                     return;
                 }
                 #endregion Универсальные команды бота
-                #region Перезагрузки
+                #region Перезагрузки     
+                if(callbackData.Contains("auto_restart_torrserver"))
+                {
+                    var SettingsTorrserverBot =await SqlMethods.GetSettingsTorrserverBot();
+    
+
+                    
+                    if (callbackData.StartsWith("+60"))
+                    {
+                        DateTime restartTime = DateTime.Parse(SettingsTorrserverBot.TorrserverRestartTime);
+                        restartTime = restartTime.AddMinutes(60); // Увеличиваем на 60 минут
+                                                                  // Сохраняем обратно как строку в формате HH:mm
+                        SettingsTorrserverBot.TorrserverRestartTime = restartTime.ToString("HH:mm");
+                    }
+                    else if (callbackData.StartsWith("-60"))
+                    {
+                        DateTime restartTime = DateTime.Parse(SettingsTorrserverBot.TorrserverRestartTime);
+                        restartTime = restartTime.AddMinutes(-60); // Уменьшаем на 60 минут
+                                                                   // Сохраняем обратно как строку в формате HH:mm
+                        SettingsTorrserverBot.TorrserverRestartTime = restartTime.ToString("HH:mm");
+                    }
+                    if (callbackData.EndsWith("0"))
+                    {
+                        SettingsTorrserverBot.IsTorrserverAutoRestart=false;
+                    }
+                    if (callbackData.EndsWith("1"))
+                    {
+                        SettingsTorrserverBot.IsTorrserverAutoRestart = true;
+                    }
+                    string result = $"🔧 Автоперезапуск Torrserver\n\n"
+                                  + $"Состояние: {(SettingsTorrserverBot.IsTorrserverAutoRestart ? "🟢 ВКЛ" : "🔴 ВЫКЛ")}\n"
+                                  + $"Время перезапуска: ⏰ {SettingsTorrserverBot.TorrserverRestartTime}\n\n"
+                                  + "Рекомендуется выполнять перезагрузку раз в сутки\n"
+                                  + "для стабильной работы профилей.";
+
+                    await SqlMethods.UpdateSettingsTorrserverBot(SettingsTorrserverBot);
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, result, replyMarkup: 
+                          KeyboardManager.GetAutoRestartingTorrserverMain(SettingsTorrserverBot.IsTorrserverAutoRestart));
+                    return;
+                }
                 if (callbackData == "restart_torrserver")
                 {
                     await Torrserver.RebootingTorrserver();
@@ -830,6 +870,7 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"BackProfilesUersTorrserver"
             ,"createNewProfile"
             ,"createAutoNewProfileOther"
+            ,"auto_restart_torr"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))
@@ -909,7 +950,11 @@ namespace AdTorrBot.BotTelegram.Handler
             {
                 return true;
             }
-            if (command.Contains(""))
+            if (command.Contains("set_auto_restart_time"))
+            {
+                return true;
+            }
+            if (command.Contains("auto_restart_torrserver"))
             {
                 return true;
             }
@@ -920,7 +965,6 @@ namespace AdTorrBot.BotTelegram.Handler
                     return true;
                 }
             }
-
             // Если команда не найдена
             return false;
         }

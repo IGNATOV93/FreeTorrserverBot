@@ -501,13 +501,34 @@ namespace FreeTorrBot.BotTelegram
             });
             return inlineSetServerMain;
         }
+
+        public static InlineKeyboardMarkup GetAutoRestartingTorrserverMain(bool isEnabled)
+        {         
+            var enableAutoRestart = InlineKeyboardButton.WithCallbackData(
+                isEnabled ? "Выключить" : "Включить",
+                isEnabled ? "auto_restart_torrserver0" : "auto_restart_torrserver1"
+                );
+            var butHourBack = InlineKeyboardButton.WithCallbackData("- 1 час", "-60auto_restart_torrserver");
+            var butHourNext = InlineKeyboardButton.WithCallbackData("+ 1 час", "+60auto_restart_torrserver");
+            var inlineKeyboard = new InlineKeyboardMarkup(new[]
+            {
+                new[] { enableAutoRestart }
+                 ,new[] { butHourBack, butHourNext }
+                 ,new[] { buttonHideButtots }
+            });
+
+            return inlineKeyboard;
+        }
         public static InlineKeyboardMarkup GetRestartingMain()
         {
-            var restartTorrServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Torr", "restart_torrserver");
-            var restartServer = InlineKeyboardButton.WithCallbackData("🔄 Перезагрузка Сервера", "restart_server");
+            var restartTorrServer = InlineKeyboardButton.WithCallbackData("🔄 Перезапуск Torrserver", "restart_torrserver");
+            var restartServer = InlineKeyboardButton.WithCallbackData("🔄 Перезапуск сервера", "restart_server");
+            var autoRestartTorrServerMain = InlineKeyboardButton.WithCallbackData("⚙ Настроить ⏳ Torrserver", "auto_restart_torrserver");
             var inlineRestartingMain = new InlineKeyboardMarkup(new[]
             {
-                new[]{restartServer, restartTorrServer }
+                 new[]{restartServer}
+                ,new[]{restartTorrServer}
+                ,new[]{autoRestartTorrServerMain}
                 ,new[]{buttonHideButtots}
 
             });

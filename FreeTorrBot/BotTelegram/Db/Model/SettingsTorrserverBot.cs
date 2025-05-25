@@ -23,6 +23,11 @@ namespace AdTorrBot.BotTelegram.Db.Model
         public string? Password { get; set; } 
         public bool IsActiveAutoChange { get; set; } = false;
         public string TimeAutoChangePassword { get; set; } = "20:00";
+
+        public bool IsTorrserverAutoRestart { get; set; } = true;
+
+        public string TorrserverRestartTime { get; set; } = "20:00";
+
         // Переопределение метода ToString()
         public override string ToString()
         {
@@ -37,8 +42,10 @@ namespace AdTorrBot.BotTelegram.Db.Model
             // string timeZoneUserString = $"UTC{(timeZoneUser >= 0 ? "+" : "")}{timeZoneUser}";
             return
 
-                $"Статус автосмены: {(IsActiveAutoChange ? "✅" : "❌")}\r\n" +
-                $"\u23F0 Автосмена пароля : {TimeAutoChangePassword} "
+                $"Статус автосмены пароля: {(IsActiveAutoChange ? "✅" : "❌")}\r\n" +
+                $"\u23F0 Автосмена пароля : {TimeAutoChangePassword} \r\n"
+                //$"Статус авто-рестарта Torrserver: {(IsTorrserverAutoRestart ? "✅" : "❌")}\r\n" +
+                //$"Авто-рестарт Torrserver: {TorrserverRestartTime}"
                 //+$"\uD83C\uDF0F {timeZoneUserString}\r\n"
                 //+$"\uD83D\uDD50 Время сервера : {localTime} \uD83C\uDF0F {localTimeZoneString}\r\n" 
                 ;

@@ -23,17 +23,15 @@ namespace FreeTorrBot.BotTelegram.BotSettings
             IsActiveAutoChange,
             LoginDefaultTorrserver
         }
-       public static void ConfigureBot()
+        public static void ConfigureBot()
         {
             while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("❌ Настройки бота не заполнены.");
-                Console.ResetColor();
+                ShowErrorMessage("❌ Настройки бота не заполнены.");
 
                 Console.WriteLine("Выберите действие:");
                 Console.WriteLine("1️⃣ Заполнить настройки через консоль");
-                Console.WriteLine("2️⃣ Открыть settings.json и перезапустить бота");
+                Console.WriteLine("2️⃣ Изменил сам settings.json, перезапустить бота");
                 Console.WriteLine("3️⃣ Выйти из режима запуска");
 
                 Console.Write("Введите номер действия: ");
@@ -42,67 +40,19 @@ namespace FreeTorrBot.BotTelegram.BotSettings
                 switch (userChoice)
                 {
                     case "1":
-                        while (true) // Повторный ввод при ошибке
-                        {
-                            Console.Write("Введите Telegram токен: ");
-                            string token = Console.ReadLine();
-
-                            Console.Write("Введите AdminChatId: ");
-                            string adminChatId = Console.ReadLine();
-
-                            Console.WriteLine("\n🔍 Проверяем введенные данные...");
-                            Console.WriteLine($"➡ Telegram Token: {token}");
-                            Console.WriteLine($"➡ Admin Chat ID: {adminChatId}");
-                            Console.WriteLine($"➡ File Path Torrserver: /opt/torrserver/ (Можно поменять в settings.json)");
-
-                            Console.Write("\n✅ Данные верны? (Yes/No/Back): ");
-                            string confirmation = Console.ReadLine()?.ToLower();
-
-                            if (confirmation == "yes")
-                            {
-                                var newSettings = new BotSettingsJson
-                                {
-                                    YourBotTelegramToken = token,
-                                    AdminChatId = adminChatId,
-                                    FilePathTorrserver = "/opt/torrserver/"
-                                };
-
-                                BotSettingsMethods.SaveSettings(newSettings);
-
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("✅ Настройки сохранены! Перезапустите бота.");
-                                Console.ResetColor();
-
-                                return; // 🚀 Выход из функции, завершение настройки
-                            }
-                            else if (confirmation == "back")
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine("🔄 Возвращаемся назад в меню...");
-                                Console.ResetColor();
-                                break; // 🔄 Выход из внутреннего цикла, возврат в меню
-                            }
-                            else
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine("🔄 Попробуем снова.");
-                                Console.ResetColor();
-                            }
-                        }
-                        break;
+                        ConfigureBotSettings();
+                        return; // 🚀 Настройки сохранены, завершаем
 
                     case "2":
-                        Console.WriteLine("⚠️ Откройте settings.json, заполните его вручную и перезапустите бота.");
-                        return; // 🚪 Выход из функции
+                        Console.WriteLine("⚠️ Отредактируйте settings.json вручную и перезапустите бота.");
+                        return;
 
                     case "3":
                         Console.WriteLine("🚪 Выход из режима запуска...");
-                        return; // ❌ Закрытие режима настройки
+                        return;
 
                     default:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("❌ Неверный выбор. Попробуйте снова.");
-                        Console.ResetColor();
+                        ShowErrorMessage("❌ Неверный выбор. Попробуйте снова.");
                         break;
                 }
             }
@@ -112,68 +62,67 @@ namespace FreeTorrBot.BotTelegram.BotSettings
         {
             if (!File.Exists(path))
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("⚠️ Файл настроек не найден. Создаю новый settings.json...");
-
-                var defaultSettings = new BotSettingsJson
-                {
-                    YourBotTelegramToken = "",
-                    AdminChatId = "",
-                    FilePathTorrserver = "/opt/torrserver/"
-                };
-
-                SaveSettings(defaultSettings);
-
-                Console.WriteLine("⚠️ settings.json создан! Заполните его вручную или введите данные в консоли.");
-                Console.ResetColor();
+                ShowWarningMessage("⚠️ Файл настроек не найден. Создаю новый settings.json...");
+                SaveSettings(new BotSettingsJson { YourBotTelegramToken = "", AdminChatId = "", FilePathTorrserver = "/opt/torrserver/" });
+                ShowWarningMessage("⚠️ settings.json создан! Заполните его вручную.");
                 return false;
             }
 
             var settings = LoadSettings();
-
             if (!settings.Validate(out List<string> missingFields))
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("❌ Настройки бота не заполнены.");
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"⚠️ Заполните следующие параметры: {string.Join(", \r\n", missingFields)}");
-                Console.WriteLine("🔄 Вы можете заполнить вручную в settings.json или прямо сейчас в консоли.");
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("1️ => Заполнить настройки прямо сейчас");
-                Console.WriteLine("2️ => Открыть settings.json и перезапустить бота");
-                Console.WriteLine("3️ =>  Выйти из настройки");
-                Console.ResetColor();
-
-                Console.Write("Введите номер действия: ");
-                string userChoice = Console.ReadLine();
-
-                switch (userChoice)
-                {
-                    case "1":
-                        ConfigureBot(); // Запускаем процесс настройки в консоли
-                        return ValidateOrCreateSettings(); // Повторно проверяем настройки после ввода
-
-                    case "2":
-                        Console.WriteLine("⚠️Отредактируйте самостоятельно settings.json в папке бота и попробуйте снова.");
-                        return false;
-
-                    case "3":
-                        Console.WriteLine("🚪 Выход из режима настройки...");
-                        return false;
-
-                    default:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("❌ Неверный выбор. Попробуйте снова.");
-                        Console.ResetColor();
-                        return false;
-                }
+                ShowErrorMessage("❌ Настройки бота не заполнены.");
+                Console.WriteLine($"⚠️ Заполните параметры: {string.Join(", \r\n", missingFields)}");
+                Console.WriteLine("🔄 Отредактируйте settings.json вручную и попробуйте снова.");
+                return false;
             }
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("✅ Настройки бота корректны.");
-            Console.ResetColor();
+            ShowSuccessMessage("✅ Настройки бота корректны.");
             return true;
         }
+
+        private static void ConfigureBotSettings()
+        {
+            while (true)
+            {
+                Console.Write("Введите Telegram токен: ");
+                string token = Console.ReadLine();
+
+                Console.Write("Введите AdminChatId: ");
+                string adminChatId = Console.ReadLine();
+
+                ShowInfoMessage("\n🔍 Проверяем введенные данные...");
+                Console.WriteLine($"➡ Telegram Token: {token}");
+                Console.WriteLine($"➡ Admin Chat ID: {adminChatId}");
+                Console.WriteLine($"➡ File Path Torrserver: /opt/torrserver/ (Можно поменять в settings.json)");
+
+                Console.Write("\n✅ Данные верны? (Yes/No/Back): ");
+                string confirmation = Console.ReadLine()?.ToLower();
+
+                if (confirmation == "yes")
+                {
+                    BotSettingsMethods.SaveSettings(new BotSettingsJson { YourBotTelegramToken = token, AdminChatId = adminChatId, FilePathTorrserver = "/opt/torrserver/" });
+                    ShowSuccessMessage("✅ Настройки сохранены! Перезапустите бота.");
+                    return;
+                }
+                else if (confirmation == "back")
+                {
+                    ShowWarningMessage("🔄 Возвращаемся назад в меню...");
+                    break;
+                }
+                else
+                {
+                    ShowWarningMessage("🔄 Попробуем снова.");
+                }
+            }
+        }
+
+        // Универсальные методы для вывода сообщений
+        private static void ShowErrorMessage(string message) { Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine(message); Console.ResetColor(); }
+        private static void ShowWarningMessage(string message) { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine(message); Console.ResetColor(); }
+        private static void ShowSuccessMessage(string message) { Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine(message); Console.ResetColor(); }
+        private static void ShowInfoMessage(string message) { Console.ForegroundColor = ConsoleColor.Blue; Console.WriteLine(message); Console.ResetColor(); }
+
 
         public static void UpdateSettings(SettingsField field, string newValue)
         {

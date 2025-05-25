@@ -475,6 +475,7 @@ namespace AdTorrBot.BotTelegram.Db
             });
             
         }
+
         public static async Task<SettingsBot> GetSettingBot()
         {
             return await SqlMethods.WithDbContextAsync(async db =>
@@ -496,11 +497,40 @@ namespace AdTorrBot.BotTelegram.Db
             });
 
         }
+        public static async Task<bool> UpdateSettingsTorrserverBot(SettingsTorrserverBot settings)
+        {
+            return await SqlMethods.WithDbContextAsync(async db =>
+            {
+                var setTorr = await db.SettingsTorrserverBot.FirstOrDefaultAsync(x => x.idChat == settings.idChat);
+                if (setTorr != null)
+                {
+                    setTorr.Login = settings.Login;
+                    setTorr.Password = settings.Password;
+                    setTorr.IsActiveAutoChange = settings.IsActiveAutoChange;
+                    setTorr.TimeAutoChangePassword = settings.TimeAutoChangePassword;
+                    setTorr.IsTorrserverAutoRestart = settings.IsTorrserverAutoRestart;
+                    setTorr.TorrserverRestartTime = settings.TorrserverRestartTime;
+
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            });
+        }
+
+
         public static async Task<SettingsTorrserverBot> GetSettingsTorrserverBot()
         {
          return   await SqlMethods.WithDbContextAsync(async db =>
             {
-                var setTorr = db.SettingsTorrserverBot.FirstOrDefault(x => x.idChat == adminChat);
+                var setTorr =await db.SettingsTorrserverBot.FirstOrDefaultAsync(x => x.idChat == adminChat);
+             
+              if (string.IsNullOrWhiteSpace(setTorr?.TorrserverRestartTime)) // Проверка на null и пустую строку
+                {
+                    setTorr.TorrserverRestartTime = "20:00";
+                    await db.SaveChangesAsync();
+                }
+
                 return setTorr;
             });
            
