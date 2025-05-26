@@ -224,7 +224,14 @@ namespace AdTorrBot.BotTelegram.Handler
                     return;
                 }
                 #endregion Универсальные команды бота
-                #region Перезагрузки     
+                #region Перезагрузки
+                if(callbackData== "restart_bot")
+                {
+                    await botClient.EditMessageTextAsync(AdminChat, idMessage, "Бот будет перезагружен \u2705", replyMarkup: KeyboardManager.buttonHideButtots);
+                    Console.WriteLine("🔄 Перезапуск бота...");
+                    Task.Run(() => Main()); // Запускаем Main() асинхронно
+                    return;
+                }
                 if(callbackData.Contains("auto_restart_torrserver"))
                 {
                     var SettingsTorrserverBot =await SqlMethods.GetSettingsTorrserverBot();
@@ -257,7 +264,8 @@ namespace AdTorrBot.BotTelegram.Handler
                                   + $"Состояние: {(SettingsTorrserverBot.IsTorrserverAutoRestart ? "🟢 ВКЛ" : "🔴 ВЫКЛ")}\n"
                                   + $"Время перезапуска: ⏰ {SettingsTorrserverBot.TorrserverRestartTime}\n\n"
                                   + "Рекомендуется выполнять перезагрузку раз в сутки\n"
-                                  + "для стабильной работы профилей.";
+                                  + "для стабильной работы профилей.\n" +
+                                  "❗После редактирования настроек,нужно перезапустить бота или сам сервер.❗";
 
                     await SqlMethods.UpdateSettingsTorrserverBot(SettingsTorrserverBot);
                     await botClient.EditMessageTextAsync(AdminChat, idMessage, result, replyMarkup: 
@@ -658,7 +666,8 @@ namespace AdTorrBot.BotTelegram.Handler
                     await botClient.EditMessageTextAsync(AdminChat,idMessage,
                         "Управление главным профилем  Torrserver.\r\n" + setTorr.ToString()+"" +
                         "\r\nПри редактировании данных профиля,\r\n" +
-                        "Torrserver перезагружается"
+                        "Torrserver перезагружается\n" +
+                        "❗При редактировании автосмены пароля,после нужно перезапустить бота .❗"
                         , replyMarkup: KeyboardManager.GetControlTorrserver());
                     return;
                 }
@@ -871,6 +880,7 @@ namespace AdTorrBot.BotTelegram.Handler
             ,"createNewProfile"
             ,"createAutoNewProfileOther"
             ,"auto_restart_torr"
+            ,"restart_bot"
             };
             // Проверяем, если это одна из стандартных команд
             if (commands.Contains(command))

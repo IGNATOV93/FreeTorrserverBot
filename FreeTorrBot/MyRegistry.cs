@@ -18,6 +18,11 @@ namespace FreeTorrserverBot
         public MyRegistry()
         {
             ScheduleJobAsync().GetAwaiter().GetResult();
+            var isTorrserverAutoRunEnabled = GetTorrserverAutoRunSettingAsync().GetAwaiter().GetResult();
+            if (isTorrserverAutoRunEnabled)
+            {
+                ScheduleTorrserverAutoRun().GetAwaiter().GetResult(); // Автозапуск именно Torrserver
+            }
         }
 
         private async Task ScheduleJobAsync()
@@ -43,7 +48,7 @@ namespace FreeTorrserverBot
             }
 
             // Выводим итоговое время
-           // Console.WriteLine($"Итоговое время автосмены пароля на самом сервере : {finalHours:D2}:{finalMinutes:D2}"); // Формат с ведущим нулем
+         //  Console.WriteLine($"Итоговое время автосмены пароля на самом сервере : {finalHours:D2}:{finalMinutes:D2}"); // Формат с ведущим нулем
 
             Schedule(async () => await Torrserver.Torrserver.AutoChangeAccountTorrserver())
                 .ToRunEvery(1)
@@ -71,6 +76,68 @@ namespace FreeTorrserverBot
             
           return  await SqlMethods.GetSettingsTorrserverBot();
             // Ваша логика для загрузки настроек
+        }
+        private async Task<bool> GetTorrserverAutoRunSettingAsync()
+        {
+            var settings = await SqlMethods.GetSettingsTorrserverBot();
+            return settings.IsTorrserverAutoRunEnabled; // Новый флаг в базе данных
+        }
+
+        private async Task ScheduleTorrserverAutoRun()
+        {
+            var setBot = await SqlMethods.GetSettingBot();
+            var timeZone = ServerInfo.GetLocalServerTimeTimeZone();
+            double hoursWithTimeZone = timeZone - setBot.TimeZoneOffset;
+
+            int hours = await GetTorrserverHoursAsync();
+            int minutes = await GetTorrserverMinutesAsync();
+
+            // Корректируем с учетом часового пояса
+            int additionalHours = (int)hoursWithTimeZone;
+            int additionalMinutes = (int)((hoursWithTimeZone - additionalHours) * 60);
+
+            int finalHours = hours + additionalHours;
+            int finalMinutes = minutes + additionalMinutes;
+
+            // Если минуты превышают 60, корректируем
+            if (finalMinutes >= 60)
+            {
+                finalHours += finalMinutes / 60;
+                finalMinutes %= 60;
+            }
+
+            Schedule(async () => await RunTorrserverTask())
+                .ToRunEvery(1)
+                .Days()
+                .At(finalHours, finalMinutes);
+
+         //   Console.WriteLine($"✅ Автозапуск Torrserver запланирован на {finalHours:D2}:{finalMinutes:D2} (с учетом часового пояса)");
+        }
+
+        private async Task RunTorrserverTask()
+        {
+            await Torrserver.Torrserver.RebootingTorrserver();
+            await BotTelegram.TelegramBot.SendMessageToAdmin("✅Ежедневный авто-перезапуск Torrserver выполнен!")
+            // Логика автозапуска Torrserver
+            Console.WriteLine("Ежедневный авто-перезапуск Torrserver выполнен!");
+            // Здесь можно добавить вызов нужного метода
+        }
+
+        private async Task<int> GetTorrserverHoursAsync()
+        {
+            var settings = await LoadSettingsAsync();
+            return int.Parse(settings.TorrserverTaskTime.Split(":")[0]); // Время из базы
+        }
+
+        private async Task<int> GetTorrserverMinutesAsync()
+        {
+            var settings = await LoadSettingsAsync();
+            return int.Parse(settings.TorrserverTaskTime.Split(":")[1]); // Время из базы
+        }
+
+        private async Task<SettingsTorrserverBot> LoadSettingsAsync()
+        {
+            return await SqlMethods.GetSettingsTorrserverBot();
         }
     }
 }

@@ -61,7 +61,7 @@ namespace FreeTorrserverBot.BotTelegram
             return;
 
         }
-        
+      
         public static Task Error(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
         {
             Console.WriteLine(arg2.Message);
