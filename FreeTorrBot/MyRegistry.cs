@@ -117,7 +117,7 @@ namespace FreeTorrserverBot
         private async Task RunTorrserverTask()
         {
             await Torrserver.Torrserver.RebootingTorrserver();
-            await BotTelegram.TelegramBot.SendMessageToAdmin("✅Ежедневный авто-перезапуск Torrserver выполнен!")
+            await BotTelegram.TelegramBot.SendMessageToAdmin("✅Ежедневный авто-перезапуск Torrserver выполнен!");
             // Логика автозапуска Torrserver
             Console.WriteLine("Ежедневный авто-перезапуск Torrserver выполнен!");
             // Здесь можно добавить вызов нужного метода
