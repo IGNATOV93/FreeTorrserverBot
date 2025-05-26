@@ -30,9 +30,9 @@ namespace FreeTorrBot.BotTelegram.BotSettings
                 ShowErrorMessage("❌ Настройки бота не заполнены.");
 
                 Console.WriteLine("Выберите действие:");
-                Console.WriteLine("1️⃣ Заполнить настройки через консоль");
-                Console.WriteLine("2️⃣ Изменил сам settings.json, перезапустить бота");
-                Console.WriteLine("3️⃣ Выйти из режима запуска");
+                Console.WriteLine("1️ Заполнить настройки через консоль");
+                Console.WriteLine("2️ Изменил сам settings.json, перезапустить бота");
+                Console.WriteLine("3️ Выйти из режима запуска");
 
                 Console.Write("Введите номер действия: ");
                 string userChoice = Console.ReadLine();
@@ -44,11 +44,13 @@ namespace FreeTorrBot.BotTelegram.BotSettings
                         return; // 🚀 Настройки сохранены, завершаем
 
                     case "2":
-                        Console.WriteLine("⚠️ Отредактируйте settings.json вручную и перезапустите бота.");
+                        Console.WriteLine("⚠️ Отредактируйте settings.json вручную и перезапустите установку бота.");
+                        Environment.Exit(0);
                         return;
 
                     case "3":
                         Console.WriteLine("🚪 Выход из режима запуска...");
+                        Environment.Exit(0);
                         return;
 
                     default:

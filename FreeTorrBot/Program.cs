@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FluentScheduler;
-using FreeTorrBot.BotTelegram.BotSettings;
+﻿using FreeTorrBot.BotTelegram.BotSettings;
 using FreeTorrserverBot.BotTelegram;
 using FreeTorrserverBot.Torrserver;
 
@@ -21,7 +17,10 @@ public class MainClass
             Console.ResetColor();
 
             var input = Console.ReadLine(); // Ожидаем ввод от пользователя перед выходом
-            if (input != null && input == "2") return;
+            if (input != null && input == "2")
+            {
+                Environment.Exit(0);
+            }
         }
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("✅ TorrServer найден! Продолжаем...");

@@ -18,7 +18,8 @@ namespace FreeTorrserverBot.BotTelegram
         static readonly public TelegramBotClient client = new TelegramBotClient(settingsJson.YourBotTelegramToken);
         public  static string AdminChat = settingsJson.AdminChatId;
         
-      public static  InlineKeyboardMarkup inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
+
+        public static  InlineKeyboardMarkup inlineKeyboarDeleteMessageOnluOnebutton = new InlineKeyboardMarkup(new[]
                 {new[]{InlineKeyboardButton.WithCallbackData("Скрыть \U0001F5D1", "deletemessages")}});
         public static async Task Update(ITelegramBotClient botClient, Update update, CancellationToken token)
         {
@@ -67,6 +68,7 @@ namespace FreeTorrserverBot.BotTelegram
             Console.WriteLine(arg2.Message);
             return Task.CompletedTask;
         }
+        
         static public async Task StartBot()
         {
            
@@ -82,6 +84,8 @@ namespace FreeTorrserverBot.BotTelegram
 
             Console.ReadLine();
         }
+
+
         public static async Task SendMessageToAdmin(string mes)
         {
             Console.WriteLine(mes);

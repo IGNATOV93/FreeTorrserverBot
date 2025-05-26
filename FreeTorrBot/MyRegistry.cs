@@ -59,7 +59,7 @@ namespace FreeTorrserverBot
         private async Task<int> GetHoursAsync()
         {
             // Предполагается асинхронная загрузка данных
-            var settings = await LoadSettingsAsync();
+            var settings = await  LoadSettingsAsync();
             
          
             return int.Parse(settings.TimeAutoChangePassword.Split(":")[0]);
@@ -71,16 +71,11 @@ namespace FreeTorrserverBot
             var settings = await LoadSettingsAsync();
             return int.Parse(settings.TimeAutoChangePassword.Split(":")[1]);
         }
-        private async Task<SettingsTorrserverBot> LoadSettingsAsync()
-        {
-            
-          return  await SqlMethods.GetSettingsTorrserverBot();
-            // Ваша логика для загрузки настроек
-        }
+     
         private async Task<bool> GetTorrserverAutoRunSettingAsync()
         {
             var settings = await SqlMethods.GetSettingsTorrserverBot();
-            return settings.IsTorrserverAutoRunEnabled; // Новый флаг в базе данных
+            return settings.IsTorrserverAutoRestart; // Новый флаг в базе данных
         }
 
         private async Task ScheduleTorrserverAutoRun()
@@ -126,16 +121,16 @@ namespace FreeTorrserverBot
         private async Task<int> GetTorrserverHoursAsync()
         {
             var settings = await LoadSettingsAsync();
-            return int.Parse(settings.TorrserverTaskTime.Split(":")[0]); // Время из базы
+            return int.Parse(settings.TorrserverRestartTime.Split(":")[0]); // Время из базы
         }
 
         private async Task<int> GetTorrserverMinutesAsync()
         {
             var settings = await LoadSettingsAsync();
-            return int.Parse(settings.TorrserverTaskTime.Split(":")[1]); // Время из базы
+            return int.Parse(settings.TorrserverRestartTime.Split(":")[1]); // Время из базы
         }
 
-        private async Task<SettingsTorrserverBot> LoadSettingsAsync()
+        private static async Task<SettingsTorrserverBot> LoadSettingsAsync()
         {
             return await SqlMethods.GetSettingsTorrserverBot();
         }
